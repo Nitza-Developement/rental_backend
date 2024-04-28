@@ -10,9 +10,10 @@ from apps.core.tenant.exceptions import validate_tenant_and_handle_errors
 
 class ListAndCreateTenantsView(APIViewWithPagination):
 
-    permission_classes = [IsAuthenticated, IsAdminTenant]
+    permission_classes = [IsAuthenticated]#, IsAdminTenant]
 
     def get(self, request):
+        print(f'THE REQUEST: {request.user}')
         search_text = request.query_params.get('searchText', None)
         order_by = request.query_params.get('orderBy', 'name')
         asc = request.query_params.get('asc', None)
