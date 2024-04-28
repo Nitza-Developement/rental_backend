@@ -7,7 +7,7 @@ from apps.core.client.serializer import ClientListSerializer, ClientCreateSerial
 from apps.core.client.features import delete_client, get_client, get_clients, create_client, update_client
 from apps.core.client.exceptions import validate_client_and_handle_errors
 from settings.utils.api import APIViewWithPagination
-from settings.utils.exceptions import BadRequest400APIException
+from settings.utils.exceptions import BadRequest400APIException, NotFound404APIException
 
 
 class ClientListAndCreateView(APIViewWithPagination):
