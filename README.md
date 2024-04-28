@@ -59,22 +59,47 @@ To access the browsable API, navigate to `http://localhost:8000/api/` in your we
 - **Views:** Create views to handle HTTP requests and responses in the `views.py` file within the Django app.
 - **Serializers:** Define serializers to convert complex data types to native Python datatypes and vice versa in the `serializers.py` file within the Django app.
 
-## Contributing
+## Contributing Guidelines
 
-Contributions are welcome! If you'd like to contribute to this project, please follow these steps:
+1. **Include All Models in the Admin Site**: Ensure all models are registered in the Django admin site. Provide meaningful `__str__()` functions for each model to facilitate easy identification of instances in the admin interface.
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/your-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin feature/your-feature`)
-5. Create a new Pull Request
+2. **Use a Single App Called "rental"**: All functionalities in this repository should be contained within a single Django app named "rental".
 
-Please ensure that your pull request adheres to the [code of conduct](CODE_OF_CONDUCT.md) and includes appropriate tests and documentation as necessary.
+3. **Code Formatting**: Utilize the Black code formatter with its default configuration for this project. Ensure your code adheres to the formatting standards before submitting a pull request.
+
+4. **Include Tests for All Routes**: Write tests to cover all routes and functionalities implemented. Tests ensure the reliability and stability of the project.
+
+5. **Organize Models in Separate Files**: Create a file within the `models` folder for each model. Name the files meaningfully, such as `my_module.py`, to improve code organization and maintainability.
+
+## Submitting a Pull Request
+
+1. Fork the repository to your GitHub account.
+
+2. Create a new branch for your feature or bug fix:
+    ```bash
+    git checkout -b feature-name
+    ```
+
+3. Make your changes and ensure they adhere to the contributing guidelines.
+
+4. Commit your changes:
+    ```bash
+    git commit -m "Brief description of your changes"
+    ```
+
+5. Push your changes to your fork:
+    ```bash
+    git push origin feature-name
+    ```
+
+6. Open a pull request on the main repository's `develop` branch.
+
+7. Provide a clear description of your changes in the pull request, including any relevant information or context.
+
+8. Await review and feedback from project maintainers. Make any requested changes and updates as necessary.
+
+9. Once approved, your changes will be merged into the main repository.
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-Feel free to customize this README according to your specific project requirements and preferences.
