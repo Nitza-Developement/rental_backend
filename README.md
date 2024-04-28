@@ -18,7 +18,7 @@ To set up the project locally, follow these steps:
 1. **Clone the repository:**
 
    ```
-   git clone https://github.com/your_username/your_repo.git
+   git clone https://github.com/Nitza-Developement/rental_backend
    ```
 
 2. **Install dependencies:**
