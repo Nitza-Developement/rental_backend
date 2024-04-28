@@ -22,16 +22,16 @@ def get_image_path(user, picture_filename: str):
 
 class UserManager(BaseUserManager):
     
-    def create_user(self, email, password, role, **extra_fields):
+    def create_user(self, email, password, **extra_fields):
         if not email:
             raise ValueError('The email field must be set')
         user = self.model(email=email, **extra_fields)
-        user.role = role
         user.set_password(password)
         user.save(using=self._db)
         return user
 
     def create_superuser(self, email, password, **extra_fields):
+        extra_fields.setdefault('is_superuser', True)
         user = self.create_user(email, password)
         user.save(using=self._db)
         return user
@@ -42,7 +42,6 @@ class User(AbstractBaseUser):
     name = models.CharField(max_length=100,
                             validators=[user_name_validator])
     image = models.ImageField(upload_to=get_image_path, null=True, blank=True)
-
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
