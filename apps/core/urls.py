@@ -12,5 +12,5 @@ urlpatterns = [
     path('profile', update_profile, name="update-profile"),
 
     path('tenant', ListAndCreateTenantsView.as_view(), name="tenant"),
-    path('tenant/<int: tenant_id>', GetUpdateAndDeleteATenantView.as_view(), name="tenant-actions")
+    path('tenant/<int:tenant_id>', GetUpdateAndDeleteATenantView.as_view(), name="tenant-actions")
 ]
