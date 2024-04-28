@@ -67,7 +67,9 @@ class ClientUpdateSerializer(serializers.ModelSerializer):
         return new_email
 
     def validate_phone_number(self, value):
-        if Client.objects.filter(phone_number=value).exclude(id=self.instance.id).exists():
+        data: dict = self.initial_data
+        client = Client.objects.filter(pk=data['id']).first()
+        if Client.objects.filter(phone_number=value).exclude(pk=client.id if client else None).exists():
             raise serializers.ValidationError(
                 "A client with this phone number already exists.")
         return value

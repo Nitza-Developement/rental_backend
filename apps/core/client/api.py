@@ -12,12 +12,15 @@ from settings.utils.exceptions import BadRequest400APIException
 
 class ClientListAndCreateView(APIViewWithPagination):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
+
     def get(self, request):
         try:
             clients_list = get_clients(request.user.defaultTenantUser().tenant)
             paginator = self.pagination_class()
-            paginated_clients = paginator.paginate_queryset(clients_list, request)
-            serialized_list = ClientListSerializer(paginated_clients, many=True)
+            paginated_clients = paginator.paginate_queryset(
+                clients_list, request)
+            serialized_list = ClientListSerializer(
+                paginated_clients, many=True)
             return paginator.get_paginated_response(serialized_list.data)
         except Exception as e:
             raise BadRequest400APIException(str(e))
@@ -30,7 +33,8 @@ class ClientListAndCreateView(APIViewWithPagination):
             name=serializer.validated_data['name'],
             email=serializer.validated_data['email'],
             phone_number=serializer.validated_data['phone_number'],
-            tenant=serializer.validated_data.get('tenant', request.user.defaultTenantUser().tenant)
+            tenant=serializer.validated_data.get(
+                'tenant', request.user.defaultTenantUser().tenant)
         )
 
         serialized_client = ClientListSerializer(created_client)
@@ -39,7 +43,7 @@ class ClientListAndCreateView(APIViewWithPagination):
 
 class ClientGetUpdateAndDeleteView(APIView):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
-    
+
     def get(self, request, client_id):
         try:
             client = get_client(client_id)
@@ -49,15 +53,15 @@ class ClientGetUpdateAndDeleteView(APIView):
             raise BadRequest400APIException(str(e))
 
     def put(self, request, client_id):
-        serializer = ClientUpdateSerializer(data=request.data|{'id': client_id})
+        serializer = ClientUpdateSerializer(
+            data=request.data | {'id': client_id})
         validate_client_and_handle_errors(serializer)
 
         updated_client = update_client(
-            id=client_id,
+            client_id=client_id,
             name=serializer.validated_data.get('name'),
             email=serializer.validated_data.get('email'),
-            phone_number=serializer.validated_data.get('phone_number'),
-            tenant=serializer.validated_data.get('tenant')
+            phone_number=serializer.validated_data.get('phone_number')
         )
 
         serialized_client = ClientListSerializer(updated_client)
