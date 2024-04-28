@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.core.tenant.models import TenantUser
+from apps.core.tenantUser.models import TenantUser
 
 
 class TenantUserListSerializer(serializers.ModelSerializer):

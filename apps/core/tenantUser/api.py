@@ -8,13 +8,15 @@ from settings.utils.api import APIViewWithPagination
 from settings.utils.exceptions import BadRequest400APIException
 
 
-class TenantUserListAndCreateView(APIViewWithPagination):
+class ListAndCreateTenantUserView(APIViewWithPagination):
 
     def get(self, request):
         try:
             tenant_users_list = get_tenantUsers()
-            serialized_list = TenantUserListSerializer(tenant_users_list, many=True)
-            return Response(serialized_list.data, status=status.HTTP_200_OK)
+            paginator = self.pagination_class()
+            paginated_tenantUsers = paginator.paginate_queryset(tenant_users_list, request)
+            serialized_list = TenantUserListSerializer(paginated_tenantUsers, many=True)
+            return paginator.get_paginated_response(serialized_list.data)
         except Exception as e:
             return BadRequest400APIException(str(e))
 
@@ -33,7 +35,7 @@ class TenantUserListAndCreateView(APIViewWithPagination):
         return Response(serialized_tenantUser.data, status=status.HTTP_201_CREATED)
 
 
-class TenantUserGetUpdateAndDeleteView(APIView):
+class GetUpdateAndDeleteTenantUserView(APIView):
 
     def get(self, request, tenant_user_id):
         try:

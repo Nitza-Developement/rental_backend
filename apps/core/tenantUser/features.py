@@ -29,6 +29,12 @@ def get_tenantUser(tenant_user_id):
         return TenantUser.objects.get(id=tenant_user_id)
     except TenantUser.DoesNotExist:
         return None
+    
+def get_tenantUsers():
+    try:
+        return TenantUser.objects.all()
+    except TenantUser.DoesNotExist:
+        return None
 
 
 def update_tenantUser(tenant_user_id, role=None, is_default=None):

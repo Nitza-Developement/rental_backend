@@ -13,8 +13,10 @@ class ClientListAndCreateView(APIViewWithPagination):
     def get(self, request):
         try:
             clients_list = get_clients()
-            serialized_list = ClientListSerializer(clients_list, many=True)
-            return Response(serialized_list.data, status=status.HTTP_200_OK)
+            paginator = self.pagination_class()
+            paginated_clients = paginator.paginate_queryset(clients_list, request)
+            serialized_list = ClientListSerializer(paginated_clients, many=True)
+            return paginator.get_paginated_response(serialized_list.data)
         except Exception as e:
             return BadRequest400APIException(str(e))
 
