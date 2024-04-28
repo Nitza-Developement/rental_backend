@@ -8,6 +8,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import api_view, permission_classes
 from apps.core.user.serializer import UpdateUserSerializer, UserProfileSerializer
 from apps.core.user.exceptions import validate_user_and_handle_errors
+from settings.utils.exceptions import BadRequest400APIException
 
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
@@ -19,7 +20,7 @@ class LogoutView(APIView):
             token.blacklist()
             return Response(status=205)
         except Exception as e:
-            return Response(status=400, data={"error": str(e)})
+            return BadRequest400APIException(str(e))
 
 
 @api_view(['PUT'])

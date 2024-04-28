@@ -4,9 +4,11 @@ from rest_framework.response import Response
 from apps.core.client.serializer import ClientListSerializer, ClientCreateSerializer, ClientUpdateSerializer
 from apps.core.client.features import delete_client, get_client, get_clients, create_client, update_client
 from apps.core.client.exceptions import validate_client_and_handle_errors
+from settings.utils.api import APIViewWithPagination
+from settings.utils.exceptions import BadRequest400APIException
 
 
-class ClientListAndCreateView(APIView):
+class ClientListAndCreateView(APIViewWithPagination):
 
     def get(self, request):
         try:
@@ -14,7 +16,7 @@ class ClientListAndCreateView(APIView):
             serialized_list = ClientListSerializer(clients_list, many=True)
             return Response(serialized_list.data, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response(status=400, data={"error": str(e)})
+            return BadRequest400APIException(str(e))
 
     def post(self, request):
         serializer = ClientCreateSerializer(data=request.data)
@@ -39,7 +41,7 @@ class ClientGetUpdateAndDeleteView(APIView):
             serialized_client = ClientListSerializer(client)
             return Response(serialized_client.data, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response(status=400, data={"error": str(e)})
+            return BadRequest400APIException(str(e))
 
     def put(self, request, client_id):
         serializer = ClientUpdateSerializer(data=request.data)

@@ -24,15 +24,15 @@ def create_tenantUser(
     return tenant_user
 
 
-def get_tenant_user(tenant_user_id):
+def get_tenantUser(tenant_user_id):
     try:
         return TenantUser.objects.get(id=tenant_user_id)
     except TenantUser.DoesNotExist:
         return None
 
 
-def update_tenant_user(tenant_user_id, role=None, is_default=None):
-    tenant_user = get_tenant_user(tenant_user_id)
+def update_tenantUser(tenant_user_id, role=None, is_default=None):
+    tenant_user = get_tenantUser(tenant_user_id)
     if tenant_user:
         if role:
             tenant_user.role = role
@@ -46,8 +46,8 @@ def update_tenant_user(tenant_user_id, role=None, is_default=None):
     return tenant_user
 
 
-def delete_tenant_user(tenant_user_id):
-    tenant_user = get_tenant_user(tenant_user_id)
+def delete_tenantUser(tenant_user_id):
+    tenant_user = get_tenantUser(tenant_user_id)
     print(f'EL USER: {tenant_user.user}')
     """
     if tenant_user:

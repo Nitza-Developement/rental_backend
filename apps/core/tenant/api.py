@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from apps.core.tenant.features import create_tenant, get_tenants, get_tenant, update_tenant, delete_tenant
 from apps.core.tenant.serializer import CreateTenantSerializer, TenantSerializer, UpdateTenantSerializer
 from apps.core.tenant.exceptions import validate_tenant_and_handle_errors
+from settings.utils.exceptions import BadRequest400APIException
 
 
 class ListAndCreateTenantsView(APIViewWithPagination):
@@ -13,7 +14,7 @@ class ListAndCreateTenantsView(APIViewWithPagination):
     permission_classes = [IsAuthenticated]#, IsAdminTenant]
 
     def get(self, request):
-        print(f'THE REQUEST: {request.user}')
+        print(f'THE REQUEST: {request.user.defaultTenantUser}')
         search_text = request.query_params.get('searchText', None)
         order_by = request.query_params.get('orderBy', 'name')
         asc = request.query_params.get('asc', None)
@@ -30,7 +31,7 @@ class ListAndCreateTenantsView(APIViewWithPagination):
             serialized_list = TenantSerializer(paginated_tenants, many=True)
             return paginator.get_paginated_response(serialized_list.data)
         except Exception as e:
-            return Response(status=400, data={"error": str(e)})
+            return BadRequest400APIException(str(e))
 
     def post(self, request):
         serializer = CreateTenantSerializer(data=request.data)
