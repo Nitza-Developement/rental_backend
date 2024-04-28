@@ -1,6 +1,8 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from apps.core.tenantUser.permissions import IsAdminOrStaffTenantUser
 from apps.core.client.serializer import ClientListSerializer, ClientCreateSerializer, ClientUpdateSerializer
 from apps.core.client.features import delete_client, get_client, get_clients, create_client, update_client
 from apps.core.client.exceptions import validate_client_and_handle_errors
@@ -9,16 +11,16 @@ from settings.utils.exceptions import BadRequest400APIException
 
 
 class ClientListAndCreateView(APIViewWithPagination):
-
+    permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
     def get(self, request):
         try:
-            clients_list = get_clients()
+            clients_list = get_clients(request.user.defaultTenantUser().tenant)
             paginator = self.pagination_class()
             paginated_clients = paginator.paginate_queryset(clients_list, request)
             serialized_list = ClientListSerializer(paginated_clients, many=True)
             return paginator.get_paginated_response(serialized_list.data)
         except Exception as e:
-            return BadRequest400APIException(str(e))
+            raise BadRequest400APIException(str(e))
 
     def post(self, request):
         serializer = ClientCreateSerializer(data=request.data)
@@ -28,7 +30,7 @@ class ClientListAndCreateView(APIViewWithPagination):
             name=serializer.validated_data['name'],
             email=serializer.validated_data['email'],
             phone_number=serializer.validated_data['phone_number'],
-            tenant=serializer.validated_data['tenant']
+            tenant=serializer.validated_data.get('tenant', request.user.defaultTenantUser().tenant)
         )
 
         serialized_client = ClientListSerializer(created_client)
@@ -36,21 +38,22 @@ class ClientListAndCreateView(APIViewWithPagination):
 
 
 class ClientGetUpdateAndDeleteView(APIView):
-
+    permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
+    
     def get(self, request, client_id):
         try:
             client = get_client(client_id)
             serialized_client = ClientListSerializer(client)
             return Response(serialized_client.data, status=status.HTTP_200_OK)
         except Exception as e:
-            return BadRequest400APIException(str(e))
+            raise BadRequest400APIException(str(e))
 
     def put(self, request, client_id):
-        serializer = ClientUpdateSerializer(data=request.data)
+        serializer = ClientUpdateSerializer(data=request.data|{'id': client_id})
         validate_client_and_handle_errors(serializer)
 
         updated_client = update_client(
-            client_id=client_id,
+            id=client_id,
             name=serializer.validated_data.get('name'),
             email=serializer.validated_data.get('email'),
             phone_number=serializer.validated_data.get('phone_number'),

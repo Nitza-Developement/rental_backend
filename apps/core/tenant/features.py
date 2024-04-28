@@ -1,7 +1,5 @@
 from django.db.models import Q
-from apps.core.user.models import User
 from apps.core.tenant.models import Tenant
-from rest_framework.exceptions import PermissionDenied
 from settings.utils.exceptions import NotFound404APIException
 
 
@@ -24,11 +22,7 @@ def get_tenants(search_text: str = None,
     return tenants
 
 
-def get_tenant(user_requesting: User, tenant_id: str):
-
-    if not user_requesting.isAdmin():
-        raise PermissionDenied()
-
+def get_tenant(tenant_id: str):
     try:
         tenant = Tenant.objects.get(id=tenant_id)
     except Tenant.DoesNotExist:

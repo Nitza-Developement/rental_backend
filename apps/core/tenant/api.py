@@ -11,10 +11,9 @@ from settings.utils.exceptions import BadRequest400APIException
 
 class ListAndCreateTenantsView(APIViewWithPagination):
 
-    permission_classes = [IsAuthenticated]#, IsAdminTenant]
+    permission_classes = [IsAuthenticated, IsAdminTenant]
 
     def get(self, request):
-        print(f'THE REQUEST: {request.user.defaultTenantUser}')
         search_text = request.query_params.get('searchText', None)
         order_by = request.query_params.get('orderBy', 'name')
         asc = request.query_params.get('asc', None)
@@ -31,7 +30,7 @@ class ListAndCreateTenantsView(APIViewWithPagination):
             serialized_list = TenantSerializer(paginated_tenants, many=True)
             return paginator.get_paginated_response(serialized_list.data)
         except Exception as e:
-            return BadRequest400APIException(str(e))
+            raise BadRequest400APIException(str(e))
 
     def post(self, request):
         serializer = CreateTenantSerializer(data=request.data)
@@ -49,7 +48,7 @@ class ListAndCreateTenantsView(APIViewWithPagination):
 
 
 class GetUpdateAndDeleteATenantView(APIViewWithPagination):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAdminTenant]
 
     def get_permissions(self):
         if self.request.method in ['PUT', 'DELETE']:
@@ -57,8 +56,7 @@ class GetUpdateAndDeleteATenantView(APIViewWithPagination):
         return super().get_permissions()
 
     def get(self, request, tenant_id=None):
-        tenant_requesting = request.user
-        tenant = get_tenant(tenant_requesting, tenant_id)
+        tenant = get_tenant(tenant_id)
 
         serialized_tenant = TenantSerializer(tenant)
 

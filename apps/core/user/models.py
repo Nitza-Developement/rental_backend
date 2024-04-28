@@ -47,12 +47,6 @@ class User(AbstractBaseUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['password']
 
-    def isAdmin(self):
-        return self.role == User.ADMIN
-
     def get_tenantUsers(self):
-        return self.tenantUsers
-    
-    def get_defaultTenantUser(self):
-        return self.tenantUsers.filter(is_default=True)
+        return self.tenantUsers.all()
 

@@ -1,14 +1,17 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from settings.utils.api import APIViewWithPagination
+from rest_framework.permissions import IsAuthenticated
+from apps.core.tenantUser.permissions import IsAdminTenantUser
+from settings.utils.exceptions import BadRequest400APIException
+from apps.core.tenantUser.exceptions import validate_tenantUser_and_handle_errors
 from apps.core.tenantUser.serializer import TenantUserListSerializer, TenantUserCreateSerializer, TenantUserUpdateSerializer
 from apps.core.tenantUser.features import delete_tenantUser, get_tenantUser, get_tenantUsers, create_tenantUser, update_tenantUser
-from apps.core.tenantUser.exceptions import validate_tenantUser_and_handle_errors
-from settings.utils.api import APIViewWithPagination
-from settings.utils.exceptions import BadRequest400APIException
 
 
 class ListAndCreateTenantUserView(APIViewWithPagination):
+    permission_classes = [IsAuthenticated, IsAdminTenantUser]
 
     def get(self, request):
         try:
@@ -18,14 +21,18 @@ class ListAndCreateTenantUserView(APIViewWithPagination):
             serialized_list = TenantUserListSerializer(paginated_tenantUsers, many=True)
             return paginator.get_paginated_response(serialized_list.data)
         except Exception as e:
-            return BadRequest400APIException(str(e))
+            raise BadRequest400APIException(str(e))
 
     def post(self, request):
-        serializer = TenantUserCreateSerializer(data=request.data)
+        serializer = TenantUserCreateSerializer(data={
+            'role': request.data.get('role'),
+            'tenant': request.data.get('tenant'),
+            'is_default': request.data.get('is_default')
+        })
         validate_tenantUser_and_handle_errors(serializer)
 
         created_tenantUser = create_tenantUser(
-            email=serializer.validated_data['email'],
+            email=request.data.get('email'),
             role=serializer.validated_data['role'],
             tenant=serializer.validated_data['tenant'],
             is_default=serializer.validated_data['is_default']
@@ -36,6 +43,7 @@ class ListAndCreateTenantUserView(APIViewWithPagination):
 
 
 class GetUpdateAndDeleteTenantUserView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminTenantUser]
 
     def get(self, request, tenant_user_id):
         try:
@@ -43,7 +51,7 @@ class GetUpdateAndDeleteTenantUserView(APIView):
             serialized_tenant_user = TenantUserListSerializer(tenant_user)
             return Response(serialized_tenant_user.data, status=status.HTTP_200_OK)
         except Exception as e:
-            return BadRequest400APIException(str(e))
+            raise BadRequest400APIException(str(e))
 
     def put(self, request, tenant_user_id):
         serializer = TenantUserUpdateSerializer(data=request.data)

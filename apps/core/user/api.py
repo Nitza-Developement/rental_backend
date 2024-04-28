@@ -20,7 +20,7 @@ class LogoutView(APIView):
             token.blacklist()
             return Response(status=205)
         except Exception as e:
-            return BadRequest400APIException(str(e))
+            raise BadRequest400APIException(str(e))
 
 
 @api_view(['PUT'])

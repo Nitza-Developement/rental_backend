@@ -19,8 +19,8 @@ class TenantUser(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tenantUsers')
     is_default = models.BooleanField(default=False)
 
-    def get_default_tenant_user(self):
-        return self.tenantUsers.filter(user=self.user, is_default=True).first()
+    def get_default_tenantUser(self):
+        return self.tenantUsers.filter(is_default=True).first()
 
     def set_as_default(self):
         TenantUser.objects.filter(user=self.user).update(is_default=False)
@@ -30,4 +30,4 @@ class TenantUser(models.Model):
     class Meta:
         unique_together = ('user', 'is_default')
 
-    User.add_to_class('defaultTenantUser', get_default_tenant_user)
+    User.add_to_class('defaultTenantUser', get_default_tenantUser)
