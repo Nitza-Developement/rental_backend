@@ -50,9 +50,9 @@ class User(AbstractBaseUser):
     def isAdmin(self):
         return self.role == User.ADMIN
 
-    def get_enterprises(self):
-        return self.enterprises.filter(is_deleted=False).order_by('name')
-
-    def get_associated_centers(self):
-        return self.centers.filter(is_deleted=False).order_by('name')
+    def get_tenantUsers(self):
+        return self.tenantUsers
+    
+    def get_defaultTenantUser(self):
+        return self.tenantUsers.filter(is_default=True)
 

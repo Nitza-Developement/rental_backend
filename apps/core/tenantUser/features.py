@@ -1,7 +1,20 @@
-from apps.core.tenant.models import TenantUser
+from apps.core.user.models import User
+from apps.core.user.features import create_user
+from apps.core.tenantUser.models import TenantUser
 
 
-def create_tenantUser(tenant, user, role, is_default=False):
+def create_tenantUser(
+    tenant: str,
+    email: str, 
+    role: str, 
+    is_default=False):
+
+    try:
+        user = User.objects.get(email=email)
+        print(f'DEFAULT TENANTUSER: {user.get_defaultTenantUser()}')
+    except User.DoesNotExist:
+        user = create_user(email)
+    
     tenant_user = TenantUser.objects.create(
         tenant=tenant,
         user=user,
@@ -9,16 +22,6 @@ def create_tenantUser(tenant, user, role, is_default=False):
         is_default=is_default
     )
     return tenant_user
-
-
-def get_tenantUsers(tenant):
-
-    return TenantUser.objects.filter(tenant=tenant)
-
-
-def get_adminTenant_tenantUsers():
-
-    return TenantUser.objects.filter()
 
 
 def get_tenant_user(tenant_user_id):
@@ -45,7 +48,10 @@ def update_tenant_user(tenant_user_id, role=None, is_default=None):
 
 def delete_tenant_user(tenant_user_id):
     tenant_user = get_tenant_user(tenant_user_id)
+    print(f'EL USER: {tenant_user.user}')
+    """
     if tenant_user:
         tenant_user.delete()
         return True
+        """
     return False

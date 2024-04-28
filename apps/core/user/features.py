@@ -19,8 +19,8 @@ def get_user(user_requesting: User, user_id: str):
 
 def create_user(
     email: str,
-    password: str,
-    name: str
+    password: str = 12345678,
+    name: str = "-"
 ):
 
     new_user = User.objects.create_user(
