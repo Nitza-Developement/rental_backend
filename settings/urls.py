@@ -6,7 +6,7 @@ from settings.utils.url_signer import ServeSignedUrlsStorageLocalView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('apps.core.urls')),
+    path('', include('rental.urls')),
     re_path(r'^%s(?P<path>.*)$' % re.escape(
         settings.MEDIA_SIGNED_URL.lstrip('/')
     ), ServeSignedUrlsStorageLocalView.as_view()),

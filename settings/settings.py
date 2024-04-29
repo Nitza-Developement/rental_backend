@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
-    'apps.core',
+    'rental',
 ]
 
 MIDDLEWARE = [
@@ -228,7 +228,7 @@ LOGGING = {
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-AUTH_USER_MODEL = "core.User"
+AUTH_USER_MODEL = "rental.User"
 
 
 # Internationalization
