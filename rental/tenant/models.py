@@ -13,6 +13,7 @@ class Tenant(models.Model):
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=100,
                             validators=[user_name_validator])
+    date_joined = models.DateTimeField(auto_now=True)
     isAdmin = models.BooleanField(default=False)
     
     @classmethod
@@ -27,4 +28,7 @@ class Tenant(models.Model):
         if adminTenant is not None:
             return self.tenantUsers.filter(tenant=adminTenant, role='Admin')
         return []
+    
+    def __str__(self) -> str:
+        return f'{self.name}'
 

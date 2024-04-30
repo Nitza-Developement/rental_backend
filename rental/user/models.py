@@ -54,4 +54,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_tenantUsers(self):
         return self.tenantUsers.all()
+    
+    def __str__(self) -> str:
+        return f'{self.email if self.name is None else self.name}'
 

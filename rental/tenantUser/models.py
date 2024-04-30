@@ -31,3 +31,12 @@ class TenantUser(models.Model):
         unique_together = ('user', 'is_default')
 
     User.add_to_class('defaultTenantUser', get_default_tenantUser)
+    
+    def get_user(self):
+        return f'{self.user.email if self.user.name is None else self.user.name}'
+    
+    def get_tenant(self):
+        return f'{self.tenant.name}'
+
+    def __str__(self) -> str:
+        return f'{self.id}'
