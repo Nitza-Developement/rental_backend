@@ -12,7 +12,6 @@ def create_tenantUser(
 
     try:
         user = User.objects.get(email=email)
-        print(f'DEFAULT TENANTUSER: {user.get_defaultTenantUser()}')
     except User.DoesNotExist:
         user = create_user(email)
 
@@ -22,6 +21,7 @@ def create_tenantUser(
         role=role,
         is_default=is_default
     )
+    tenant_user.save()
     return tenant_user
 
 

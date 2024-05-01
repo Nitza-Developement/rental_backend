@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
-from rental.models import User, Tenant, TenantUser, Client
+from rental.models import User, Tenant, TenantUser, Client, Vehicle, VehiclePlate, VehiclePicture
 
 admin.site.site_title = "Fleet Admin Site"
 admin.site.site_header = "Administration Panel"
@@ -37,9 +37,27 @@ class ClientInline(admin.TabularInline):
     extra = 0
 
 
+class VehicleInline(admin.TabularInline):
+    model = Vehicle
+    extra = 0
+
+
+class VehiclePlateInline(admin.TabularInline):
+    model = VehiclePlate
+    extra = 0
+
+
 @admin.register(Tenant)
 class TenantAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'email', 'isAdmin')
     search_fields = ('name', 'email')
     date_hierarchy = 'date_joined'
-    inlines = [TenantUserInline, ClientInline]
+    inlines = [TenantUserInline, ClientInline, VehicleInline]
+
+
+@admin.register(Vehicle)
+class VehicleAdmin(admin.ModelAdmin):
+    list_display = ('id', 'active_plate', 'type', 'year', 'make',
+                    'model', 'trim', 'vin', 'nickname', 'spare_tires', 'status')
+    search_fields = ('id', 'nickname', 'model', 'vin', 'status')
+    inlines = [VehiclePlateInline]

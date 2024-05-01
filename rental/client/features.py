@@ -9,6 +9,7 @@ def create_client(tenant, name, email, phone_number):
         email=email,
         phone_number=phone_number
     )
+    client.save()
     return client
 
 

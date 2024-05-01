@@ -1,5 +1,6 @@
+from datetime import datetime
 from django.db import models
-from django.contrib.postgres.fields import JSONField
+from rental.tenant.models import Tenant
 
 
 class Vehicle(models.Model):
@@ -26,7 +27,7 @@ class Vehicle(models.Model):
     UNAVAILABLE = 'Unavailable'
 
     TYPE_CHOICES = [
-        (ATV, 'All Terrain Vehicle'),
+        (ATV, 'ATV'),
         (BOAT, 'Boat'),
         (BUS, 'Bus'),
         (CAR, 'Car'),
@@ -52,7 +53,7 @@ class Vehicle(models.Model):
         (UNAVAILABLE, 'Unavailable')
     ]
 
-    type = models.CharField(max_length=10, choices=TYPE_CHOICES)
+    type = models.CharField(choices=TYPE_CHOICES)
     year = models.IntegerField()
     make = models.CharField(max_length=255)
     model = models.CharField(max_length=255)
@@ -61,16 +62,36 @@ class Vehicle(models.Model):
     odometer = models.IntegerField()
     nickname = models.CharField(max_length=255)
     spare_tires = models.IntegerField(default=0)
-    extraFields = JSONField(null=True, blank=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+    extra_fields = models.JSONField(null=True, blank=True)
+    status = models.CharField(choices=STATUS_CHOICES)
+    tenant = models.ForeignKey(
+        Tenant, on_delete=models.CASCADE, related_name='vehicles')
+
+    def __str__(self) -> str:
+        return f'{self.vin} | {self.nickname} | {self.type}'
 
 
 class VehiclePlate(models.Model):
-    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='plates')
-    isActive = models.BooleanField(default=False)
+    vehicle = models.ForeignKey(
+        Vehicle, on_delete=models.DO_NOTHING, related_name='plates')
+    is_active = models.BooleanField(default=True)
     plate = models.CharField(max_length=255, unique=True)
-    assignDate = models.DateTimeField(auto_now_add=True)
-    dismissDate = models.DateTimeField(null=True, blank=True)
+    assign_date = models.DateTimeField(auto_now_add=True)
+    dismiss_date = models.DateTimeField(null=True, blank=True)
+
+    def get_active_plate(self):
+        return self.plates.filter(is_active=True).first()
+
+    Vehicle.add_to_class('active_plate', get_active_plate)
+
+    def __str__(self) -> str:
+        return f'{self.plate}'
+
+    def save(self, *args, **kwargs):
+        if self.pk is None or self.is_active != True:
+            if not self.is_active:
+                self.dismiss_date = datetime.now()
+        super().save(*args, **kwargs)
 
 
 class VehiclePicture(models.Model):

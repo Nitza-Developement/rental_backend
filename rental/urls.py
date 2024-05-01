@@ -4,6 +4,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rental.tenant.api import ListAndCreateTenantsView, GetUpdateAndDeleteATenantView
 from rental.tenantUser.api import ListAndCreateTenantUserView, GetUpdateAndDeleteTenantUserView
 from rental.client.api import ClientListAndCreateView, ClientGetUpdateAndDeleteView
+from rental.vehicle.api import ListAndCreateVehicleView, GetUpdateAndDeleteVehicleView
 
 
 urlpatterns = [
@@ -20,5 +21,8 @@ urlpatterns = [
     path('tenantUser/<int:tenantUser_id>', GetUpdateAndDeleteTenantUserView.as_view(), name="tenantUser-actions"),
 
     path('client', ClientListAndCreateView.as_view(), name='client'),
-    path('client/<int:client_id>', ClientGetUpdateAndDeleteView.as_view(), name='client-actions')
+    path('client/<int:client_id>', ClientGetUpdateAndDeleteView.as_view(), name='client-actions'),
+
+    path('vehicle', ListAndCreateVehicleView.as_view(), name='vehicle'),
+    path('vehicle/<str:search_by>', GetUpdateAndDeleteVehicleView.as_view(), name='vehicle-actions')
 ]
