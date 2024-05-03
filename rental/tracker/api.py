@@ -1,0 +1,98 @@
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
+from rental.tracker.features import create_tracker, get_trackers, get_tracker, update_tracker, delete_tracker, get_tracker_heart_beat_data, get_tracker_heart_beat_data_by_tracker_id
+from rental.tracker.models import TrackerHeartBeatData
+from rental.tracker.serializer import CreateTrackerSerializer, TrackerHeartBeatDataSerializer, TrackerSerializer, UpdateTrackerSerializer
+from settings.utils.api import APIViewWithPagination
+from settings.utils.exceptions import BadRequest400APIException
+from rental.tracker.exceptions import validate_tracker_and_handle_errors, validate_tracker_heartbeat_data_and_handle_errors
+
+
+class ListAndCreateTrackersView(APIViewWithPagination):
+    permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
+
+    def get(self, request):
+        try:
+            trackers_list = get_trackers()
+
+            paginated_trackers = self.paginate_queryset(trackers_list, request)
+            serialized_list = TrackerSerializer(paginated_trackers, many=True)
+            return self.get_paginated_response(serialized_list.data)
+        except Exception as e:
+            raise BadRequest400APIException(str(e))
+
+    def post(self, request):
+        serializer = CreateTrackerSerializer(data=request.data)
+        validate_tracker_and_handle_errors(serializer)
+
+        created_tracker = create_tracker(
+            name=serializer.validated_data['name'],
+            vehicle=serializer.validated_data['vehicle']
+        )
+
+        serialized_tracker = TrackerSerializer(created_tracker)
+
+        return Response(serialized_tracker.data, status=status.HTTP_201_CREATED)
+
+
+class GetUpdateAndDeleteATrackerView(APIViewWithPagination):
+    permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
+
+    def get(self, request, tracker_id):
+        tracker = get_tracker(tracker_id)
+
+        serialized_tracker = TrackerSerializer(tracker)
+
+        return Response(serialized_tracker.data, status=status.HTTP_200_OK)
+
+    def put(self, request, tracker_id):
+        serializer = UpdateTrackerSerializer(data={
+            'id': tracker_id,
+            'name': request.data.get('name'),
+            'vehicle': request.data.get('vehicle')
+        })
+        validate_tracker_and_handle_errors(serializer)
+
+        updated_tracker = update_tracker(
+            tracker_id=tracker_id,
+            name=serializer.validated_data.get('name'),
+            vehicle=serializer.validated_data.get('vehicle')
+        )
+        serialized_tracker = TrackerSerializer(updated_tracker)
+
+        return Response(serialized_tracker.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, tracker_id):
+        delete_tracker(tracker_id)
+        return Response(status=status.HTTP_200_OK)
+
+
+class ListAndCreateTrackerHeartBeatDataView(APIViewWithPagination):
+    permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
+
+    def get(self, request):
+        try:
+            heart_beat_data_list = get_tracker_heart_beat_data()
+
+            paginated_heart_beat_data = self.paginate_queryset(heart_beat_data_list, request)
+            serialized_list = TrackerHeartBeatDataSerializer(paginated_heart_beat_data, many=True)
+            return self.get_paginated_response(serialized_list.data)
+        except Exception as e:
+            raise BadRequest400APIException(str(e))
+
+    def post(self, request):
+        serializer = TrackerHeartBeatDataSerializer(data=request.data)
+        validate_tracker_heartbeat_data_and_handle_errors(serializer)
+
+        created_heart_beat_data = TrackerHeartBeatData.objects.create(
+            timestamp=serializer.validated_data['timestamp'],
+            latitude=serializer.validated_data['latitude'],
+            longitude=serializer.validated_data['longitude'],
+            tracker_id=serializer.validated_data['tracker']
+        )
+
+        serialized_heart_beat_data = TrackerHeartBeatDataSerializer(created_heart_beat_data)
+
+        return Response(serialized_heart_beat_data.data, status=status.HTTP_201_CREATED)

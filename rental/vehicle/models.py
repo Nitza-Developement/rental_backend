@@ -3,6 +3,13 @@ from django.db import models
 from rental.tenant.models import Tenant
 
 
+def get_image_path(vehiclePicture, picture_filename: str):
+
+    image_extension = picture_filename.split('.')[-1]
+
+    return f'tenant/{vehiclePicture.vehicle.tenant.id}/vehicle/{vehiclePicture.vehicle}/image.{image_extension}'
+
+
 class Vehicle(models.Model):
     ATV = 'ATV'
     BOAT = 'Boat'
@@ -95,8 +102,7 @@ class VehiclePlate(models.Model):
 
 
 class VehiclePicture(models.Model):
-    id = models.AutoField(primary_key=True)
-    image = models.CharField(max_length=255)
+    image = models.ImageField(upload_to=get_image_path, null=False, blank=False)
     vehicle = models.ForeignKey(
         Vehicle, on_delete=models.CASCADE, related_name='vehicle_pictures')
     pinned = models.BooleanField(default=False)

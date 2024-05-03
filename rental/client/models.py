@@ -1,5 +1,5 @@
 from django.db import models
-from rental.models import Tenant
+from rental.tenant.models import Tenant
 
 
 class Client(models.Model):
@@ -7,3 +7,6 @@ class Client(models.Model):
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=255, unique=True)
     tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name='clients')
+
+    def __str__(self) -> str:
+        return f'{self.name} | {self.email} | {self.phone_number}'

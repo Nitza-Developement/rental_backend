@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+    'minio_storage',
     'rental',
 ]
 
@@ -246,9 +247,13 @@ USE_TZ = True
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-MEDIA_SIGNED_ROOT = os.path.join(BASE_DIR, 'private-media')
-MEDIA_SIGNED_URL = '/signed/'
-DEFAULT_FILE_STORAGE = 'settings.utils.storage.SignedUrlsStorage'
+#MEDIA_SIGNED_ROOT = os.path.join(BASE_DIR, 'private-media')
+DEFAULT_FILE_STORAGE = "minio_storage.storage.MinioMediaStorage"
+MINIO_STORAGE_ENDPOINT = config('S3_ENDPOINT')
+MINIO_STORAGE_ACCESS_KEY = config('S3_ACCESS_KEY')
+MINIO_STORAGE_SECRET_KEY = config('S3_SECRET_KEY')
+MINIO_STORAGE_MEDIA_BUCKET_NAME = config('S3_BUCKET')
+MINIO_STORAGE_MEDIA_USE_PRESIGNED = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/

@@ -1,4 +1,5 @@
 from django.conf import settings
+from decouple import config
 from django.core.files.storage import FileSystemStorage
 
 from settings.utils.url_signer import sign_url

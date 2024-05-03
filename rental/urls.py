@@ -5,6 +5,11 @@ from rental.tenant.api import ListAndCreateTenantsView, GetUpdateAndDeleteATenan
 from rental.tenantUser.api import ListAndCreateTenantUserView, GetUpdateAndDeleteTenantUserView
 from rental.client.api import ClientListAndCreateView, ClientGetUpdateAndDeleteView
 from rental.vehicle.api import ListAndCreateVehicleView, GetUpdateAndDeleteVehicleView
+from rental.rentalPlan.api import ListAndCreateRentalPlansView, GetUpdateAndDeleteARentalPlanView
+from rental.notes.api import ListAndCreateNotesView, GetUpdateAndDeleteANoteView
+from rental.toll.api import ListAndCreateTollDuesView, GetUpdateAndDeleteATollDueView
+from rental.contract.api import ListAndCreateContractView, GetUpdatePatchContractView
+from rental.tracker.api import ListAndCreateTrackersView, ListAndCreateTrackerHeartBeatDataView, GetUpdateAndDeleteATrackerView
 
 
 urlpatterns = [
@@ -24,5 +29,22 @@ urlpatterns = [
     path('client/<int:client_id>', ClientGetUpdateAndDeleteView.as_view(), name='client-actions'),
 
     path('vehicle', ListAndCreateVehicleView.as_view(), name='vehicle'),
-    path('vehicle/<str:search_by>', GetUpdateAndDeleteVehicleView.as_view(), name='vehicle-actions')
+    path('vehicle/<str:search_by>', GetUpdateAndDeleteVehicleView.as_view(), name='vehicle-actions'),
+    
+    path('rental-plan', ListAndCreateRentalPlansView.as_view(), name='rental-plan'),
+    path('rental-plan/<int:rental_plan_id>', GetUpdateAndDeleteARentalPlanView.as_view(), name='rental-plan-actions'),
+    
+    path('contract', ListAndCreateContractView.as_view(), name='contract'),
+    path('contract/<int:contract_id>', GetUpdatePatchContractView.as_view(), name='contract-actons'),
+    
+    path('notes', ListAndCreateNotesView.as_view(), name='notes'),
+    path('notes/<int:note_id>', GetUpdateAndDeleteANoteView.as_view(), name='notes-actions'),
+
+    path('toll-due', ListAndCreateTollDuesView.as_view(), name='toll-due'),
+    path('toll-due/<int:toll_due_id>', GetUpdateAndDeleteATollDueView.as_view(), name='toll-due-actions'),
+    
+    path('tracker', ListAndCreateTrackersView.as_view(), name='tracker'),
+    path('tracker-heartbeat', ListAndCreateTrackerHeartBeatDataView.as_view(), name='tracker-heartbeat'),
+    path('toll-due/<int:toll_due_id>', GetUpdateAndDeleteATrackerView.as_view(), name='tracker-actions'),
+
 ]
