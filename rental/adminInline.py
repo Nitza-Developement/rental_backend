@@ -1,5 +1,17 @@
 from django.contrib import admin
-from rental.models import TenantUser, Client, Vehicle, VehiclePlate, VehiclePicture, Note, StageUpdate, TollDue, TrackerHeartBeatData, Contract
+from rental.models import (
+    TenantUser,
+    Client,
+    Vehicle,
+    VehiclePlate,
+    VehiclePicture,
+    Note,
+    StageUpdate,
+    TollDue,
+    TrackerHeartBeatData,
+    Contract,
+)
+
 
 class TenantUserInline(admin.TabularInline):
     model = TenantUser
@@ -49,5 +61,3 @@ class TrackerHeartbeatDataInline(admin.TabularInline):
 class ContractInline(admin.TabularInline):
     model = Contract
     extra = 0
-
-

@@ -4,8 +4,18 @@ from settings.utils.api import APIViewWithPagination
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
-from rental.vehicle.serializer import VehicleListSerializer, VehicleCreateSerializer, VehicleUpdateSerializer
-from rental.vehicle.features import get_vehicles, create_vehicle, get_vehicle, update_vehicle, delete_vehicle
+from rental.vehicle.serializer import (
+    VehicleListSerializer,
+    VehicleCreateSerializer,
+    VehicleUpdateSerializer,
+)
+from rental.vehicle.features import (
+    get_vehicles,
+    create_vehicle,
+    get_vehicle,
+    update_vehicle,
+    delete_vehicle,
+)
 from settings.utils.exceptions import BadRequest400APIException
 
 

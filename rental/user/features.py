@@ -12,35 +12,24 @@ def get_user(user_requesting: User, user_id: str):
     try:
         user = User.objects.get(id=user_id)
     except User.DoesNotExist:
-        raise NotFound404APIException(f'User with id {user_id} not found')
+        raise NotFound404APIException(f"User with id {user_id} not found")
 
     return user
 
 
-def create_user(
-    email: str,
-    password: str = 12345678,
-    name: str = "-"
-):
+def create_user(email: str, password: str = 12345678, name: str = "-"):
 
-    new_user = User.objects.create_user(
-        email=email, password=password, name=name)
+    new_user = User.objects.create_user(email=email, password=password, name=name)
     new_user.save()
     return new_user
 
 
-def update_user(
-    user_id: str,
-    email: str,
-    password: str,
-    name: str,
-    image: str = None
-):
+def update_user(user_id: str, email: str, password: str, name: str, image: str = None):
 
     try:
         user = User.objects.get(id=user_id)
     except User.DoesNotExist:
-        raise NotFound404APIException(f'User with id {user_id} not found')
+        raise NotFound404APIException(f"User with id {user_id} not found")
 
     if email:
         user.email = email
@@ -65,4 +54,4 @@ def delete_user(user_id):
         user.delete()
 
     except User.DoesNotExist:
-        raise NotFound404APIException(f'User with id {user_id} not found')
+        raise NotFound404APIException(f"User with id {user_id} not found")

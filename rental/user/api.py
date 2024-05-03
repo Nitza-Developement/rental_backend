@@ -10,6 +10,7 @@ from rental.user.serializer import UpdateUserSerializer, UserProfileSerializer
 from rental.user.exceptions import validate_user_and_handle_errors
 from settings.utils.exceptions import BadRequest400APIException
 
+
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -23,28 +24,30 @@ class LogoutView(APIView):
             raise BadRequest400APIException(str(e))
 
 
-@api_view(['PUT'])
+@api_view(["PUT"])
 @permission_classes([IsAuthenticated, IsSelf])
 def update_profile(request):
 
-        user = request.user
-        serializer = UpdateUserSerializer(data={
-            'id': user.id,
-            'name': request.data.get('name'),
-            'email': request.data.get('email'),
-            'password': request.data.get('password'),
-            'image': request.FILES.get('image')
-        })
-        validate_user_and_handle_errors(serializer)
+    user = request.user
+    serializer = UpdateUserSerializer(
+        data={
+            "id": user.id,
+            "name": request.data.get("name"),
+            "email": request.data.get("email"),
+            "password": request.data.get("password"),
+            "image": request.FILES.get("image"),
+        }
+    )
+    validate_user_and_handle_errors(serializer)
 
-        updated_user = update_user(
-            user_id=user.id,
-            name=serializer.validated_data.get('name'),
-            email=serializer.validated_data.get('email'),
-            password=serializer.validated_data.get('password'),
-            image=serializer.validated_data.get('image')
-        )
+    updated_user = update_user(
+        user_id=user.id,
+        name=serializer.validated_data.get("name"),
+        email=serializer.validated_data.get("email"),
+        password=serializer.validated_data.get("password"),
+        image=serializer.validated_data.get("image"),
+    )
 
-        serialized_user = UserProfileSerializer(updated_user)
+    serialized_user = UserProfileSerializer(updated_user)
 
-        return Response(serialized_user.data, status=status.HTTP_200_OK)
+    return Response(serialized_user.data, status=status.HTTP_200_OK)
