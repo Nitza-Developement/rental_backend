@@ -28,6 +28,9 @@ class TenantUser(models.Model):
         self.save()
 
     class Meta:
+        verbose_name = 'Tenant User'
+        verbose_name_plural = 'Tenant Users'
+        ordering = ['id']
         unique_together = ('user', 'is_default')
 
     User.add_to_class('defaultTenantUser', get_default_tenantUser)

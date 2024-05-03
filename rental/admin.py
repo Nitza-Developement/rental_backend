@@ -57,7 +57,7 @@ class ContractAdmin(admin.ModelAdmin):
 
 @admin.register(StageUpdate)
 class StageUpdateAdmin(admin.ModelAdmin):
-    list_display = ('id', 'stage', 'reason', 'previous_stage', 'date')
+    list_display = ('id', 'stage', 'reason', 'date')
     date_hierarchy = 'date'
 
 

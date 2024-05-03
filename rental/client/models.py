@@ -10,3 +10,8 @@ class Client(models.Model):
 
     def __str__(self) -> str:
         return f'{self.name} | {self.email} | {self.phone_number}'
+    
+    class Meta:
+        verbose_name = 'Client'
+        verbose_name_plural = 'Clients'
+        ordering = ['name']

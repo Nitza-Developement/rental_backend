@@ -26,7 +26,7 @@ def validate_and_handle_errors(serializer: Serializer):
 
         error_detail: ErrorDetail = serializer.errors['stage'][0]
 
-        if error_detail.code == 'invalid':
+        if error_detail.code == 'invalid_choice':
             raise ErrorInvalidStage(serializer.data.get('stage'))
 
     if 'date' in serializer.errors:

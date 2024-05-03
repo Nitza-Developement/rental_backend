@@ -3,12 +3,13 @@ from rental.vehicle.models import Vehicle
 
 class Tracker(models.Model):
     name = models.CharField(max_length=255)
-    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='tracker')
+    vehicle = models.OneToOneField(Vehicle, on_delete=models.CASCADE, related_name='tracker')
     created_date = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = 'Tracker'
         verbose_name_plural = 'Trackers'
+        ordering = ['created_date']
 
 
 class TrackerHeartBeatData(models.Model):
@@ -20,3 +21,4 @@ class TrackerHeartBeatData(models.Model):
     class Meta:
         verbose_name = 'Tracker Heart Beat Data'
         verbose_name_plural = 'Tracker Heart Beat Data'
+        ordering = ['-timestamp']

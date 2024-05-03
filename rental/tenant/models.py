@@ -31,4 +31,9 @@ class Tenant(models.Model):
     
     def __str__(self) -> str:
         return f'{self.name}'
+    
+    class Meta:
+        verbose_name = 'Tenant'
+        verbose_name_plural = 'Tenants'
+        ordering = ['date_joined']
 

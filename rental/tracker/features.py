@@ -78,11 +78,18 @@ def create_tracker_heart_beat_data(
     except TrackerHeartBeatData.DoesNotExist:
         raise NotFound404APIException(f'Tracker with id {tracker_id} not found')
     
+    
     new_heart_beat_data = TrackerHeartBeatData.objects.create(
-        timestamp=timestamp,
         latitude=latitude,
         longitude=longitude,
-        tracker=tracker
+        tracker=tracker,
+        timestamp=timestamp,
     )
-    new_heart_beat_data.save()
     return new_heart_beat_data
+
+def delete_tracker_heart_beat_data(heartbeat_id):
+    try:
+        heart_beat_data = TrackerHeartBeatData.objects.filter(id=heartbeat_id)
+        heart_beat_data.delete()
+    except TrackerHeartBeatData.DoesNotExist:
+        raise NotFound404APIException(f'Tracker HeartBeatData with id {heartbeat_id} not found')

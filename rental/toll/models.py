@@ -23,3 +23,7 @@ class TollDue(models.Model):
 
     def __str__(self) -> str:
         return f'{self.plate} | {self.amount} | {self.stage}'
+    
+    class Meta:
+        verbose_name = 'TollDue'
+        ordering = ['createDate']

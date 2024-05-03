@@ -76,6 +76,11 @@ class Vehicle(models.Model):
 
     def __str__(self) -> str:
         return f'{self.vin} | {self.nickname} | {self.type}'
+    
+    class Meta:
+        verbose_name = 'Vehicle'
+        verbose_name_plural = 'Vehicles'
+        ordering = ['id']
 
 
 class VehiclePlate(models.Model):

@@ -6,6 +6,7 @@ from rental.rentalPlan.features import get_rental_plans, create_rental_plan, get
 from rental.rentalPlan.serializer import CreateRentalPlanSerializer, RentalPlanSerializer, UpdateRentalPlanSerializer
 from settings.utils.exceptions import BadRequest400APIException
 from rental.tenantUser.permissions import IsAdminTenantUser, IsAdminOrStaffTenantUser
+from rental.rentalPlan.exceptions import validate_plan_and_handle_errors
 
 class ListAndCreateRentalPlansView(APIViewWithPagination):
     permission_classes = [IsAuthenticated, IsAdminTenantUser]
@@ -31,7 +32,7 @@ class ListAndCreateRentalPlansView(APIViewWithPagination):
 
     def post(self, request):
         serializer = CreateRentalPlanSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        validate_plan_and_handle_errors(serializer)
 
         created_rental_plan = create_rental_plan(
             name=serializer.validated_data['name'],
@@ -66,7 +67,7 @@ class GetUpdateAndDeleteARentalPlanView(APIViewWithPagination):
             'amount': request.data.get('amount'),
             'periodicity': request.data.get('periodicity'),
         })
-        serializer.is_valid(raise_exception=True)
+        validate_plan_and_handle_errors(serializer)
 
         updated_rental_plan = update_rental_plan(
             rental_plan_id=rental_plan_id,

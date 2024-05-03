@@ -19,3 +19,8 @@ class Note(models.Model):
 
     def __str__(self) -> str:
         return f'{self.subject} | {self.body}'
+    
+    class Meta:
+        verbose_name = 'Note'
+        verbose_name_plural = 'Notes'
+        ordering = ['createdDate']

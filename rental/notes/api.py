@@ -16,9 +16,10 @@ class ListAndCreateNotesView(APIViewWithPagination):
         try:
             notes_list = get_notes()
 
-            paginated_notes = self.paginate_queryset(notes_list, request)
+            paginator = self.pagination_class()
+            paginated_notes = paginator.paginate_queryset(notes_list, request)
             serialized_list = NoteSerializer(paginated_notes, many=True)
-            return self.get_paginated_response(serialized_list.data)
+            return paginator.get_paginated_response(serialized_list.data)
         except Exception as e:
             raise BadRequest400APIException(str(e))
 
@@ -42,11 +43,6 @@ class ListAndCreateNotesView(APIViewWithPagination):
 
 class GetUpdateAndDeleteANoteView(APIViewWithPagination):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
-
-    def get_permissions(self):
-        if self.request.method in ['PUT', 'DELETE']:
-            return [IsAuthenticated(), IsAdminOrStaffTenantUser()]
-        return super().get_permissions()
 
     def get(self, request, note_id):
         note = get_note(note_id)

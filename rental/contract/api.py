@@ -3,22 +3,24 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from settings.utils.api import APIViewWithPagination
 from rest_framework.permissions import IsAuthenticated
-from .exceptions import validate_and_handle_errors
-from rental.contract.serializer import ContractCreateSerializer, ContractUpdateSerializer, StageUpdateSerializer, ContractSerializer, StageUpdateCreateSerializer
+from rental.contract.exceptions import validate_and_handle_errors
+from rental.contract.serializer import ContractCreateSerializer, ContractUpdateSerializer, ContractSerializer, StageUpdateCreateSerializer
 from rental.contract.features import create_contract, get_contract, get_contracts, update_contract, create_stage_update
 from settings.utils.exceptions import BadRequest400APIException
+from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
 
 
 class ListAndCreateContractView(APIViewWithPagination):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
     def get(self, request):
         try:
             contract_list = get_contracts()
 
-            paginated_contracts = self.paginate_queryset(contract_list, request)
+            paginator = self.pagination_class()
+            paginated_contracts = paginator.paginate_queryset(contract_list, request)
             serialized_list = ContractSerializer(paginated_contracts, many=True)
-            return self.get_paginated_response(serialized_list.data)
+            return paginator.get_paginated_response(serialized_list.data)
         except Exception as e:
             raise BadRequest400APIException(str(e))
 
@@ -29,12 +31,12 @@ class ListAndCreateContractView(APIViewWithPagination):
         contract = create_contract(**serializer.validated_data)
         create_stage_update(contract=contract)
 
-        serialized_contract = ContractCreateSerializer(contract)
+        serialized_contract = ContractSerializer(contract)
         return Response(serialized_contract.data, status=status.HTTP_201_CREATED)
 
 
 class GetUpdatePatchContractView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
     def get(self, request, contract_id):
         contract = get_contract(contract_id)
@@ -53,7 +55,7 @@ class GetUpdatePatchContractView(APIView):
         validate_and_handle_errors(serializer)
 
         updated_contract = update_contract(contract_id, **serializer.validated_data)
-        serialized_contract = ContractUpdateSerializer(updated_contract)
+        serialized_contract = ContractSerializer(updated_contract)
         return Response(serialized_contract.data, status=status.HTTP_200_OK)
     
     def patch(self, request, contract_id):
@@ -65,8 +67,7 @@ class GetUpdatePatchContractView(APIView):
         })
         validate_and_handle_errors(serializer)
         contract = get_contract(contract_id)
-        #old_stage = contract.stage
-        #new_stage = create_stage_update(previous_stage=old_stage,**serializer.validated_data)
-        #updated_contract = update_contract(contract_id, stage=new_stage)
-        #serialized_contract = ContractSerializer(updated_contract)
-        #return Response(serialized_contract.data, status=status.HTTP_200_OK)
+        create_stage_update(contract=contract,**serializer.validated_data)
+        contract = get_contract(contract_id) #This is to update the contract after changed the stage
+        serialized_contract = ContractSerializer(contract)
+        return Response(serialized_contract.data, status=status.HTTP_200_OK)

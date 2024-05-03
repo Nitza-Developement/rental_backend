@@ -5,7 +5,7 @@ from rental.vehicle.models import Vehicle
 class VehicleListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vehicle
-        fields = ['id', 'type', 'year', 'make', 'model', 'trim', 'status']
+        fields = ['id', 'type', 'year', 'make', 'model', 'trim', 'status', 'tracker']
 
 
 class VehicleCreateSerializer(serializers.Serializer):

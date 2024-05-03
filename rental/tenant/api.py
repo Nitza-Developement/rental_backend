@@ -50,11 +50,6 @@ class ListAndCreateTenantsView(APIViewWithPagination):
 class GetUpdateAndDeleteATenantView(APIViewWithPagination):
     permission_classes = [IsAuthenticated, IsAdminTenant]
 
-    def get_permissions(self):
-        if self.request.method in ['PUT', 'DELETE']:
-            return [IsAuthenticated(), IsAdminTenant()]
-        return super().get_permissions()
-
     def get(self, request, tenant_id=None):
         tenant = get_tenant(tenant_id)
 

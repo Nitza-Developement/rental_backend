@@ -19,4 +19,6 @@ class RentalPlan(models.Model):
         return f'{self.name} | {self.amount} | {self.periodicity}'
 
     class Meta:
+        verbose_name = 'Rental Plan'
+        ordering = ['id']
         unique_together = ('name', 'periodicity', 'amount')

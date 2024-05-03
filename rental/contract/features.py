@@ -2,12 +2,11 @@ from rental.contract.models import Contract, StageUpdate
 from settings.utils.exceptions import NotFound404APIException
 
 
-def create_stage_update(date=None, reason=None, comments=None, previous_stage=None, stage='Pending', contract=None):
+def create_stage_update(date=None, reason=None, comments=None, stage='Pending', contract=None):
     stage_update = StageUpdate.objects.create(
         date=date,
         reason=reason,
         comments=comments,
-        previous_stage=previous_stage,
         stage=stage,
         contract=contract
     )

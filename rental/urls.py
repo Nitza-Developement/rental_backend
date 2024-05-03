@@ -9,7 +9,7 @@ from rental.rentalPlan.api import ListAndCreateRentalPlansView, GetUpdateAndDele
 from rental.notes.api import ListAndCreateNotesView, GetUpdateAndDeleteANoteView
 from rental.toll.api import ListAndCreateTollDuesView, GetUpdateAndDeleteATollDueView
 from rental.contract.api import ListAndCreateContractView, GetUpdatePatchContractView
-from rental.tracker.api import ListAndCreateTrackersView, ListAndCreateTrackerHeartBeatDataView, GetUpdateAndDeleteATrackerView
+from rental.tracker.api import ListAndCreateTrackersView, ListAndCreateTrackerHeartBeatDataView, GetUpdateAndDeleteATrackerView, DeleteTrackerHeartBeatDataView
 
 
 urlpatterns = [
@@ -44,7 +44,7 @@ urlpatterns = [
     path('toll-due/<int:toll_due_id>', GetUpdateAndDeleteATollDueView.as_view(), name='toll-due-actions'),
     
     path('tracker', ListAndCreateTrackersView.as_view(), name='tracker'),
+    path('tracker/<int:tracker_id>', GetUpdateAndDeleteATrackerView.as_view(), name='tracker-actions'),
     path('tracker-heartbeat', ListAndCreateTrackerHeartBeatDataView.as_view(), name='tracker-heartbeat'),
-    path('toll-due/<int:toll_due_id>', GetUpdateAndDeleteATrackerView.as_view(), name='tracker-actions'),
-
+    path('tracker-heartbeat/<int:heartbeat_id>', DeleteTrackerHeartBeatDataView.as_view(), name='tracker-heartbeat-actions'),
 ]

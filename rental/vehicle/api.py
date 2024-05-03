@@ -1,5 +1,6 @@
 from rest_framework import status
 from rest_framework.views import APIView
+from settings.utils.api import APIViewWithPagination
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
@@ -8,7 +9,7 @@ from rental.vehicle.features import get_vehicles, create_vehicle, get_vehicle, u
 from settings.utils.exceptions import BadRequest400APIException
 
 
-class ListAndCreateVehicleView(APIView):
+class ListAndCreateVehicleView(APIViewWithPagination):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
     def get(self, request):

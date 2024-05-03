@@ -5,7 +5,7 @@ from rental.tracker.models import Tracker, TrackerHeartBeatData
 class TrackerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tracker
-        fields = ['id', 'name', 'vehicle', 'created_date']
+        fields = ['id', 'name', 'vehicle', 'created_date', 'heartbeat_data']
 
     def validate_name(self, value):
         if not value.strip():
@@ -13,6 +13,13 @@ class TrackerSerializer(serializers.ModelSerializer):
                 message='Name cannot be empty',
                 code='invalid')
         return value
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        representation['heartbeat_data'] = TrackerHeartBeatDataSerializer(instance.heartbeat_data.all(), many=True).data
+
+        return representation
 
 
 class CreateTrackerSerializer(serializers.ModelSerializer):
@@ -67,34 +74,8 @@ class CreateTrackerHeartBeatDataSerializer(serializers.ModelSerializer):
         model = TrackerHeartBeatData
         fields = ['timestamp', 'latitude', 'longitude', 'tracker']
         extra_kwargs = {
-            'timestamp': {'required': True},
+            'timestamp': {'required': False},
             'latitude': {'required': True},
             'longitude': {'required': True},
             'tracker': {'required': True}
         }
-
-    def validate_timestamp(self, value):
-        if value is None:
-            raise serializers.ValidationError(
-                message='Timestamp cannot be null',
-                code='invalid')
-        return value
-
-
-class UpdateTrackerHeartBeatDataSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TrackerHeartBeatData
-        fields = ['timestamp', 'latitude', 'longitude', 'tracker']
-        extra_kwargs = {
-            'timestamp': {'required': False},
-            'latitude': {'required': False},
-            'longitude': {'required': False},
-            'tracker': {'required': False}
-        }
-
-    def validate_timestamp(self, value):
-        if value and value is None:
-            raise serializers.ValidationError(
-                message='Timestamp cannot be null',
-                code='invalid')
-        return value

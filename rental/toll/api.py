@@ -16,9 +16,10 @@ class ListAndCreateTollDuesView(APIViewWithPagination):
         try:
             toll_dues_list = get_toll_dues()
 
-            paginated_toll_dues = self.paginate_queryset(toll_dues_list, request)
+            paginator = self.pagination_class()
+            paginated_toll_dues = paginator.paginate_queryset(toll_dues_list, request)
             serialized_list = TollDueSerializer(paginated_toll_dues, many=True)
-            return self.get_paginated_response(serialized_list.data)
+            return paginator.get_paginated_response(serialized_list.data)
         except Exception as e:
             raise BadRequest400APIException(str(e))
 
