@@ -8,6 +8,14 @@ from rental.tenantUser.models import TenantUser
 from rental.contract.models import StageUpdate, Contract
 from rental.tracker.models import Tracker, TrackerHeartBeatData
 from rental.vehicle.models import Vehicle, VehiclePlate, VehiclePicture
+from rental.forms.models import (
+    Form,
+    Inspection,
+    Card,
+    Field,
+    CheckOption,
+    FieldResponse,
+)
 from auditlog.registry import auditlog
 
 
@@ -21,3 +29,4 @@ auditlog.register(StageUpdate)
 auditlog.register(Contract)
 auditlog.register(Vehicle)
 auditlog.register(VehiclePlate)
+auditlog.register(Inspection)
