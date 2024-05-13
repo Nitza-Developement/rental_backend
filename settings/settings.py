@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_seeding',
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt',
@@ -85,7 +86,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'settings.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
