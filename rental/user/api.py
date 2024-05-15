@@ -2,11 +2,11 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rental.user.permissions import IsSelf
-from rental.user.features import update_user
+from rental.user.features import update_user, get_user
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import api_view, permission_classes
-from rental.user.serializer import UpdateUserSerializer, UserProfileSerializer
+from rental.user.serializer import UpdateUserSerializer, UserProfileSerializer, UserDataSerializer
 from rental.user.exceptions import validate_user_and_handle_errors
 from settings.utils.exceptions import BadRequest400APIException
 
@@ -22,6 +22,17 @@ class LogoutView(APIView):
             return Response(status=205)
         except Exception as e:
             raise BadRequest400APIException(str(e))
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_user_data(request):
+    user = request.user
+    user = get_user(user.id)
+
+    serialized_user = UserDataSerializer(user)
+
+    return Response(serialized_user.data, status=status.HTTP_200_OK)
 
 
 @api_view(["PUT"])
