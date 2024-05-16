@@ -19,12 +19,6 @@ class UserDataSerializer(serializers.ModelSerializer):
     
     def get_defaultTenantUser(self, user: User):
         return TenantUserListSerializer(user.defaultTenantUser(), read_only = True).data
-    
-
-class UserProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ["id", "name", "email", "image"]
 
 
 class UpdateUserSerializer(serializers.Serializer):

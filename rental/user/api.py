@@ -6,12 +6,13 @@ from rental.user.features import update_user, get_user
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import api_view, permission_classes
-from rental.user.serializer import UpdateUserSerializer, UserProfileSerializer, UserDataSerializer
+from rental.user.serializer import UpdateUserSerializer, UserDataSerializer
 from rental.user.exceptions import validate_user_and_handle_errors
 from settings.utils.exceptions import BadRequest400APIException
+from rental.shared_serializers.serializers import UserProfileSerializer
 
 
-class LogoutView(APIView):
+class  LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -19,7 +20,7 @@ class LogoutView(APIView):
             refresh_token = request.data["refreshToken"]
             token = RefreshToken(refresh_token)
             token.blacklist()
-            return Response(status=205)
+            return Response(status=200)
         except Exception as e:
             raise BadRequest400APIException(str(e))
 

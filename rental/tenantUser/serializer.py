@@ -3,6 +3,13 @@ from rental.tenantUser.models import TenantUser
 from rental.tenant.serializer import TenantSerializer
 
 
+class OwnerTenantUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TenantUser
+        fields = ["id", "role", "user"]
+        read_only_fields = ["user"]
+    
+
 class TenantUserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = TenantUser
