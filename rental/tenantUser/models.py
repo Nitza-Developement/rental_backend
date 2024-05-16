@@ -1,6 +1,7 @@
 from django.db import models
 from rental.user.models import User
 from rental.tenant.models import Tenant
+from django.core.exceptions import ValidationError
 
 
 class TenantUser(models.Model):
@@ -27,11 +28,20 @@ class TenantUser(models.Model):
         self.is_default = True
         self.save()
 
+    def save(self, *args, **kwargs):
+        if self.pk:
+            existing_default = TenantUser.objects.filter(user=self.user, is_default=True).exclude(pk=self.pk)
+            print(existing_default)
+        else:
+            existing_default = TenantUser.objects.filter(user=self.user, is_default=True)
+        if existing_default.exists():
+            raise ValidationError("A user can only have one default Tenant User.")
+        super().save(*args, **kwargs)
+
     class Meta:
         verbose_name = 'Tenant User'
         verbose_name_plural = 'Tenant Users'
         ordering = ['id']
-        unique_together = ('user', 'is_default')
 
     User.add_to_class('defaultTenantUser', get_default_tenantUser)
     

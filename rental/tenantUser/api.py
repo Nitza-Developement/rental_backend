@@ -45,21 +45,20 @@ class ListAndCreateTenantUserView(APIViewWithPagination):
 class GetUpdateAndDeleteTenantUserView(APIView):
     permission_classes = [IsAuthenticated, IsAdminTenantUser]
 
-    def get(self, request, tenant_user_id):
+    def get(self, request, tenantUser_id):
         try:
-            tenant_user = get_tenantUser(tenant_user_id)
+            tenant_user = get_tenantUser(tenantUser_id)
             serialized_tenant_user = TenantUserListSerializer(tenant_user)
             return Response(serialized_tenant_user.data, status=status.HTTP_200_OK)
         except Exception as e:
             raise BadRequest400APIException(str(e))
 
-    def put(self, request, tenant_user_id):
+    def put(self, request, tenantUser_id):
         serializer = TenantUserUpdateSerializer(data=request.data)
         validate_tenantUser_and_handle_errors(serializer)
 
         updated_tenant_user = update_tenantUser(
-            tenant_user_id=tenant_user_id,
-            email=serializer.validated_data.get('email'),
+            tenant_user_id=tenantUser_id,
             is_default=serializer.validated_data.get('is_default'),
             tenant=serializer.validated_data.get('tenant')
         )
@@ -67,6 +66,6 @@ class GetUpdateAndDeleteTenantUserView(APIView):
         serialized_tenant_user = TenantUserListSerializer(updated_tenant_user)
         return Response(serialized_tenant_user.data, status=status.HTTP_200_OK)
 
-    def delete(self, request, tenant_user_id):
-        delete_tenantUser(tenant_user_id)
+    def delete(self, request, tenantUser_id):
+        delete_tenantUser(tenantUser_id)
         return Response(status=status.HTTP_200_OK)
