@@ -23,6 +23,13 @@ class ListAndCreateTenantsView(APIViewWithPagination):
 
     permission_classes = [IsAuthenticated, IsAdminTenant]
 
+    def get_permissions(self):
+        if self.request.method in ["GET"]:
+
+            return [IsAuthenticated()]
+
+        return super().get_permissions()
+
     def get(self, request):
         search_text = request.query_params.get("searchText", None)
         order_by = request.query_params.get("orderBy", "name")
