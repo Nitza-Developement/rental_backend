@@ -1,6 +1,8 @@
 from rest_framework import serializers
+from rental.models import User
 from rental.tenantUser.models import TenantUser
 from rental.tenant.serializer import TenantSerializer
+from rental.shared_serializers.serializers import UserProfileSerializer
 
 
 class OwnerTenantUserSerializer(serializers.ModelSerializer):
@@ -8,7 +10,7 @@ class OwnerTenantUserSerializer(serializers.ModelSerializer):
         model = TenantUser
         fields = ["id", "role", "user"]
         read_only_fields = ["user"]
-    
+
 
 class TenantUserListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,6 +22,7 @@ class TenantUserListSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
 
         representation["tenant"] = TenantSerializer(instance.tenant).data
+        representation["user"] = UserProfileSerializer(instance.user).data
 
         return representation
 
@@ -40,7 +43,10 @@ class TenantUserCreateSerializer(serializers.ModelSerializer):
 class TenantUserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = TenantUser
-        fields = ["role", "is_default"]
+        fields = ["role", "tenant", "is_default"]
+        extra_kwargs = {
+            "is_default": {"allow_null": True},
+        }
 
     def validate_role(self, value):
         if value not in [TenantUser.ADMIN, TenantUser.STAFF, TenantUser.OWNER]:

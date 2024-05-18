@@ -1,4 +1,5 @@
 from django.db.models import Q
+from rental.models import TenantUser
 from rental.tenant.models import Tenant
 from settings.utils.exceptions import NotFound404APIException
 
@@ -46,7 +47,8 @@ def update_tenant(
     tenant_id: str,
     email: str,
     name: str,
-    isAdmin: bool = False
+    ownerId: int,
+    isAdmin: bool = False,
 ):
 
     try:
@@ -62,6 +64,17 @@ def update_tenant(
 
     if isAdmin is not None:
         tenant.isAdmin = isAdmin
+
+    if ownerId:
+        old_owner = TenantUser.objects.get(role=TenantUser.OWNER)
+        if old_owner:
+            old_owner.role = TenantUser.STAFF
+            old_owner.full_clean()
+            old_owner.save()
+        tenantUser_to_be_owner = TenantUser.objects.get(id=ownerId)
+        tenantUser_to_be_owner.role = TenantUser.OWNER
+        tenantUser_to_be_owner.full_clean()
+        tenantUser_to_be_owner.save()
 
     tenant.full_clean()
     tenant.save()

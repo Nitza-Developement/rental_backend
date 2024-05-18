@@ -27,23 +27,39 @@ def get_tenantUser(tenant_user_id):
         )
 
 
-def get_tenantUsers():
+def get_tenantUsers(user_requesting: User):
+
+    if not user_requesting.defaultTenantUser().tenant.isAdmin:
+        return TenantUser.objects.filter(
+            tenant=user_requesting.defaultTenantUser().tenant
+        )
+
     return TenantUser.objects.all()
 
 
-def update_tenantUser(tenant_user_id, role=None, is_default=None, tenant=None):
+def update_tenantUser(tenant_user_id, role=None, is_default=None, tenant=None, email=None, old_email=None):
     tenant_user = get_tenantUser(tenant_user_id)
     if tenant_user:
         if role:
             tenant_user.role = role
         if tenant:
             tenant_user.tenant = tenant
+        if email:
+            user = User.objects.get(email=old_email)
+            user.email = email
+            user.full_clean()
+            user.save()
+
         if is_default is not None:
-            current_default = TenantUser.objects.filter(user=tenant_user.user, is_default=True).first()
+            current_default = TenantUser.objects.filter(
+                user=tenant_user.user, is_default=True
+            ).first()
             current_default.is_default = False
             current_default.save()
 
             tenant_user.is_default = is_default
+
+        tenant_user.full_clean()
         tenant_user.save()
     else:
         raise NotFound404APIException(

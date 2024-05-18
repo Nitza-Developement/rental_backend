@@ -1,17 +1,24 @@
 from rest_framework import serializers
 from rental.tenant.models import Tenant
-from rental.shared_serializers.serializers import OwnerTenantUserSerializer 
+from rental.shared_serializers.serializers import InnerTenantUserSerializer 
 
 
 class TenantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tenant
-        fields = ["id", "email", "name", "isAdmin", "owner"]
+        fields = ["id", "email", "name", "isAdmin", "owner", "tenantUsers"]
 
     owner = serializers.SerializerMethodField()
 
     def get_owner(self, tenant:Tenant):
-        return OwnerTenantUserSerializer(tenant.owner(), read_only = True).data
+        return InnerTenantUserSerializer(tenant.owner(), read_only = True).data
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        
+        representation['tenantUsers'] = InnerTenantUserSerializer(instance.tenantUsers.all(), many=True).data
+        
+        return representation
 
     def validate_name(self, value):
         if value.strip().isspace() or value.strip() == "":
@@ -59,6 +66,7 @@ class UpdateTenantSerializer(serializers.Serializer):
         trim_whitespace=True,
     )
     isAdmin = serializers.BooleanField(required=False, allow_null=True)
+    ownerId = serializers.IntegerField(required=False, allow_null=True)
 
     def validate_name(self, value):
         if value and (value.strip().isspace() or value.strip() == ""):
