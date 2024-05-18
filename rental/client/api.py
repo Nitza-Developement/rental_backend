@@ -33,8 +33,7 @@ class ClientListAndCreateView(APIViewWithPagination):
             name=serializer.validated_data['name'],
             email=serializer.validated_data['email'],
             phone_number=serializer.validated_data['phone_number'],
-            tenant=serializer.validated_data.get(
-                'tenant', request.user.defaultTenantUser().tenant)
+            tenant=request.user.defaultTenantUser().tenant
         )
 
         serialized_client = ClientListSerializer(created_client)

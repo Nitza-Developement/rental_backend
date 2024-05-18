@@ -7,36 +7,31 @@ from django.core.exceptions import ValidationError
 class ClientCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
-        fields = ['name', 'email', 'phone_number', 'tenant']
+        fields = ["name", "email", "phone_number"]
         extra_kwargs = {
-            'name': {
-                'required': True
-            },
-            'email': {
-                'required': True
-            },
-            'tenant': {
-                'required': False
-            }
+            "name": {"required": True},
+            "email": {"required": True},
         }
 
     def validate_email(self, value):
         if Client.objects.filter(email=value).exists():
             raise serializers.ValidationError(
-                "A client with this email already exists.")
+                "A client with this email already exists."
+            )
         return value
 
     def validate_phone_number(self, value):
         if Client.objects.filter(phone_number=value).exists():
             raise serializers.ValidationError(
-                "A client with this phone number already exists.")
+                "A client with this phone number already exists."
+            )
         return value
 
 
 class ClientUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
-        fields = ['id', 'name', 'email', 'phone_number']
+        fields = ["id", "name", "email", "phone_number"]
 
     def validate_email(self, new_email):
         if not new_email:
@@ -44,39 +39,47 @@ class ClientUpdateSerializer(serializers.ModelSerializer):
 
         data: dict = self.initial_data
 
-        client = Client.objects.filter(pk=data['id']).first()
+        client = Client.objects.filter(pk=data["id"]).first()
 
         if client and client.email == new_email:
             return new_email
 
-        existing_client = Client.objects.filter(email=new_email).exclude(
-            pk=client.id if client else None).first()
+        existing_client = (
+            Client.objects.filter(email=new_email)
+            .exclude(pk=client.id if client else None)
+            .first()
+        )
 
         if existing_client:
             raise serializers.ValidationError(
-                detail=f'Client with email "{new_email}" already exists',
-                code='unique')
+                detail=f'Client with email "{new_email}" already exists', code="unique"
+            )
 
         try:
             validate_email(new_email)
         except ValidationError as e:
             raise serializers.ValidationError(
-                detail=f'Invalid email: {e.message}',
-                code='invalid')
+                detail=f"Invalid email: {e.message}", code="invalid"
+            )
 
         return new_email
 
     def validate_phone_number(self, value):
         data: dict = self.initial_data
-        client = Client.objects.filter(pk=data['id']).first()
-        if Client.objects.filter(phone_number=value).exclude(pk=client.id if client else None).exists():
+        client = Client.objects.filter(pk=data["id"]).first()
+        if (
+            Client.objects.filter(phone_number=value)
+            .exclude(pk=client.id if client else None)
+            .exists()
+        ):
             raise serializers.ValidationError(
-                "A client with this phone number already exists.")
+                "A client with this phone number already exists."
+            )
         return value
 
 
 class ClientListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
-        fields = ['id', 'name', 'email', 'phone_number', 'tenant']
-        read_only_fields = ['tenant']
+        fields = ["id", "name", "email", "phone_number", "tenant"]
+        read_only_fields = ["tenant"]
