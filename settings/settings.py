@@ -32,7 +32,11 @@ SECRET_KEY = config("SECRET_KEY")
 
 DEBUG = config("DEBUG", cast=bool)
 APPEND_SLASH = False
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+    "rental.towithouston.com",
+    "localhost",
+    "127.0.0.1",
+]
 CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
@@ -252,10 +256,17 @@ MINIO_STORAGE_SECRET_KEY = config("S3_SECRET_KEY")
 MINIO_STORAGE_MEDIA_BUCKET_NAME = config("S3_BUCKET")
 MINIO_STORAGE_MEDIA_USE_PRESIGNED = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
+# Base directory for static files
+STATIC_URL = "/static/"
+
+# Location for collected static files
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+# Directories to search for static files
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
