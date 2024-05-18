@@ -4,10 +4,7 @@ from rest_framework.exceptions import PermissionDenied
 from settings.utils.exceptions import NotFound404APIException
 
 
-def get_user(user_requesting: User, user_id: str):
-
-    if not user_requesting.isAdmin() and user_requesting.id != user_id:
-        raise PermissionDenied()
+def get_user(user_id: str):
 
     try:
         user = User.objects.get(id=user_id)

@@ -1,5 +1,5 @@
 from django.urls import path
-from rental.user.api import LogoutView, update_profile
+from rental.user.api import LogoutView, update_profile, get_user_data
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rental.tenant.api import ListAndCreateTenantsView, GetUpdateAndDeleteATenantView
 from rental.tenantUser.api import (
@@ -27,6 +27,7 @@ urlpatterns = [
     path("login", TokenObtainPairView.as_view(), name="login"),
     path("login/refresh", TokenRefreshView.as_view(), name="refresh"),
     path("logout", LogoutView.as_view(), name="logout"),
+    path("user", get_user_data, name="user-data"),
     path("profile", update_profile, name="update-profile"),
     path("tenant", ListAndCreateTenantsView.as_view(), name="tenant"),
     path(

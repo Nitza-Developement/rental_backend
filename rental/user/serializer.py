@@ -2,12 +2,23 @@ from rest_framework import serializers
 from rental.user.models import User
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from rental.tenantUser.serializer import TenantUserListSerializer
 
 
-class UserProfileSerializer(serializers.ModelSerializer):
+class UserDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "name", "email", "image"]
+        fields = ["id", "name", "email", "image", "defaultTenantUser", "tenantUsers"]
+
+    defaultTenantUser = serializers.SerializerMethodField()
+    tenantUsers = serializers.SerializerMethodField()
+
+
+    def get_tenantUsers(self, user: User):
+        return TenantUserListSerializer(user.tenantUsers, many = True, read_only = True).data
+    
+    def get_defaultTenantUser(self, user: User):
+        return TenantUserListSerializer(user.defaultTenantUser(), read_only = True).data
 
 
 class UpdateUserSerializer(serializers.Serializer):
