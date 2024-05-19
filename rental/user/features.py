@@ -14,7 +14,7 @@ def get_user(user_id: str):
     return user
 
 
-def create_user(email: str, password: str = 12345678, name: str = "-"):
+def create_user(email: str, password: str = "12345678", name: str = "-"):
 
     new_user = User.objects.create_user(email=email, password=password, name=name)
     new_user.save()
