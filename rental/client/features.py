@@ -33,6 +33,7 @@ def update_client(client_id, name=None, email=None, phone_number=None):
             client.email = email
         if phone_number:
             client.phone_number = phone_number
+        client.full_clean()
         client.save()
     else:
         raise NotFound404APIException(f'Client with ID {client_id} doesnt exists')
