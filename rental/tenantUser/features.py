@@ -37,7 +37,9 @@ def get_tenantUsers(user_requesting: User):
     return TenantUser.objects.all()
 
 
-def update_tenantUser(tenant_user_id, role=None, is_default=None, tenant=None, email=None, old_email=None):
+def update_tenantUser(
+    tenant_user_id, role=None, is_default=None, tenant=None, email=None, old_email=None
+):
     tenant_user = get_tenantUser(tenant_user_id)
     if tenant_user:
         if role:
@@ -74,7 +76,11 @@ def delete_tenantUser(tenant_user_id):
         tenant_user.is_default = False
         tenant_user.save()
 
-        new_default_tenantUser = TenantUser.objects.filter(user=tenant_user.user).exclude(id=tenant_user.id).first()
+        new_default_tenantUser = (
+            TenantUser.objects.filter(user=tenant_user.user)
+            .exclude(id=tenant_user.id)
+            .first()
+        )
         if new_default_tenantUser:
             new_default_tenantUser.is_default = True
             new_default_tenantUser.full_clean()

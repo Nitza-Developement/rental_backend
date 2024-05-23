@@ -7,13 +7,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rental', '0008_customuser_name_alter_customuser_username'),
+        ("rental", "0008_customuser_name_alter_customuser_username"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='user',
-            name='name',
-            field=models.CharField(default=None, max_length=100, validators=[rental.user.models.user_name_validator]),
+            model_name="user",
+            name="name",
+            field=models.CharField(
+                default=None,
+                max_length=100,
+                validators=[rental.user.models.user_name_validator],
+            ),
         ),
     ]

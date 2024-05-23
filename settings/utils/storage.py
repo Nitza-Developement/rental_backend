@@ -11,7 +11,8 @@ class SignedUrlsStorage(FileSystemStorage):
         super().__init__(
             location=location or settings.MEDIA_SIGNED_ROOT,
             base_url=base_url or settings.MEDIA_SIGNED_URL,
-            *args, **kwargs
+            *args,
+            **kwargs
         )
 
     def url(self, name):

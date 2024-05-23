@@ -6,48 +6,80 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rental', '0021_alter_tracker_options_and_more'),
+        ("rental", "0021_alter_tracker_options_and_more"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='client',
-            options={'ordering': ['name'], 'verbose_name': 'Client', 'verbose_name_plural': 'Clients'},
+            name="client",
+            options={
+                "ordering": ["name"],
+                "verbose_name": "Client",
+                "verbose_name_plural": "Clients",
+            },
         ),
         migrations.AlterModelOptions(
-            name='contract',
-            options={'ordering': ['creation_date'], 'verbose_name': 'Contract', 'verbose_name_plural': 'Contracts'},
+            name="contract",
+            options={
+                "ordering": ["creation_date"],
+                "verbose_name": "Contract",
+                "verbose_name_plural": "Contracts",
+            },
         ),
         migrations.AlterModelOptions(
-            name='note',
-            options={'ordering': ['createdDate'], 'verbose_name': 'Note', 'verbose_name_plural': 'Notes'},
+            name="note",
+            options={
+                "ordering": ["createdDate"],
+                "verbose_name": "Note",
+                "verbose_name_plural": "Notes",
+            },
         ),
         migrations.AlterModelOptions(
-            name='rentalplan',
-            options={'ordering': ['id'], 'verbose_name': 'Rental Plan'},
+            name="rentalplan",
+            options={"ordering": ["id"], "verbose_name": "Rental Plan"},
         ),
         migrations.AlterModelOptions(
-            name='stageupdate',
-            options={'ordering': ['date'], 'verbose_name': 'Stage', 'verbose_name_plural': 'Stages'},
+            name="stageupdate",
+            options={
+                "ordering": ["date"],
+                "verbose_name": "Stage",
+                "verbose_name_plural": "Stages",
+            },
         ),
         migrations.AlterModelOptions(
-            name='tenant',
-            options={'ordering': ['date_joined'], 'verbose_name': 'Tenant', 'verbose_name_plural': 'Tenants'},
+            name="tenant",
+            options={
+                "ordering": ["date_joined"],
+                "verbose_name": "Tenant",
+                "verbose_name_plural": "Tenants",
+            },
         ),
         migrations.AlterModelOptions(
-            name='tenantuser',
-            options={'ordering': ['id'], 'verbose_name': 'Tenant User', 'verbose_name_plural': 'Tenant Users'},
+            name="tenantuser",
+            options={
+                "ordering": ["id"],
+                "verbose_name": "Tenant User",
+                "verbose_name_plural": "Tenant Users",
+            },
         ),
         migrations.AlterModelOptions(
-            name='tolldue',
-            options={'ordering': ['createDate'], 'verbose_name': 'TollDue'},
+            name="tolldue",
+            options={"ordering": ["createDate"], "verbose_name": "TollDue"},
         ),
         migrations.AlterModelOptions(
-            name='user',
-            options={'ordering': ['date_joined'], 'verbose_name': 'User', 'verbose_name_plural': 'Users'},
+            name="user",
+            options={
+                "ordering": ["date_joined"],
+                "verbose_name": "User",
+                "verbose_name_plural": "Users",
+            },
         ),
         migrations.AlterModelOptions(
-            name='vehicle',
-            options={'ordering': ['id'], 'verbose_name': 'Vehicle', 'verbose_name_plural': 'Vehicles'},
+            name="vehicle",
+            options={
+                "ordering": ["id"],
+                "verbose_name": "Vehicle",
+                "verbose_name_plural": "Vehicles",
+            },
         ),
     ]

@@ -30,27 +30,16 @@ def get_rental_plan(rental_plan_id: int):
     return rental_plan
 
 
-def create_rental_plan(
-    name: str, 
-    amount: int, 
-    periodicity: str, 
-    tenant
-):
+def create_rental_plan(name: str, amount: int, periodicity: str, tenant):
     new_rental_plan = RentalPlan.objects.create(
-        name=name, 
-        amount=amount, 
-        periodicity=periodicity, 
-        tenant=tenant
+        name=name, amount=amount, periodicity=periodicity, tenant=tenant
     )
     new_rental_plan.save()
     return new_rental_plan
 
 
 def update_rental_plan(
-    rental_plan_id: int, 
-    name: str = None, 
-    amount: int = None, 
-    periodicity: str = None
+    rental_plan_id: int, name: str = None, amount: int = None, periodicity: str = None
 ):
     rental_plan = RentalPlan.objects.get(id=rental_plan_id)
     if rental_plan:

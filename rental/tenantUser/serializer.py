@@ -46,7 +46,7 @@ class TenantUserUpdateSerializer(serializers.ModelSerializer):
         fields = ["role", "tenant", "is_default"]
         extra_kwargs = {
             "is_default": {"allow_null": True},
-            "tenant": {"required": False}
+            "tenant": {"required": False},
         }
 
     def validate_role(self, value):

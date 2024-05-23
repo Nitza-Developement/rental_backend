@@ -12,51 +12,150 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='User',
+            name="User",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('password', models.CharField(max_length=128, verbose_name='password')),
-                ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
-                ('email', models.EmailField(max_length=254, unique=True)),
-                ('name', models.CharField(max_length=100, validators=[rental.user.models.user_name_validator])),
-                ('image', models.ImageField(blank=True, null=True, upload_to=rental.user.models.get_image_path)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("password", models.CharField(max_length=128, verbose_name="password")),
+                (
+                    "last_login",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="last login"
+                    ),
+                ),
+                ("email", models.EmailField(max_length=254, unique=True)),
+                (
+                    "name",
+                    models.CharField(
+                        max_length=100,
+                        validators=[rental.user.models.user_name_validator],
+                    ),
+                ),
+                (
+                    "image",
+                    models.ImageField(
+                        blank=True,
+                        null=True,
+                        upload_to=rental.user.models.get_image_path,
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Tenant',
+            name="Tenant",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('email', models.EmailField(max_length=254, unique=True)),
-                ('name', models.CharField(max_length=100, validators=[rental.tenant.models.user_name_validator])),
-                ('isAdmin', models.BooleanField(default=False)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("email", models.EmailField(max_length=254, unique=True)),
+                (
+                    "name",
+                    models.CharField(
+                        max_length=100,
+                        validators=[rental.tenant.models.user_name_validator],
+                    ),
+                ),
+                ("isAdmin", models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(
-            name='Client',
+            name="Client",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('email', models.EmailField(max_length=254, unique=True)),
-                ('phone_number', models.CharField(max_length=255, unique=True, validators=[django.core.validators.RegexValidator(message='Invalid Number!', regex='^([+]?[\\s0-9]+)?(\\d{3}|[(]?[0-9]+[)])?([-]?[\\s]?[0-9])+$')])),
-                ('tenant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='clients', to='rental.tenant')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("email", models.EmailField(max_length=254, unique=True)),
+                (
+                    "phone_number",
+                    models.CharField(
+                        max_length=255,
+                        unique=True,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                message="Invalid Number!",
+                                regex="^([+]?[\\s0-9]+)?(\\d{3}|[(]?[0-9]+[)])?([-]?[\\s]?[0-9])+$",
+                            )
+                        ],
+                    ),
+                ),
+                (
+                    "tenant",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="clients",
+                        to="rental.tenant",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='TenantUser',
+            name="TenantUser",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('role', models.CharField(choices=[('Admin', 'Admin'), ('Staff', 'Staff'), ('Owner', 'Owner')], default='Staff', max_length=10)),
-                ('is_default', models.BooleanField(default=False)),
-                ('tenant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tenantUsers', to='rental.tenant')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tenantUsers', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "role",
+                    models.CharField(
+                        choices=[
+                            ("Admin", "Admin"),
+                            ("Staff", "Staff"),
+                            ("Owner", "Owner"),
+                        ],
+                        default="Staff",
+                        max_length=10,
+                    ),
+                ),
+                ("is_default", models.BooleanField(default=False)),
+                (
+                    "tenant",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="tenantUsers",
+                        to="rental.tenant",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="tenantUsers",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

@@ -1,6 +1,7 @@
 from django_seeding import seeders
 from django_seeding.seeder_registry import SeederRegistry
 from rental.models import Tenant
+from rental.vehicle.models import Vehicle, VehiclePlate, VehiclePicture
 
 
 @SeederRegistry.register

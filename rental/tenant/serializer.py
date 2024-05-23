@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rental.tenant.models import Tenant
-from rental.shared_serializers.serializers import InnerTenantUserSerializer 
+from rental.shared_serializers.serializers import InnerTenantUserSerializer
 
 
 class TenantSerializer(serializers.ModelSerializer):
@@ -10,14 +10,16 @@ class TenantSerializer(serializers.ModelSerializer):
 
     owner = serializers.SerializerMethodField()
 
-    def get_owner(self, tenant:Tenant):
-        return InnerTenantUserSerializer(tenant.owner(), read_only = True).data
-    
+    def get_owner(self, tenant: Tenant):
+        return InnerTenantUserSerializer(tenant.owner(), read_only=True).data
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        
-        representation['tenantUsers'] = InnerTenantUserSerializer(instance.tenantUsers.all(), many=True).data
-        
+
+        representation["tenantUsers"] = InnerTenantUserSerializer(
+            instance.tenantUsers.all(), many=True
+        ).data
+
         return representation
 
     def validate_name(self, value):

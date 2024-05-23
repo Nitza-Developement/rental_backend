@@ -6,16 +6,16 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rental', '0019_alter_stageupdate_previous_stage'),
+        ("rental", "0019_alter_stageupdate_previous_stage"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='stageupdate',
-            options={'ordering': ['date']},
+            name="stageupdate",
+            options={"ordering": ["date"]},
         ),
         migrations.RemoveField(
-            model_name='stageupdate',
-            name='previous_stage',
+            model_name="stageupdate",
+            name="previous_stage",
         ),
     ]

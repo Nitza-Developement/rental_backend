@@ -5,8 +5,18 @@ from rest_framework.permissions import IsAuthenticated
 from settings.utils.exceptions import BadRequest400APIException
 from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
 from rental.notes.exceptions import validate_note_and_handle_errors
-from rental.notes.features import create_note, get_notes, get_note, update_note, delete_note
-from rental.notes.serializer import CreateNoteSerializer, NoteSerializer, UpdateNoteSerializer
+from rental.notes.features import (
+    create_note,
+    get_notes,
+    get_note,
+    update_note,
+    delete_note,
+)
+from rental.notes.serializer import (
+    CreateNoteSerializer,
+    NoteSerializer,
+    UpdateNoteSerializer,
+)
 
 
 class ListAndCreateNotesView(APIViewWithPagination):
@@ -28,12 +38,12 @@ class ListAndCreateNotesView(APIViewWithPagination):
         validate_note_and_handle_errors(serializer)
 
         created_note = create_note(
-            contract_id=serializer.validated_data['contract'],
-            user_id=serializer.validated_data['user'],
-            subject=serializer.validated_data['subject'],
-            body=serializer.validated_data['body'],
-            remainder=serializer.validated_data.get('remainder'),
-            file=serializer.validated_data.get('file'),
+            contract_id=serializer.validated_data["contract"],
+            user_id=serializer.validated_data["user"],
+            subject=serializer.validated_data["subject"],
+            body=serializer.validated_data["body"],
+            remainder=serializer.validated_data.get("remainder"),
+            file=serializer.validated_data.get("file"),
         )
 
         serialized_note = NoteSerializer(created_note)
@@ -52,21 +62,23 @@ class GetUpdateAndDeleteANoteView(APIViewWithPagination):
         return Response(serialized_note.data, status=status.HTTP_200_OK)
 
     def put(self, request, note_id):
-        serializer = UpdateNoteSerializer(data={
-            'id': note_id,
-            'subject': request.data.get('subject'),
-            'body': request.data.get('body'),
-            'remainder': request.data.get('remainder'),
-            'file': request.data.get('file'),
-        })
+        serializer = UpdateNoteSerializer(
+            data={
+                "id": note_id,
+                "subject": request.data.get("subject"),
+                "body": request.data.get("body"),
+                "remainder": request.data.get("remainder"),
+                "file": request.data.get("file"),
+            }
+        )
         validate_note_and_handle_errors(serializer)
 
         updated_note = update_note(
             note_id=note_id,
-            subject=serializer.validated_data.get('subject'),
-            body=serializer.validated_data.get('body'),
-            remainder=serializer.validated_data.get('remainder'),
-            file=serializer.validated_data.get('file'),
+            subject=serializer.validated_data.get("subject"),
+            body=serializer.validated_data.get("body"),
+            remainder=serializer.validated_data.get("remainder"),
+            file=serializer.validated_data.get("file"),
         )
         serialized_note = NoteSerializer(updated_note)
 

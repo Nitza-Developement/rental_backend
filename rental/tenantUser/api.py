@@ -83,7 +83,7 @@ class GetUpdateAndDeleteTenantUserView(APIView):
             is_default=serializer.validated_data.get("is_default"),
             tenant=serializer.validated_data.get("tenant"),
             email=request.data.get("email"),
-            old_email=request.data.get("oldEmail")
+            old_email=request.data.get("oldEmail"),
         )
 
         serialized_tenant_user = TenantUserListSerializer(updated_tenant_user)
