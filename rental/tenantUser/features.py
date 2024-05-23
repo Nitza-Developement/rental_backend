@@ -1,5 +1,5 @@
 from rental.user.models import User
-from rental.user.features import create_user
+from rental.user.features import create_user, delete_user
 from rental.tenantUser.models import TenantUser
 from settings.utils.exceptions import NotFound404APIException
 
@@ -70,6 +70,17 @@ def update_tenantUser(tenant_user_id, role=None, is_default=None, tenant=None, e
 
 def delete_tenantUser(tenant_user_id):
     tenant_user = get_tenantUser(tenant_user_id)
+    if tenant_user.is_default:
+        tenant_user.is_default = False
+        tenant_user.save()
+
+        new_default_tenantUser = TenantUser.objects.filter(user=tenant_user.user).exclude(id=tenant_user.id).first()
+        if new_default_tenantUser:
+            new_default_tenantUser.is_default = True
+            new_default_tenantUser.full_clean()
+            new_default_tenantUser.save()
+        else:
+            delete_user(tenant_user.user.id)
     if tenant_user:
         tenant_user.delete()
         return True
