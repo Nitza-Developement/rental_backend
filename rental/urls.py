@@ -49,7 +49,7 @@ urlpatterns = [
     ),
     path("vehicle", ListAndCreateVehicleView.as_view(), name="vehicle"),
     path(
-        "vehicle/<str:search_by>",
+        "vehicle/<int:vehicle_id>",
         GetUpdateAndDeleteVehicleView.as_view(),
         name="vehicle-actions",
     ),
@@ -63,7 +63,7 @@ urlpatterns = [
     path(
         "contract/<int:contract_id>",
         GetUpdatePatchContractView.as_view(),
-        name="contract-actons",
+        name="contract-actions",
     ),
     path("notes", ListAndCreateNotesView.as_view(), name="notes"),
     path(

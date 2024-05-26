@@ -4,28 +4,12 @@ from rental.tenant.models import Tenant
 
 
 def get_image_path(vehiclePicture, picture_filename: str):
-
-    image_extension = picture_filename.split(".")[-1]
-
-    return f"tenant/{vehiclePicture.vehicle.tenant.id}/vehicle/{vehiclePicture.vehicle}/image.{image_extension}"
+    return f"tenant/{vehiclePicture.vehicle.tenant.id}/vehicle/{vehiclePicture.vehicle}/{picture_filename}"
 
 
 class Vehicle(models.Model):
-    ATV = "ATV"
-    BOAT = "Boat"
-    BUS = "Bus"
     CAR = "Car"
-    CHASIS = "Chassis"
-    EQUIPMENT = "Equipment"
-    FORKLIFT = "Forklift"
     FREIGHTLINER = "Freightliner"
-    GENERATOR = "Generator"
-    MACHINERY = "Machinery"
-    MOTORCYCLE = "Motorcycle"
-    PLANE = "Plane"
-    RV = "RV"
-    SUV = "SUV"
-    TRACTOR = "Tractor"
     TRAILER = "Trailer"
     TRUCK = "Truck"
     VAN = "Van"
@@ -34,21 +18,8 @@ class Vehicle(models.Model):
     UNAVAILABLE = "Unavailable"
 
     TYPE_CHOICES = [
-        (ATV, "ATV"),
-        (BOAT, "Boat"),
-        (BUS, "Bus"),
         (CAR, "Car"),
-        (CHASIS, "Chassis"),
-        (EQUIPMENT, "Equipment"),
-        (FORKLIFT, "Forklift"),
         (FREIGHTLINER, "Freightliner"),
-        (GENERATOR, "Generator"),
-        (MACHINERY, "Machinery"),
-        (MOTORCYCLE, "Motorcycle"),
-        (PLANE, "Plane"),
-        (RV, "Recreational Vehicle"),
-        (SUV, "Sport Utility Vehicle"),
-        (TRACTOR, "Tractor"),
         (TRAILER, "Trailer"),
         (TRUCK, "Truck"),
         (VAN, "Van"),
@@ -68,6 +39,7 @@ class Vehicle(models.Model):
     spare_tires = models.IntegerField(default=0)
     extra_fields = models.JSONField(null=True, blank=True)
     status = models.CharField(choices=STATUS_CHOICES)
+    is_deleted = models.BooleanField(default=False)
     tenant = models.ForeignKey(
         Tenant, on_delete=models.CASCADE, related_name="vehicles"
     )

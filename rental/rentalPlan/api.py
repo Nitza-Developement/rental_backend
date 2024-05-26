@@ -20,7 +20,7 @@ from rental.rentalPlan.exceptions import validate_plan_and_handle_errors
 
 
 class ListAndCreateRentalPlansView(APIViewWithPagination):
-    permission_classes = [IsAuthenticated, IsAdminTenantUser]
+    permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
     def get(self, request):
         search_text = request.query_params.get("searchText", None)

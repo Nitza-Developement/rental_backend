@@ -14,7 +14,8 @@ class ListAndCreateNotesView(APIViewWithPagination):
 
     def get(self, request):
         try:
-            notes_list = get_notes()
+            search_contract = request.query_params.get('contract')
+            notes_list = get_notes(search_contract)
 
             paginator = self.pagination_class()
             paginated_notes = paginator.paginate_queryset(notes_list, request)
