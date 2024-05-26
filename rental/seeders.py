@@ -1,4 +1,3 @@
-import imp
 from rental.seeders.tenant import TenantSeeder
 from rental.seeders.tenantUser import TenantUserSeeder
 from rental.seeders.vehicle import (
