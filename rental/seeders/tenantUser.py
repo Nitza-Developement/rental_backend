@@ -6,7 +6,7 @@ from rental.models import TenantUser, Tenant, User
 @SeederRegistry.register
 class TenantUserSeeder(seeders.ModelSeeder):
     id = "TenantUserSeeder"
-    priopity = 2
+    priority = 2
     model = TenantUser
     data = [
         {

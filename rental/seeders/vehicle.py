@@ -115,7 +115,7 @@ class VehicleSeeder(seeders.ModelSeeder):
 @SeederRegistry.register
 class VehiclePictureSeeder(seeders.ModelSeeder):
     id = "VehiclePictureSeeder"
-    priority = 5
+    priority = 6
     model = VehiclePicture
     data = [
         {
@@ -156,15 +156,9 @@ class VehiclePictureSeeder(seeders.ModelSeeder):
         },
         {
             "id": 7,
-            "vehicle": 7,
+            "vehicle_id": 7,
             "image": "sample1",
             "pinned": True,
-        },
-        {
-            "id": 8,
-            "vehicle_id": 8,
-            "image": "sample1",
-            "pinned": False,
         },
     ]
 
@@ -172,7 +166,7 @@ class VehiclePictureSeeder(seeders.ModelSeeder):
 @SeederRegistry.register
 class VehiclePlateSeeder(seeders.ModelSeeder):
     id = "VehiclePlateSeeder"
-    priority = 6
+    priority = 5
     model = VehiclePlate
     data = [
         {
@@ -194,10 +188,10 @@ class VehiclePlateSeeder(seeders.ModelSeeder):
         {
             "id": 3,
             "vehicle_id": 3,
-            "is_active": False,
+            "is_active": True,
             "plate": "LMN4321",
             "assign_date": "2021-12-05T07:20:00Z",
-            "dismiss_date": "2023-04-10T12:00:00Z",
+            "dismiss_date": None,
         },
         {
             "id": 4,
@@ -233,7 +227,7 @@ class VehiclePlateSeeder(seeders.ModelSeeder):
         },
         {
             "id": 8,
-            "vehicle_id": 8,
+            "vehicle_id": 3,
             "is_active": False,
             "plate": "MNB0987",
             "assign_date": "2018-04-14T10:05:00Z",
@@ -241,10 +235,10 @@ class VehiclePlateSeeder(seeders.ModelSeeder):
         },
         {
             "id": 9,
-            "vehicle_id": 9,
+            "vehicle_id": 5,
             "is_active": True,
             "plate": "MNB0989",
-            "assign_date": "2021-11-30T19:50:00Z",
+            "assign_date": "2022-09-03T19:50:00Z",
             "dismiss_date": None,
         },
     ]

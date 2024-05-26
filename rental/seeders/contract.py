@@ -27,7 +27,7 @@ def get_past_date(months=0, weeks=0, days=0):
 @SeederRegistry.register
 class ContractSeeder(seeders.Seeder):
     id = "ContractSeeder"
-    priority = 4
+    priority = 7
 
     @transaction.atomic
     def seed(self):
@@ -36,7 +36,7 @@ class ContractSeeder(seeders.Seeder):
 
         clients_list = [1, 2, 3]
         rental_plan_list = [1, 2, 3]
-        vehicle_list = [1, 2, 4, 6, 7, 9]
+        vehicle_list = [1, 2, 4, 6, 7]
 
         def random_element(array):
             return random.choice(array)
@@ -58,7 +58,7 @@ class ContractSeeder(seeders.Seeder):
         for i in range(1, 5):
             TollDue.objects.create(
                 amount=100,
-                plate=contract1.vehicle.plates.filter(is_active=True).first(),
+                plate_id=contract1.vehicle_id,
                 contract=contract1,
                 invoiceNumber=f"M1235{i}",
                 stage=TollDue.PAID,
@@ -68,7 +68,7 @@ class ContractSeeder(seeders.Seeder):
         for i in range(1, 3):
             TollDue.objects.create(
                 amount=500,
-                plate=contract1.vehicle.plates.filter(is_active=True).first(),
+                plate_id=contract1.vehicle_id,
                 contract=contract1,
                 invoiceNumber=f"X1432{i}",
                 stage=TollDue.UNPAID,
@@ -90,7 +90,7 @@ class ContractSeeder(seeders.Seeder):
         for i in range(1, 3):
             TollDue.objects.create(
                 amount=250 + i * 32,
-                plate=contract2.vehicle.plates.filter(is_active=True).first(),
+                plate_id=contract2.vehicle_id,
                 contract=contract2,
                 invoiceNumber=f"X1{i * 2}32{i}",
                 stage=TollDue.PAID,
@@ -112,7 +112,7 @@ class ContractSeeder(seeders.Seeder):
         for i in range(1, 4):
             TollDue.objects.create(
                 amount=250 + i * 32,
-                plate=contract3.vehicle.plates.filter(is_active=True).first(),
+                plate_id=contract3.vehicle_id,
                 contract=contract3,
                 invoiceNumber=f"J1{i * 2}32{i}",
                 stage=TollDue.PAID,
@@ -121,7 +121,7 @@ class ContractSeeder(seeders.Seeder):
 
         TollDue.objects.create(
             amount=2400,
-            plate=contract3.vehicle.plates.filter(is_active=True).first(),
+            plate_id=contract3.vehicle_id,
             contract=contract3,
             invoiceNumber="J112321",
             stage=TollDue.UNPAID,
@@ -142,7 +142,7 @@ class ContractSeeder(seeders.Seeder):
 
         TollDue.objects.create(
             amount=130,
-            plate=contract4.vehicle.plates.filter(is_active=True).first(),
+            plate_id=contract4.vehicle_id,
             contract=contract4,
             invoiceNumber="Q769531",
             stage=TollDue.UNPAID,
@@ -185,7 +185,7 @@ class ContractSeeder(seeders.Seeder):
         for i in range(1, 3):
             TollDue.objects.create(
                 amount=250 + i * 32,
-                plate=contract6.vehicle.plates.filter(is_active=True).first(),
+                plate_id=contract6.vehicle_id,
                 contract=contract6,
                 invoiceNumber=f"N9{i * 2}47{i}",
                 stage=TollDue.PAID,
@@ -194,7 +194,7 @@ class ContractSeeder(seeders.Seeder):
 
         TollDue.objects.create(
             amount=130,
-            plate=contract6.vehicle.plates.filter(is_active=True).first(),
+            plate_id=contract6.vehicle_id,
             contract=contract6,
             invoiceNumber="Z785423",
             stage=TollDue.PAID,
@@ -225,7 +225,7 @@ class ContractSeeder(seeders.Seeder):
         for i in range(1, 4):
             TollDue.objects.create(
                 amount=250 + i * 32,
-                plate=contract7.vehicle.plates.filter(is_active=True).first(),
+                plate_id=contract7.vehicle_id,
                 contract=contract7,
                 invoiceNumber=f"M9{i * 2}23{i}",
                 stage=TollDue.PAID,
@@ -234,7 +234,7 @@ class ContractSeeder(seeders.Seeder):
 
         TollDue.objects.create(
             amount=650,
-            plate=contract7.vehicle.plates.filter(is_active=True).first(),
+            plate_id=contract7.vehicle_id,
             contract=contract7,
             invoiceNumber="H894032",
             stage=TollDue.UNPAID,
@@ -260,7 +260,7 @@ class ContractSeeder(seeders.Seeder):
 
         TollDue.objects.create(
             amount=650,
-            plate=contract8.vehicle.plates.filter(is_active=True).first(),
+            plate_id=contract8.vehicle_id,
             contract=contract8,
             invoiceNumber="Y546782",
             stage=TollDue.UNPAID,
@@ -269,7 +269,7 @@ class ContractSeeder(seeders.Seeder):
 
         TollDue.objects.create(
             amount=650,
-            plate=contract8.vehicle.plates.filter(is_active=True).first(),
+            plate_id=contract8.vehicle_id,
             contract=contract8,
             invoiceNumber="Y546790",
             stage=TollDue.UNPAID,
