@@ -32,21 +32,20 @@ class ContractSeeder(seeders.Seeder):
     @transaction.atomic
     def seed(self):
         print("Seeding contracts data...")
-        tenant = Tenant.objects.get(id=2)
+        tenant = 2
 
-        clients_list = list(Client.objects.all())
-        rental_plan_list = list(RentalPlan.objects.all())
-        active_plates_list = list(VehiclePlate.objects.filter(is_active=True))
-        vehicle_list = [plate.vehicle for plate in active_plates_list]
+        clients_list = [1, 2, 3]
+        rental_plan_list = [1, 2, 3]
+        vehicle_list = [1, 2, 4, 6, 7, 9]
 
         def random_element(array):
             return random.choice(array)
 
         contract1 = Contract.objects.create(
-            tenant=tenant,
-            rental_plan=random_element(rental_plan_list),
-            client=random_element(clients_list),
-            vehicle=random_element(vehicle_list),
+            tenant_id=tenant,
+            rental_plan_id=random_element(rental_plan_list),
+            client_id=random_element(clients_list),
+            vehicle_id=random_element(vehicle_list),
             creation_date=get_past_date(months=12),
             active_date=get_past_date(months=12, days=2),
         )
@@ -77,10 +76,10 @@ class ContractSeeder(seeders.Seeder):
             )
 
         contract2 = Contract.objects.create(
-            tenant=tenant,
-            rental_plan=random_element(rental_plan_list),
-            client=random_element(clients_list),
-            vehicle=random_element(vehicle_list),
+            tenant_id=tenant,
+            rental_plan_id=random_element(rental_plan_list),
+            client_id=random_element(clients_list),
+            vehicle_id=random_element(vehicle_list),
             creation_date=get_past_date(months=7),
             active_date=get_past_date(months=6),
         )
@@ -99,10 +98,10 @@ class ContractSeeder(seeders.Seeder):
             )
 
         contract3 = Contract.objects.create(
-            tenant=tenant,
-            rental_plan=random_element(rental_plan_list),
-            client=random_element(clients_list),
-            vehicle=random_element(vehicle_list),
+            tenant_id=tenant,
+            rental_plan_id=random_element(rental_plan_list),
+            client_id=random_element(clients_list),
+            vehicle_id=random_element(vehicle_list),
             creation_date=get_past_date(months=4),
             active_date=get_past_date(months=3),
         )
@@ -130,10 +129,10 @@ class ContractSeeder(seeders.Seeder):
         )
 
         contract4 = Contract.objects.create(
-            tenant=tenant,
-            rental_plan=random_element(rental_plan_list),
-            client=random_element(clients_list),
-            vehicle=random_element(vehicle_list),
+            tenant_id=tenant,
+            rental_plan_id=random_element(rental_plan_list),
+            client_id=random_element(clients_list),
+            vehicle_id=random_element(vehicle_list),
             creation_date=get_past_date(months=2),
             active_date=get_past_date(months=1),
         )
@@ -151,10 +150,10 @@ class ContractSeeder(seeders.Seeder):
         )
 
         contract5 = Contract.objects.create(
-            tenant=tenant,
-            rental_plan=random_element(rental_plan_list),
-            client=random_element(clients_list),
-            vehicle=random_element(vehicle_list),
+            tenant_id=tenant,
+            rental_plan_id=random_element(rental_plan_list),
+            client_id=random_element(clients_list),
+            vehicle_id=random_element(vehicle_list),
             creation_date=get_past_date(weeks=3),
             active_date=get_past_date(weeks=1),
         )
@@ -163,10 +162,10 @@ class ContractSeeder(seeders.Seeder):
         )
 
         contract6 = Contract.objects.create(
-            tenant=tenant,
-            rental_plan=random_element(rental_plan_list),
-            client=random_element(clients_list),
-            vehicle=random_element(vehicle_list),
+            tenant_id=tenant,
+            rental_plan_id=random_element(rental_plan_list),
+            client_id=random_element(clients_list),
+            vehicle_id=random_element(vehicle_list),
             creation_date=get_past_date(months=12),
             active_date=get_past_date(months=12, days=2),
         )
@@ -203,10 +202,10 @@ class ContractSeeder(seeders.Seeder):
         )
 
         contract7 = Contract.objects.create(
-            tenant=tenant,
-            rental_plan=random_element(rental_plan_list),
-            client=random_element(clients_list),
-            vehicle=random_element(vehicle_list),
+            tenant_id=tenant,
+            rental_plan_id=random_element(rental_plan_list),
+            client_id=random_element(clients_list),
+            vehicle_id=random_element(vehicle_list),
             creation_date=get_past_date(months=12),
             active_date=get_past_date(months=12, days=2),
         )
@@ -243,10 +242,10 @@ class ContractSeeder(seeders.Seeder):
         )
 
         contract8 = Contract.objects.create(
-            tenant=tenant,
-            rental_plan=random_element(rental_plan_list),
-            client=random_element(clients_list),
-            vehicle=random_element(vehicle_list),
+            tenant_id=tenant,
+            rental_plan_id=random_element(rental_plan_list),
+            client_id=random_element(clients_list),
+            vehicle_id=random_element(vehicle_list),
             creation_date=get_past_date(months=7),
             active_date=get_past_date(months=6),
         )
@@ -278,10 +277,10 @@ class ContractSeeder(seeders.Seeder):
         )
 
         contract9 = Contract.objects.create(
-            tenant=tenant,
-            rental_plan=random_element(rental_plan_list),
-            client=random_element(clients_list),
-            vehicle=random_element(vehicle_list),
+            tenant_id=tenant,
+            rental_plan_id=random_element(rental_plan_list),
+            client_id=random_element(clients_list),
+            vehicle_id=random_element(vehicle_list),
             creation_date=get_past_date(months=1),
             active_date=get_past_date(months=1),
         )
@@ -295,10 +294,10 @@ class ContractSeeder(seeders.Seeder):
         contract9.save()
 
         contract10 = Contract.objects.create(
-            tenant=tenant,
-            rental_plan=random_element(rental_plan_list),
-            client=random_element(clients_list),
-            vehicle=random_element(vehicle_list),
+            tenant_id=tenant,
+            rental_plan_id=random_element(rental_plan_list),
+            client_id=random_element(clients_list),
+            vehicle_id=random_element(vehicle_list),
             creation_date=get_past_date(months=12),
             active_date=get_past_date(months=12),
         )
@@ -309,10 +308,10 @@ class ContractSeeder(seeders.Seeder):
         )
 
         contract11 = Contract.objects.create(
-            tenant=tenant,
-            rental_plan=random_element(rental_plan_list),
-            client=random_element(clients_list),
-            vehicle=random_element(vehicle_list),
+            tenant_id=tenant,
+            rental_plan_id=random_element(rental_plan_list),
+            client_id=random_element(clients_list),
+            vehicle_id=random_element(vehicle_list),
             creation_date=get_past_date(months=6),
             active_date=get_past_date(months=6),
         )
@@ -321,10 +320,10 @@ class ContractSeeder(seeders.Seeder):
         )
 
         contract12 = Contract.objects.create(
-            tenant=tenant,
-            rental_plan=random_element(rental_plan_list),
-            client=random_element(clients_list),
-            vehicle=random_element(vehicle_list),
+            tenant_id=tenant,
+            rental_plan_id=random_element(rental_plan_list),
+            client_id=random_element(clients_list),
+            vehicle_id=random_element(vehicle_list),
             creation_date=get_past_date(months=3),
             active_date=get_past_date(months=3),
         )
@@ -333,10 +332,10 @@ class ContractSeeder(seeders.Seeder):
         )
 
         contract13 = Contract.objects.create(
-            tenant=tenant,
-            rental_plan=random_element(rental_plan_list),
-            client=random_element(clients_list),
-            vehicle=random_element(vehicle_list),
+            tenant_id=tenant,
+            rental_plan_id=random_element(rental_plan_list),
+            client_id=random_element(clients_list),
+            vehicle_id=random_element(vehicle_list),
             creation_date=get_past_date(months=1),
             active_date=get_past_date(months=1),
         )
@@ -345,10 +344,10 @@ class ContractSeeder(seeders.Seeder):
         )
 
         contract14 = Contract.objects.create(
-            tenant=tenant,
-            rental_plan=random_element(rental_plan_list),
-            client=random_element(clients_list),
-            vehicle=random_element(vehicle_list),
+            tenant_id=tenant,
+            rental_plan_id=random_element(rental_plan_list),
+            client_id=random_element(clients_list),
+            vehicle_id=random_element(vehicle_list),
             creation_date=get_past_date(weeks=1),
             active_date=get_past_date(weeks=1),
         )
@@ -357,10 +356,10 @@ class ContractSeeder(seeders.Seeder):
         )
 
         contract15 = Contract.objects.create(
-            tenant=tenant,
-            rental_plan=random_element(rental_plan_list),
-            client=random_element(clients_list),
-            vehicle=random_element(vehicle_list),
+            tenant_id=tenant,
+            rental_plan_id=random_element(rental_plan_list),
+            client_id=random_element(clients_list),
+            vehicle_id=random_element(vehicle_list),
             creation_date=get_past_date(weeks=1),
             active_date=get_past_date(weeks=1),
         )
@@ -369,10 +368,10 @@ class ContractSeeder(seeders.Seeder):
         )
 
         contract16 = Contract.objects.create(
-            tenant=tenant,
-            rental_plan=random_element(rental_plan_list),
-            client=random_element(clients_list),
-            vehicle=random_element(vehicle_list),
+            tenant_id=tenant,
+            rental_plan_id=random_element(rental_plan_list),
+            client_id=random_element(clients_list),
+            vehicle_id=random_element(vehicle_list),
             creation_date=get_past_date(days=1),
             active_date=get_past_date(days=1),
         )
@@ -381,10 +380,10 @@ class ContractSeeder(seeders.Seeder):
         )
 
         contract17 = Contract.objects.create(
-            tenant=tenant,
-            rental_plan=random_element(rental_plan_list),
-            client=random_element(clients_list),
-            vehicle=random_element(vehicle_list),
+            tenant_id=tenant,
+            rental_plan_id=random_element(rental_plan_list),
+            client_id=random_element(clients_list),
+            vehicle_id=random_element(vehicle_list),
             creation_date=timezone.now(),
             active_date=timezone.now(),
         )
@@ -393,10 +392,10 @@ class ContractSeeder(seeders.Seeder):
         )
 
         contract18 = Contract.objects.create(
-            tenant=tenant,
-            rental_plan=random_element(rental_plan_list),
-            client=random_element(clients_list),
-            vehicle=random_element(vehicle_list),
+            tenant_id=tenant,
+            rental_plan_id=random_element(rental_plan_list),
+            client_id=random_element(clients_list),
+            vehicle_id=random_element(vehicle_list),
             creation_date=timezone.now(),
             active_date=timezone.now(),
         )
