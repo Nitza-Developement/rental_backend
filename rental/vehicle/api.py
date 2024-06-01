@@ -49,9 +49,9 @@ class ListAndCreateVehicleView(APIViewWithPagination):
 class GetUpdateAndDeleteVehicleView(APIView):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
-    def get(self, request, search_by):
+    def get(self, request, vehicle_id):
         try:
-            vehicle = get_vehicle(search_by)
+            vehicle = get_vehicle(vehicle_id)
             serialized_vehicle = VehicleListSerializer(vehicle)
             return Response(serialized_vehicle.data, status=status.HTTP_200_OK)
         except Exception as e:

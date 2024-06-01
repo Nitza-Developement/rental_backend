@@ -9,31 +9,29 @@ def get_vehicles(tenant: int):
     return Vehicle.objects.filter(tenant=tenant, is_deleted = False)
 
 
-def get_vehicle(search_by: int | str = None):
+def get_vehicle(vehicle_id: int):
     try:
-        return Vehicle.objects.filter(
-            Q(id=search_by) | Q(vin__icontains=search_by)
-        ).first()
+        return Vehicle.objects.get(id=vehicle_id)
     except Vehicle.DoesNotExist:
         raise NotFound404APIException(
-            f"Vehicle with id or vin {search_by} doesnt exist"
+            f"Vehicle with id {vehicle_id} doesnt exist"
         )
 
 
 def create_vehicle(
-    type: str,
-    year: int,
-    make: str,
-    model: str,
-    trim: str,
-    vin: str,
-    odometer: int,
-    nickname: str,
-    spare_tires: int,
-    extra_fields,
-    status: str,
-    plate: str,
-    tenant: int,
+    type: str = None,
+    year: int = None,
+    make: str = None,
+    model: str = None,
+    trim: str = None,
+    vin: str = None,
+    odometer: int = None,
+    nickname: str = None,
+    spare_tires: int = None,
+    extra_fields = None,
+    status: str = None,
+    plate: str = None,
+    tenant: int = None,
 ):
 
     new_vehicle = Vehicle.objects.create(
@@ -51,7 +49,8 @@ def create_vehicle(
         tenant=tenant,
     )
 
-    VehiclePlate.objects.create(vehicle=new_vehicle, plate=plate)
+    if plate:
+        VehiclePlate.objects.create(vehicle=new_vehicle, plate=plate)
 
     return new_vehicle
 

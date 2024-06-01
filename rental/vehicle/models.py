@@ -13,12 +13,16 @@ class Vehicle(models.Model):
     TRAILER = "Trailer"
     TRUCK = "Truck"
     VAN = "Van"
+    SUV = "SUV"
     CUSTOM = "Custom"
     AVAILABLE = "Available"
     UNAVAILABLE = "Unavailable"
+    RENTED = "Rented"
+    IN_MAINTENANCE = "In Maintenance"
 
     TYPE_CHOICES = [
         (CAR, "Car"),
+        (SUV, "SUV"),
         (FREIGHTLINER, "Freightliner"),
         (TRAILER, "Trailer"),
         (TRUCK, "Truck"),
@@ -26,17 +30,17 @@ class Vehicle(models.Model):
         (CUSTOM, "Custom"),
     ]
 
-    STATUS_CHOICES = [(AVAILABLE, "Available"), (UNAVAILABLE, "Unavailable")]
+    STATUS_CHOICES = [(AVAILABLE, "Available"), (UNAVAILABLE, "Unavailable"), (RENTED, "Rented"), (IN_MAINTENANCE, "In Maintenance")]
 
     type = models.CharField(choices=TYPE_CHOICES)
-    year = models.IntegerField()
-    make = models.CharField(max_length=255)
-    model = models.CharField(max_length=255)
-    trim = models.CharField(max_length=255)
+    year = models.IntegerField(null=True, blank=True)
+    make = models.CharField(max_length=255, null=True, blank=True)
+    model = models.CharField(max_length=255, null=True, blank=True)
+    trim = models.CharField(max_length=255, null=True, blank=True)
     vin = models.CharField(max_length=17, unique=True)
-    odometer = models.IntegerField()
-    nickname = models.CharField(max_length=255)
-    spare_tires = models.IntegerField(default=0)
+    odometer = models.IntegerField(null=True, blank=True)
+    nickname = models.CharField(max_length=255, null=True, blank=True)
+    spare_tires = models.IntegerField(default=0, null=True, blank=True)
     extra_fields = models.JSONField(null=True, blank=True)
     status = models.CharField(choices=STATUS_CHOICES)
     is_deleted = models.BooleanField(default=False)
