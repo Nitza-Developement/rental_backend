@@ -11,7 +11,7 @@ def get_toll_due(toll_due_id: str):
     try:
         toll_due = TollDue.objects.get(id=toll_due_id)
     except TollDue.DoesNotExist:
-        raise NotFound404APIException(f'Toll due with id {toll_due_id} not found')
+        raise NotFound404APIException(f"Toll due with id {toll_due_id} not found")
 
     return toll_due
 
@@ -23,7 +23,7 @@ def create_toll_due(
     stage: str,
     invoice: str = None,
     invoice_number: str = None,
-    note: str = None
+    note: str = None,
 ):
 
     new_toll_due = TollDue.objects.create(
@@ -33,7 +33,7 @@ def create_toll_due(
         stage=stage,
         invoice=invoice,
         invoiceNumber=invoice_number,
-        note=note
+        note=note,
     )
     new_toll_due.save()
     return new_toll_due
@@ -47,12 +47,12 @@ def update_toll_due(
     stage: str = None,
     invoice: str = None,
     invoice_number: str = None,
-    note: str = None
+    note: str = None,
 ):
     try:
         toll_due = TollDue.objects.get(id=toll_due_id)
     except TollDue.DoesNotExist:
-        raise NotFound404APIException(f'Toll due with id {toll_due_id} not found')
+        raise NotFound404APIException(f"Toll due with id {toll_due_id} not found")
 
     if amount:
         toll_due.amount = amount
@@ -79,4 +79,4 @@ def delete_toll_due(toll_due_id):
         toll_due = TollDue.objects.get(id=toll_due_id)
         toll_due.delete()
     except TollDue.DoesNotExist:
-        raise NotFound404APIException(f'Toll due with id {toll_due_id} not found')
+        raise NotFound404APIException(f"Toll due with id {toll_due_id} not found")

@@ -8,103 +8,271 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rental', '0017_alter_vehiclepicture_id_alter_vehiclepicture_image'),
+        ("rental", "0017_alter_vehiclepicture_id_alter_vehiclepicture_image"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Contract',
+            name="Contract",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('creation_date', models.DateTimeField(auto_now=True)),
-                ('active_date', models.DateTimeField(blank=True, null=True)),
-                ('end_date', models.DateTimeField(blank=True, null=True)),
-                ('client', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='contracts', to='rental.client')),
-                ('tenant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='contracts', to='rental.tenant')),
-                ('vehicle', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='contracts', to='rental.vehicle')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("creation_date", models.DateTimeField(auto_now=True)),
+                ("active_date", models.DateTimeField(blank=True, null=True)),
+                ("end_date", models.DateTimeField(blank=True, null=True)),
+                (
+                    "client",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        related_name="contracts",
+                        to="rental.client",
+                    ),
+                ),
+                (
+                    "tenant",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="contracts",
+                        to="rental.tenant",
+                    ),
+                ),
+                (
+                    "vehicle",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="contracts",
+                        to="rental.vehicle",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Note',
+            name="Note",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('subject', models.CharField(max_length=255)),
-                ('body', models.TextField()),
-                ('createdDate', models.DateTimeField(auto_now=True)),
-                ('remainder', models.DateTimeField(blank=True, null=True)),
-                ('file', models.FileField(blank=True, null=True, upload_to='notes/')),
-                ('contract', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='notes', to='rental.contract')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='notes', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("subject", models.CharField(max_length=255)),
+                ("body", models.TextField()),
+                ("createdDate", models.DateTimeField(auto_now=True)),
+                ("remainder", models.DateTimeField(blank=True, null=True)),
+                ("file", models.FileField(blank=True, null=True, upload_to="notes/")),
+                (
+                    "contract",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="notes",
+                        to="rental.contract",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        related_name="notes",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='RentalPlan',
+            name="RentalPlan",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('amount', models.IntegerField(default=0)),
-                ('periodicity', models.CharField(choices=[('Weekly', 'Weekly'), ('Biweekly', 'Biweekly'), ('Monthly', 'Monthly')], max_length=10)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("amount", models.IntegerField(default=0)),
+                (
+                    "periodicity",
+                    models.CharField(
+                        choices=[
+                            ("Weekly", "Weekly"),
+                            ("Biweekly", "Biweekly"),
+                            ("Monthly", "Monthly"),
+                        ],
+                        max_length=10,
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('name', 'periodicity', 'amount')},
+                "unique_together": {("name", "periodicity", "amount")},
             },
         ),
         migrations.AddField(
-            model_name='contract',
-            name='rental_plan',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='contracts', to='rental.rentalplan'),
+            model_name="contract",
+            name="rental_plan",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="contracts",
+                to="rental.rentalplan",
+            ),
         ),
         migrations.CreateModel(
-            name='StageUpdate',
+            name="StageUpdate",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date', models.DateTimeField(auto_now=True)),
-                ('reason', models.CharField(blank=True, max_length=255, null=True)),
-                ('comments', models.CharField(blank=True, max_length=255, null=True)),
-                ('stage', models.CharField(choices=[('Pending', 'Pending'), ('Active', 'Active'), ('Ended', 'Ended'), ('Dismiss', 'Dismiss')], max_length=100)),
-                ('contract', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='stages_updates', to='rental.contract')),
-                ('previous_stage', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='next_stages', to='rental.stageupdate')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("date", models.DateTimeField(auto_now=True)),
+                ("reason", models.CharField(blank=True, max_length=255, null=True)),
+                ("comments", models.CharField(blank=True, max_length=255, null=True)),
+                (
+                    "stage",
+                    models.CharField(
+                        choices=[
+                            ("Pending", "Pending"),
+                            ("Active", "Active"),
+                            ("Ended", "Ended"),
+                            ("Dismiss", "Dismiss"),
+                        ],
+                        max_length=100,
+                    ),
+                ),
+                (
+                    "contract",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="stages_updates",
+                        to="rental.contract",
+                    ),
+                ),
+                (
+                    "previous_stage",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="next_stages",
+                        to="rental.stageupdate",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='TollDue',
+            name="TollDue",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('amount', models.IntegerField()),
-                ('stage', models.CharField(choices=[('Paid', 'Paid'), ('Unpaid', 'Unpaid')], max_length=6)),
-                ('invoice', models.CharField(blank=True, max_length=255, null=True)),
-                ('invoiceNumber', models.CharField(blank=True, max_length=255, null=True)),
-                ('createDate', models.DateTimeField(auto_now_add=True)),
-                ('note', models.TextField(blank=True, null=True)),
-                ('contract', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='toll_dues', to='rental.contract')),
-                ('plate', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='toll_dues', to='rental.vehicleplate')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("amount", models.IntegerField()),
+                (
+                    "stage",
+                    models.CharField(
+                        choices=[("Paid", "Paid"), ("Unpaid", "Unpaid")], max_length=6
+                    ),
+                ),
+                ("invoice", models.CharField(blank=True, max_length=255, null=True)),
+                (
+                    "invoiceNumber",
+                    models.CharField(blank=True, max_length=255, null=True),
+                ),
+                ("createDate", models.DateTimeField(auto_now_add=True)),
+                ("note", models.TextField(blank=True, null=True)),
+                (
+                    "contract",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="toll_dues",
+                        to="rental.contract",
+                    ),
+                ),
+                (
+                    "plate",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="toll_dues",
+                        to="rental.vehicleplate",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Tracker',
+            name="Tracker",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('created_date', models.DateTimeField(auto_now=True)),
-                ('vehicle', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tracker', to='rental.vehicle')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("created_date", models.DateTimeField(auto_now=True)),
+                (
+                    "vehicle",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="tracker",
+                        to="rental.vehicle",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Tracker',
-                'verbose_name_plural': 'Trackers',
+                "verbose_name": "Tracker",
+                "verbose_name_plural": "Trackers",
             },
         ),
         migrations.CreateModel(
-            name='TrackerHeartBeatData',
+            name="TrackerHeartBeatData",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('timestamp', models.DateTimeField(auto_now=True)),
-                ('latitude', models.FloatField()),
-                ('longitude', models.FloatField()),
-                ('tracker', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='heartbeat_data', to='rental.tracker')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("timestamp", models.DateTimeField(auto_now=True)),
+                ("latitude", models.FloatField()),
+                ("longitude", models.FloatField()),
+                (
+                    "tracker",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="heartbeat_data",
+                        to="rental.tracker",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Tracker Heart Beat Data',
-                'verbose_name_plural': 'Tracker Heart Beat Data',
+                "verbose_name": "Tracker Heart Beat Data",
+                "verbose_name_plural": "Tracker Heart Beat Data",
             },
         ),
     ]

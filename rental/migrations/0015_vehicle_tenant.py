@@ -7,13 +7,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rental', '0014_vehicle_vehiclepicture_vehicleplate'),
+        ("rental", "0014_vehicle_vehiclepicture_vehicleplate"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='vehicle',
-            name='tenant',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='vehicles', to='rental.tenant'),
+            model_name="vehicle",
+            name="tenant",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="vehicles",
+                to="rental.tenant",
+            ),
         ),
     ]

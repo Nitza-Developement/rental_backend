@@ -75,7 +75,7 @@ class VehiclePlate(models.Model):
         return f"{self.plate}"
 
     def save(self, *args, **kwargs):
-        if self.pk is None or self.is_active != True:
+        if self.pk is None or not self.is_active:
             if not self.is_active:
                 self.dismiss_date = datetime.now()
         super().save(*args, **kwargs)

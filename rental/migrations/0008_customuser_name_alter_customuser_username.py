@@ -8,18 +8,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rental', '0007_alter_customuser_options_and_more'),
+        ("rental", "0007_alter_customuser_options_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='name',
-            field=models.CharField(default='-', max_length=100, validators=[rental.user.models.user_name_validator]),
+            model_name="user",
+            name="name",
+            field=models.CharField(
+                default="-",
+                max_length=100,
+                validators=[rental.user.models.user_name_validator],
+            ),
         ),
         migrations.AlterField(
-            model_name='user',
-            name='username',
-            field=models.CharField(default=uuid.uuid4, editable=False, max_length=100, unique=True),
+            model_name="user",
+            name="username",
+            field=models.CharField(
+                default=uuid.uuid4, editable=False, max_length=100, unique=True
+            ),
         ),
     ]

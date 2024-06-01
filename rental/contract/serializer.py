@@ -5,6 +5,7 @@ from rental.client.serializer import ClientListSerializer
 from rental.vehicle.serializer import VehicleListSerializer
 
 
+
 class StageUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = StageUpdate

@@ -12,7 +12,7 @@ from settings.utils.exceptions import BadRequest400APIException
 from rental.shared_serializers.serializers import UserProfileSerializer
 
 
-class  LogoutView(APIView):
+class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):

@@ -7,22 +7,27 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rental', '0025_alter_tenantuser_unique_together'),
+        ("rental", "0025_alter_tenantuser_unique_together"),
     ]
 
     operations = [
         migrations.AlterUniqueTogether(
-            name='rentalplan',
+            name="rentalplan",
             unique_together=set(),
         ),
         migrations.AddField(
-            model_name='rentalplan',
-            name='tenant',
-            field=models.ForeignKey(default=0, on_delete=django.db.models.deletion.CASCADE, related_name='plans', to='rental.tenant'),
+            model_name="rentalplan",
+            name="tenant",
+            field=models.ForeignKey(
+                default=0,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="plans",
+                to="rental.tenant",
+            ),
             preserve_default=False,
         ),
         migrations.AlterUniqueTogether(
-            name='rentalplan',
-            unique_together={('name', 'periodicity', 'amount', 'tenant')},
+            name="rentalplan",
+            unique_together={("name", "periodicity", "amount", "tenant")},
         ),
     ]

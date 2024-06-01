@@ -13,12 +13,13 @@ class UserDataSerializer(serializers.ModelSerializer):
     defaultTenantUser = serializers.SerializerMethodField()
     tenantUsers = serializers.SerializerMethodField()
 
-
     def get_tenantUsers(self, user: User):
-        return TenantUserListSerializer(user.tenantUsers, many = True, read_only = True).data
-    
+        return TenantUserListSerializer(
+            user.tenantUsers, many=True, read_only=True
+        ).data
+
     def get_defaultTenantUser(self, user: User):
-        return TenantUserListSerializer(user.defaultTenantUser(), read_only = True).data
+        return TenantUserListSerializer(user.defaultTenantUser(), read_only=True).data
 
 
 class UpdateUserSerializer(serializers.Serializer):

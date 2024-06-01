@@ -7,6 +7,7 @@ from rental.models import (
     Client,
     Vehicle,
     VehiclePicture,
+    VehiclePlate,
     Contract,
     Note,
     StageUpdate,
@@ -157,3 +158,8 @@ class TrackerHeartBeatDataAdmin(admin.ModelAdmin):
 @admin.register(RentalPlan)
 class RentalPlanAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "amount", "periodicity")
+
+
+@admin.register(VehiclePlate)
+class VehiclePlateAdmin(admin.ModelAdmin):
+    list_display = ("id", "plate", "is_active")

@@ -150,7 +150,7 @@ def validate_field_and_handle_errors(serializer: Serializer):
 
         if error_detail.code in ["invalid", "required", "blank"]:
             raise ErrorFieldInvalidName(serializer.data.get("name"))
-    
+
     if "type" in serializer.errors:
 
         error_detail: ErrorDetail = serializer.errors["type"][0]
