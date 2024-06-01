@@ -1,9 +1,12 @@
+from django.db.models import Q
 from rental.notes.models import Note
 from settings.utils.exceptions import NotFound404APIException
 
 
-def get_notes():
-    notes = Note.objects.all()
+def get_notes(contract):
+    notes = Note.objects.filter(
+        Q(contract__id__icontains=contract)
+    )
     return notes
 
 

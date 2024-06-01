@@ -26,7 +26,7 @@ class ListAndCreateContractView(APIViewWithPagination):
 
     def get(self, request):
         try:
-            contract_list = get_contracts()
+            contract_list = get_contracts(request.user.defaultTenantUser().tenant)
 
             paginator = self.pagination_class()
             paginated_contracts = paginator.paginate_queryset(contract_list, request)
@@ -39,7 +39,9 @@ class ListAndCreateContractView(APIViewWithPagination):
         serializer = ContractCreateSerializer(data=request.data)
         validate_and_handle_errors(serializer)
 
-        contract = create_contract(**serializer.validated_data)
+        contract = create_contract(
+            tenant=request.user.defaultTenantUser().tenant, **serializer.validated_data
+        )
         create_stage_update(contract=contract)
 
         serialized_contract = ContractSerializer(contract)
@@ -74,7 +76,6 @@ class GetUpdatePatchContractView(APIView):
     def patch(self, request, contract_id):
         serializer = StageUpdateCreateSerializer(
             data={
-                "date": request.data.get("date"),
                 "reason": request.data.get("reason"),
                 "comments": request.data.get("comments"),
                 "stage": request.data.get("stage"),

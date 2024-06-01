@@ -58,4 +58,4 @@ class StageUpdate(models.Model):
     class Meta:
         verbose_name = "Stage"
         verbose_name_plural = "Stages"
-        ordering = ["date"]
+        ordering = ["-date"]

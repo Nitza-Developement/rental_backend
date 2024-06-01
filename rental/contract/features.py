@@ -25,8 +25,8 @@ def create_contract(
     return contract
 
 
-def get_contracts():
-    return Contract.objects.all()
+def get_contracts(tenant):
+    return Contract.objects.filter(tenant=tenant)
 
 
 def get_contract(contract_id):

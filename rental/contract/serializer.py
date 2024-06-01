@@ -1,5 +1,9 @@
 from rest_framework import serializers
 from rental.contract.models import Contract, StageUpdate
+from rental.rentalPlan.serializer import RentalPlanSerializer
+from rental.client.serializer import ClientListSerializer
+from rental.vehicle.serializer import VehicleListSerializer
+
 
 
 class StageUpdateSerializer(serializers.ModelSerializer):
@@ -11,9 +15,8 @@ class StageUpdateSerializer(serializers.ModelSerializer):
 class StageUpdateCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = StageUpdate
-        fields = ["date", "reason", "comments", "stage"]
+        fields = ["reason", "comments", "stage"]
         extra_kwargs = {
-            "date": {"required": False},
             "reason": {"required": False},
             "comments": {"required": False},
             "stage": {"required": True},
@@ -33,7 +36,13 @@ class ContractSerializer(serializers.ModelSerializer):
             "creation_date",
             "active_date",
             "end_date",
+            "stage"
         ]
+    
+    stage = serializers.SerializerMethodField()
+
+    def get_stage(self, contract: Contract):
+        return StageUpdateCreateSerializer(contract.stages_updates.all()[0]).data
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -41,6 +50,10 @@ class ContractSerializer(serializers.ModelSerializer):
         representation["stages_updates"] = StageUpdateSerializer(
             instance.stages_updates.all(), many=True
         ).data
+        representation["rental_plan"] = RentalPlanSerializer(instance.rental_plan).data
+        representation["client"] = ClientListSerializer(instance.client).data
+        representation['vehicle'] = VehicleListSerializer(instance.vehicle).data
+
 
         return representation
 
@@ -48,9 +61,8 @@ class ContractSerializer(serializers.ModelSerializer):
 class ContractCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contract
-        fields = ["tenant", "client", "vehicle", "rental_plan"]
+        fields = ["client", "vehicle", "rental_plan"]
         extra_kwargs = {
-            "tenant": {"required": True},
             "client": {"required": True},
             "vehicle": {"required": True},
             "rental_plan": {"required": True},
