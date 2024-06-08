@@ -1,6 +1,7 @@
 from django.db import models
 from rental.contract.models import Contract
 from rental.vehicle.models import VehiclePlate
+from auditlog.models import AuditlogHistoryField
 
 
 class TollDue(models.Model):
@@ -20,6 +21,7 @@ class TollDue(models.Model):
     invoiceNumber = models.CharField(max_length=255, null=True, blank=True)
     createDate = models.DateTimeField(auto_now_add=True)
     note = models.TextField(null=True, blank=True)
+    history = AuditlogHistoryField()
 
     def __str__(self) -> str:
         return f'{self.plate} | {self.amount} | {self.stage}'

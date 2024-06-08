@@ -1,6 +1,7 @@
-from datetime import datetime
 from django.db import models
+from datetime import datetime
 from rental.tenant.models import Tenant
+from auditlog.models import AuditlogHistoryField
 
 
 def get_image_path(vehiclePicture, picture_filename: str):
@@ -30,7 +31,12 @@ class Vehicle(models.Model):
         (CUSTOM, "Custom"),
     ]
 
-    STATUS_CHOICES = [(AVAILABLE, "Available"), (UNAVAILABLE, "Unavailable"), (RENTED, "Rented"), (IN_MAINTENANCE, "In Maintenance")]
+    STATUS_CHOICES = [
+        (AVAILABLE, "Available"),
+        (UNAVAILABLE, "Unavailable"),
+        (RENTED, "Rented"),
+        (IN_MAINTENANCE, "In Maintenance"),
+    ]
 
     type = models.CharField(choices=TYPE_CHOICES)
     year = models.IntegerField(null=True, blank=True)
@@ -44,6 +50,7 @@ class Vehicle(models.Model):
     extra_fields = models.JSONField(null=True, blank=True)
     status = models.CharField(choices=STATUS_CHOICES)
     is_deleted = models.BooleanField(default=False)
+    history = AuditlogHistoryField()
     tenant = models.ForeignKey(
         Tenant, on_delete=models.CASCADE, related_name="vehicles"
     )
@@ -65,6 +72,7 @@ class VehiclePlate(models.Model):
     plate = models.CharField(max_length=255, unique=True)
     assign_date = models.DateTimeField(auto_now_add=True)
     dismiss_date = models.DateTimeField(null=True, blank=True)
+    history = AuditlogHistoryField()
 
     def get_active_plate(self):
         return self.plates.filter(is_active=True).first()
@@ -87,3 +95,4 @@ class VehiclePicture(models.Model):
         Vehicle, on_delete=models.CASCADE, related_name="vehicle_pictures"
     )
     pinned = models.BooleanField(default=False)
+    history = AuditlogHistoryField()

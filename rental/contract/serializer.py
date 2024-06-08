@@ -1,9 +1,10 @@
 from rest_framework import serializers
+from rental.notes.serializer import NoteSerializer
+from rental.toll.serializer import TollDueSerializer
 from rental.contract.models import Contract, StageUpdate
-from rental.rentalPlan.serializer import RentalPlanSerializer
 from rental.client.serializer import ClientListSerializer
 from rental.vehicle.serializer import VehicleListSerializer
-
+from rental.rentalPlan.serializer import RentalPlanSerializer
 
 class StageUpdateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,9 +36,11 @@ class ContractSerializer(serializers.ModelSerializer):
             "creation_date",
             "active_date",
             "end_date",
-            "stage"
+            "stage",
+            "notes",
+            "toll_dues",
         ]
-    
+
     stage = serializers.SerializerMethodField()
 
     def get_stage(self, contract: Contract):
@@ -51,8 +54,11 @@ class ContractSerializer(serializers.ModelSerializer):
         ).data
         representation["rental_plan"] = RentalPlanSerializer(instance.rental_plan).data
         representation["client"] = ClientListSerializer(instance.client).data
-        representation['vehicle'] = VehicleListSerializer(instance.vehicle).data
-
+        representation["vehicle"] = VehicleListSerializer(instance.vehicle).data
+        representation["notes"] = NoteSerializer(instance.notes.all(), many=True).data
+        representation["toll_dues"] = TollDueSerializer(
+            instance.toll_dues.all(), many=True
+        ).data
 
         return representation
 

@@ -4,6 +4,7 @@ from settings.utils.api import APIViewWithPagination
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
+from rest_framework.decorators import api_view, permission_classes
 from rental.vehicle.serializer import (
     VehicleListSerializer,
     VehicleCreateSerializer,
@@ -15,6 +16,7 @@ from rental.vehicle.features import (
     get_vehicle,
     update_vehicle,
     delete_vehicle,
+    get_vehicle_history,
 )
 from settings.utils.exceptions import BadRequest400APIException
 
@@ -24,7 +26,9 @@ class ListAndCreateVehicleView(APIViewWithPagination):
 
     def get(self, request):
         try:
-            vehicles_list = get_vehicles(tenant=request.user.defaultTenantUser().tenant.id)
+            vehicles_list = get_vehicles(
+                tenant=request.user.defaultTenantUser().tenant.id
+            )
             paginator = self.pagination_class()
             paginated_vehicles = paginator.paginate_queryset(vehicles_list, request)
             serialized_list = VehicleListSerializer(paginated_vehicles, many=True)
@@ -34,10 +38,9 @@ class ListAndCreateVehicleView(APIViewWithPagination):
 
     def post(self, request):
         serializer = VehicleCreateSerializer(data=request.data)
-        print(f"{request.data}")
         if serializer.is_valid():
             created_vehicle = create_vehicle(
-                tenant=request.user.defaultTenantUser().tenant,
+                user=request.user,
                 **serializer.validated_data,
             )
             serialized_vehicle = VehicleListSerializer(created_vehicle)
@@ -76,7 +79,9 @@ class GetUpdateAndDeleteVehicleView(APIView):
             }
         )
         if serializer.is_valid():
-            updated_vehicle = update_vehicle(**serializer.validated_data)
+            updated_vehicle = update_vehicle(
+                user=request.user, **serializer.validated_data
+            )
             serialized_vehicle = VehicleListSerializer(updated_vehicle)
             return Response(serialized_vehicle.data, status=status.HTTP_200_OK)
         else:
@@ -85,3 +90,11 @@ class GetUpdateAndDeleteVehicleView(APIView):
     def delete(self, request, vehicle_id):
         delete_vehicle(vehicle_id)
         return Response(status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated, IsAdminOrStaffTenantUser])
+def get_vehicle_timeline(request, vehicle_id):
+    history_data = get_vehicle_history(vehicle_id)
+
+    return Response(history_data, status=status.HTTP_200_OK)
