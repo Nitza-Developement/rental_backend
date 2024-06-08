@@ -6,7 +6,7 @@ from settings.utils.api import APIViewWithPagination
 from settings.utils.exceptions import BadRequest400APIException
 
 
-from rental.forms.features import get_forms, import_forms
+from rental.forms.features import get_forms, import_forms, create_form
 from rental.forms.serializer import FormSerializer
 
 
@@ -25,7 +25,29 @@ class FormListAndCreateView(APIViewWithPagination):
 
     def post(self, request):
 
+        serializer = FormSerializer(data=request.data)
+
+        if serializer.is_valid():
+
+            created_form = create_form(
+                request.user.defaultTenantUser().tenant,
+                serializer.validated_data,
+            )
+            serialized_form = FormSerializer(created_form)
+
+            return Response(serialized_form.data, status=status.HTTP_201_CREATED)
+
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FormImportView(APIViewWithPagination):
+    permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
+
+    def post(self, request):
+
         serializer = FormSerializer(data=request.data, many=True)
+
         if serializer.is_valid():
 
             created_forms = import_forms(

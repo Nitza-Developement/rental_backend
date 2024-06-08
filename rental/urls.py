@@ -21,7 +21,7 @@ from rental.tracker.api import (
     GetUpdateAndDeleteATrackerView,
     DeleteTrackerHeartBeatDataView,
 )
-from rental.forms.api import FormListAndCreateView
+from rental.forms.api import FormListAndCreateView, FormImportView
 
 urlpatterns = [
     path("login", TokenObtainPairView.as_view(), name="login"),
@@ -93,12 +93,6 @@ urlpatterns = [
         DeleteTrackerHeartBeatDataView.as_view(),
         name="tracker-heartbeat-actions",
     ),
+    path("forms", FormListAndCreateView.as_view(), name="forms"),
+    path("forms/import", FormImportView.as_view(), name="import-forms"),
 ]
-
-
-form_urls = [
-    # poner las rutas relacionadas con los formularios
-    path("forms", FormListAndCreateView.as_view(), name="forms")
-]
-
-urlpatterns += form_urls

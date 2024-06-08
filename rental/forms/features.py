@@ -14,12 +14,18 @@ def get_form(form_id):
         raise NotFound404APIException(f"Form with ID {form_id} doesnt exists")
 
 
-def create_form(tenant, name, is_active=None):
+def create_form(tenant, data):
+
     form = Form.objects.create(
         tenant=tenant,
-        name=name,
-        is_active=is_active,
+        name=data.get("name"),
     )
+
+    cards = data.get("cards", [])
+
+    for _card in cards:
+        create_card(form, _card.get("name"), _card.get("fields", []))
+
     return form
 
 
