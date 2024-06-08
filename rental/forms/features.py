@@ -47,3 +47,19 @@ def create_card(form, name, fields):
             CheckOption.objects.create(name=_field["pointPass"], field=field)
             CheckOption.objects.create(name=_field["pointFail"], field=field)
     return card
+
+
+def import_forms(tenant, forms: list):
+
+    created_forms = []
+
+    for _form in forms:
+        form = Form.objects.create(name=_form.get("name"), tenant=tenant)
+
+        cards = _form.get("cards", [])
+        for card in cards:
+            create_card(form, card.get("name"), card.get("fields", []))
+
+        created_forms.append(form)
+
+    return created_forms

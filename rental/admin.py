@@ -29,6 +29,8 @@ from rental.adminInline import (
     StageUpdateInline,
 )
 
+from rental.forms.models import Form, Card
+
 
 admin.site.site_title = "Fleet Admin Site"
 admin.site.site_header = "Administration Panel"
@@ -163,3 +165,13 @@ class RentalPlanAdmin(admin.ModelAdmin):
 @admin.register(VehiclePlate)
 class VehiclePlateAdmin(admin.ModelAdmin):
     list_display = ("id", "plate", "is_active")
+
+
+@admin.register(Form)
+class FormAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "created_at", "is_active")
+
+
+@admin.register(Card)
+class CardAdmin(admin.ModelAdmin):
+    list_display = ("id", "name")
