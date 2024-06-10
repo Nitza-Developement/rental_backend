@@ -28,15 +28,16 @@ class Inspection(models.Model):
     )
     created_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self) -> str:
+        return self.form.name
+
 
 class Card(models.Model):
     name = models.CharField(max_length=255)
-    form = models.ForeignKey(Form, on_delete=models.CASCADE , related_name="cards")
-
+    form = models.ForeignKey(Form, on_delete=models.CASCADE, related_name="cards")
 
     def __str__(self) -> str:
         return self.name
-
 
 
 class Field(models.Model):
@@ -70,6 +71,9 @@ class Field(models.Model):
         Card, on_delete=models.CASCADE, null=True, related_name="fields"
     )
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class CheckOption(models.Model):
     name = models.CharField(max_length=255, blank=True)
@@ -90,7 +94,11 @@ class FieldResponse(models.Model):
         TenantUser, on_delete=models.CASCADE, related_name="field_responses"
     )
     check_option = models.ForeignKey(
-        CheckOption, on_delete=models.SET_NULL, null=True, related_name="response"
+        CheckOption,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="response",
     )
     inspection = models.ForeignKey(
         "Inspection",
@@ -98,3 +106,6 @@ class FieldResponse(models.Model):
         null=True,
         related_name="field_responses",
     )
+
+    def __str__(self) -> str:
+        return str(self.inspection)

@@ -29,7 +29,7 @@ from rental.adminInline import (
     StageUpdateInline,
 )
 
-from rental.forms.models import Form, Card
+from rental.forms.models import Form, Card, Field, FieldResponse, Inspection
 
 
 admin.site.site_title = "Fleet Admin Site"
@@ -175,3 +175,18 @@ class FormAdmin(admin.ModelAdmin):
 @admin.register(Card)
 class CardAdmin(admin.ModelAdmin):
     list_display = ("id", "name")
+
+
+@admin.register(Field)
+class FieldAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "type")
+
+
+@admin.register(FieldResponse)
+class FieldResponseAdmin(admin.ModelAdmin):
+    list_display = ("id", "inspection", "created_at")
+
+
+@admin.register(Inspection)
+class InspectionAdmin(admin.ModelAdmin):
+    list_display = ("id", "form", "created_at")

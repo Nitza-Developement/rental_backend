@@ -2,14 +2,22 @@ from rental.forms.models import *
 from settings.utils.exceptions import NotFound404APIException
 
 
+def rename_form(form_id, name, tenant):
+    form = get_form(form_id, tenant)
+    if form:
+        form.name = name
+        form.save()
+    raise NotFound404APIException(f"Form with ID {form_id} doesnt exists")
+
+
 def get_forms(tenant):
     forms = Form.objects.filter(tenant=tenant)
     return forms
 
 
-def get_form(form_id):
+def get_form(form_id, tenant):
     try:
-        return Form.objects.get(id=form_id)
+        return Form.objects.get(id=form_id, tenant=tenant)
     except Form.DoesNotExist:
         raise NotFound404APIException(f"Form with ID {form_id} doesnt exists")
 
@@ -69,3 +77,11 @@ def import_forms(tenant, forms: list):
         created_forms.append(form)
 
     return created_forms
+
+
+def delete_form(form_id , tenant):
+    form = get_form(form_id , tenant)
+    if form:
+        form.delete()
+        return True
+    raise NotFound404APIException(f"Form with ID {form_id} doesnt exists")
