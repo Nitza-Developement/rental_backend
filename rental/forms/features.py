@@ -4,9 +4,12 @@ from settings.utils.exceptions import NotFound404APIException
 
 def rename_form(form_id, name, tenant):
     form = get_form(form_id, tenant)
+
     if form:
         form.name = name
         form.save()
+        return True
+
     raise NotFound404APIException(f"Form with ID {form_id} doesnt exists")
 
 
@@ -79,8 +82,8 @@ def import_forms(tenant, forms: list):
     return created_forms
 
 
-def delete_form(form_id , tenant):
-    form = get_form(form_id , tenant)
+def delete_form(form_id, tenant):
+    form = get_form(form_id, tenant)
     if form:
         form.delete()
         return True

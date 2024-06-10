@@ -9,7 +9,7 @@ class Form(models.Model):
     tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name="forms")
 
     class Meta:
-        ordering = ["created_at"]
+        ordering = ["name"]
 
     def __str__(self) -> str:
         return self.name
@@ -42,26 +42,16 @@ class Card(models.Model):
 
 class Field(models.Model):
 
-    TEXT = "Text"
-    NUMBER = "Number"
-    SINGLE_CHECK = "Single Check"
-    IMAGE = "Image"
-    SIGNATURE = "Signature"
-    EMAIL = "Email"
-    PHONE = "Phone"
-    DATE = "Date"
-    TIME = "Time"
-
     FORM_FIELD_TYPES = (
-        (TEXT, "Text"),
-        (NUMBER, "Number"),
-        (SINGLE_CHECK, "Single Check"),
-        (IMAGE, "Image"),
-        (SIGNATURE, "Signature"),
-        (EMAIL, "Email"),
-        (PHONE, "Phone"),
-        (DATE, "Date"),
-        (TIME, "Time"),
+        ("TEXT", "Text"),
+        ("NUMBER", "Number"),
+        ("SINGLE_CHECK", "Single Check"),
+        ("IMAGE", "Image"),
+        ("SIGNATURE", "Signature"),
+        ("EMAIL", "Email"),
+        ("PHONE", "Phone"),
+        ("DATE", "Date"),
+        ("TIME", "Time"),
     )
 
     name = models.CharField(max_length=255)
