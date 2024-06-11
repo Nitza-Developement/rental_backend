@@ -1,4 +1,4 @@
-from rental.forms.models import *
+from rental.forms.models import Card, Form, Field
 from settings.utils.exceptions import NotFound404APIException
 
 
@@ -14,7 +14,7 @@ def rename_form(form_id, name, tenant):
 
 
 def get_forms(tenant):
-    forms = Form.objects.filter(tenant=tenant)
+    forms = Form.objects.filter(tenant=tenant, is_active=True)
     return forms
 
 
@@ -53,16 +53,19 @@ def update_form(form_id, name, is_active):
 
 def create_card(form, name, fields):
     card = Card.objects.create(name=name, form=form)
+
     for _field in fields:
+
         field = Field.objects.create(
-            name=_field["labelName"],
+            name=_field["name"],
             type=_field["type"],
             required=_field["required"],
             card=card,
         )
-        if field.type == Field.SINGLE_CHECK:
-            CheckOption.objects.create(name=_field["pointPass"], field=field)
-            CheckOption.objects.create(name=_field["pointFail"], field=field)
+        # TODO
+        # if field.type == Field.SINGLE_CHECK:
+        #    CheckOption.objects.create(name=_field["pointPass"], field=field)
+        #    CheckOption.objects.create(name=_field["pointFail"], field=field)
     return card
 
 
@@ -85,6 +88,17 @@ def import_forms(tenant, forms: list):
 def delete_form(form_id, tenant):
     form = get_form(form_id, tenant)
     if form:
-        form.delete()
+        form.is_active = False
+        form.save()
         return True
     raise NotFound404APIException(f"Form with ID {form_id} doesnt exists")
+
+
+def delete_card(card_id):
+
+    try:
+        card = Card.objects.get(id=card_id)
+        card.delete()
+        return True
+    except Card.DoesNotExist:
+        raise NotFound404APIException(f"Card with ID {card_id} doesnt exists")

@@ -22,8 +22,7 @@ class FieldSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Field
-        fields = ("id", "name", "type", "field_response")
-        read_only_fields = ["id"]
+        fields = ("id", "name", "type", "required", "field_response")
 
 
 class CardSerializer(serializers.ModelSerializer):
@@ -32,7 +31,7 @@ class CardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Card
-        fields = ("name", "fields")
+        fields = ("id", "name", "fields")
 
 
 class FormSerializer(serializers.ModelSerializer):

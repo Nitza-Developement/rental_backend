@@ -25,6 +25,7 @@ from rental.forms.api import (
     FormListAndCreateView,
     FormImportView,
     FormGetUpdateAndDeleteView,
+    CardCreateAndDeleteView,
 )
 
 urlpatterns = [
@@ -102,4 +103,14 @@ urlpatterns = [
         "forms/<int:form_id>", FormGetUpdateAndDeleteView.as_view(), name="form-actions"
     ),
     path("forms/import", FormImportView.as_view(), name="import-forms"),
+    path(
+        "forms/cards",
+        CardCreateAndDeleteView.as_view(),
+        name="add-card",
+    ),
+    path(
+        "forms/cards/<int:card_id>",
+        CardCreateAndDeleteView.as_view(),
+        name="delete-card",
+    ),
 ]

@@ -6,16 +6,17 @@ from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
 from settings.utils.api import APIViewWithPagination
 from settings.utils.exceptions import BadRequest400APIException
 
-
 from rental.forms.features import (
     get_forms,
+    get_form,
     import_forms,
     create_form,
-    get_form,
+    create_card,
     rename_form,
     delete_form,
+    delete_card,
 )
-from rental.forms.serializer import FormSerializer
+from rental.forms.serializer import FormSerializer, CardSerializer
 
 
 class FormListAndCreateView(APIViewWithPagination):
@@ -97,3 +98,32 @@ class FormGetUpdateAndDeleteView(APIView):
     def delete(self, request, form_id):
         delete_form(form_id, request.user.defaultTenantUser().tenant)
         return Response(status=status.HTTP_200_OK)
+
+
+class CardCreateAndDeleteView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
+
+    def post(self, request):
+
+        serializer = CardSerializer(data=request.data)
+
+        if serializer.is_valid():
+
+            form = get_form(
+                request.data.get("form_id"), request.user.defaultTenantUser().tenant
+            )
+
+            card = create_card(
+                form,
+                serializer.validated_data.get("name"),
+                serializer.validated_data.get("fields"),
+            )
+
+            serialized_card = CardSerializer(card)
+            return Response(serialized_card.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, card_id):
+        delete_card(card_id)
+        return Response(status=status.HTTP_204_NO_CONTENT)
