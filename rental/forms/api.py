@@ -15,6 +15,7 @@ from rental.forms.features import (
     rename_form,
     delete_form,
     delete_card,
+    update_card,
 )
 from rental.forms.serializer import FormSerializer, CardSerializer
 
@@ -100,7 +101,7 @@ class FormGetUpdateAndDeleteView(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class CardCreateAndDeleteView(APIView):
+class CardCreateUpdateAndDeleteView(APIView):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
     def post(self, request):
@@ -127,3 +128,20 @@ class CardCreateAndDeleteView(APIView):
     def delete(self, request, card_id):
         delete_card(card_id)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def put(self, request):
+
+        serializer = CardSerializer(data=request.data)
+
+        if serializer.is_valid():
+
+            card = update_card(
+                request.data.get("id"),
+                serializer.validated_data.get("name"),
+                request.data.get("fields"),
+            )
+            serialized_card = CardSerializer(card)
+            return Response(serialized_card.data, status=status.HTTP_200_OK)
+        else:
+            print(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

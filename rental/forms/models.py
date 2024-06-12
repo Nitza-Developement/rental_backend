@@ -42,16 +42,26 @@ class Card(models.Model):
 
 class Field(models.Model):
 
+    TEXT = "TEXT"
+    NUMBER = "NUMBER"
+    SINGLE_CHECK = "SINGLE_CHECK"
+    IMAGE = "IMAGE"
+    SIGNATURE = "SIGNATURE"
+    EMAIL = "EMAIL"
+    PHONE = "PHONE"
+    DATE = "DATE"
+    TIME = "TIME"
+
     FORM_FIELD_TYPES = (
-        ("TEXT", "Text"),
-        ("NUMBER", "Number"),
-        ("SINGLE_CHECK", "Single Check"),
-        ("IMAGE", "Image"),
-        ("SIGNATURE", "Signature"),
-        ("EMAIL", "Email"),
-        ("PHONE", "Phone"),
-        ("DATE", "Date"),
-        ("TIME", "Time"),
+        (TEXT, "Text"),
+        (NUMBER, "Number"),
+        (SINGLE_CHECK, "Single Check"),
+        (IMAGE, "Image"),
+        (SIGNATURE, "Signature"),
+        (EMAIL, "Email"),
+        (PHONE, "Phone"),
+        (DATE, "Date"),
+        (TIME, "Time"),
     )
 
     name = models.CharField(max_length=255)
@@ -67,10 +77,14 @@ class Field(models.Model):
 
 class CheckOption(models.Model):
 
+    DEFAULT = "DEFAULT"
+    POINT_PASS = "POINT_PASS"
+    POINT_FAIL = "POINT_FAIL"
+
     CHECKOPTION_TYPES = (
-        ("DEFAULT", "default"),
-        ("POINT_PASS", "Point pass"),
-        ("POINT_FAIL", "Point fail"),
+        (DEFAULT, "default"),
+        (POINT_PASS, "Point pass"),
+        (POINT_FAIL, "Point fail"),
     )
 
     name = models.CharField(max_length=255, blank=True)
@@ -78,6 +92,9 @@ class CheckOption(models.Model):
         Field, on_delete=models.CASCADE, related_name="check_options"
     )
     type = models.CharField(max_length=20, choices=CHECKOPTION_TYPES, default="DEFAULT")
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class FieldResponse(models.Model):
