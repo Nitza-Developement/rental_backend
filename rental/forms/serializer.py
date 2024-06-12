@@ -1,12 +1,18 @@
 from rest_framework import serializers
-from rental.forms.models import Form, Card, Field, FieldResponse, Inspection
+from rental.forms.models import (
+    Form,
+    Card,
+    Field,
+    FieldResponse,
+    Inspection,
+    CheckOption,
+)
 
 
 class InspectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Inspection
         fields = ("id", "vehicle")
-        read_only_fields = ["id"]
 
 
 class FieldResponseSerializer(serializers.ModelSerializer):
@@ -16,13 +22,20 @@ class FieldResponseSerializer(serializers.ModelSerializer):
         fields = ("inspection", "note", "content", "checked")
 
 
+class CheckOptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CheckOption
+        fields = ("id", "name", "type")
+
+
 class FieldSerializer(serializers.ModelSerializer):
 
     field_response = FieldResponseSerializer(required=False, many=True)
+    check_options = CheckOptionSerializer(required=False, many=True)
 
     class Meta:
         model = Field
-        fields = ("id", "name", "type", "required", "field_response")
+        fields = ("id", "name", "type", "required", "check_options", "field_response")
 
 
 class CardSerializer(serializers.ModelSerializer):

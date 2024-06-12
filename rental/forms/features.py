@@ -1,4 +1,4 @@
-from rental.forms.models import Card, Form, Field
+from rental.forms.models import Card, Form, Field, CheckOption
 from settings.utils.exceptions import NotFound404APIException
 
 
@@ -62,10 +62,14 @@ def create_card(form, name, fields):
             required=_field["required"],
             card=card,
         )
-        # TODO
-        # if field.type == Field.SINGLE_CHECK:
-        #    CheckOption.objects.create(name=_field["pointPass"], field=field)
-        #    CheckOption.objects.create(name=_field["pointFail"], field=field)
+
+        if field.type == "SINGLE_CHECK":
+
+            for option in _field.get("check_options"):
+
+                CheckOption.objects.create(
+                    name=option.get("name"), type=option.get("type"), field=field
+                )
     return card
 
 

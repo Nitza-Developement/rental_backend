@@ -66,10 +66,18 @@ class Field(models.Model):
 
 
 class CheckOption(models.Model):
+
+    CHECKOPTION_TYPES = (
+        ("DEFAULT", "default"),
+        ("POINT_PASS", "Point pass"),
+        ("POINT_FAIL", "Point fail"),
+    )
+
     name = models.CharField(max_length=255, blank=True)
     field = models.ForeignKey(
         Field, on_delete=models.CASCADE, related_name="check_options"
     )
+    type = models.CharField(max_length=20, choices=CHECKOPTION_TYPES, default="DEFAULT")
 
 
 class FieldResponse(models.Model):
