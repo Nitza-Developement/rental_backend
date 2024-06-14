@@ -105,9 +105,11 @@ class FormImportView(APIView):
 class FormCloneView(APIView):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
-    def post(self, request, form_id):
+    def post(self, request):
 
-        form = clone_form(form_id, request.user.defaultTenantUser().tenant)
+        form = clone_form(
+            request.data.get("form_id"), request.user.defaultTenantUser().tenant
+        )
 
         serializer = FormSerializer(form)
 

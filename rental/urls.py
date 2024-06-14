@@ -124,5 +124,5 @@ urlpatterns = [
         CardCreateUpdateAndDeleteView.as_view(),
         name="delete-card",
     ),
-    path("forms/clone/<int:form_id>", FormCloneView.as_view(), name="clone-form"),
+    path("forms/clone", FormCloneView.as_view(), name="clone-form"),
 ]
