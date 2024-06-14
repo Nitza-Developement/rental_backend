@@ -24,6 +24,7 @@ from rental.tracker.api import (
 from rental.forms.api import (
     FormListAndCreateView,
     FormImportView,
+    FormCloneView,
     FormGetUpdateAndDeleteView,
     CardCreateUpdateAndDeleteView,
 )
@@ -113,4 +114,5 @@ urlpatterns = [
         CardCreateUpdateAndDeleteView.as_view(),
         name="delete-card",
     ),
+    path("forms/clone/<int:form_id>", FormCloneView.as_view(), name="clone-form"),
 ]

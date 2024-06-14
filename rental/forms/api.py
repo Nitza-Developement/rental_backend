@@ -10,6 +10,7 @@ from rental.forms.features import (
     get_forms,
     get_form,
     import_forms,
+    clone_form,
     create_form,
     create_card,
     rename_form,
@@ -51,26 +52,6 @@ class FormListAndCreateView(APIViewWithPagination):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class FormImportView(APIView):
-    permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
-
-    def post(self, request):
-
-        serializer = FormSerializer(data=request.data, many=True)
-
-        if serializer.is_valid():
-
-            created_forms = import_forms(
-                request.user.defaultTenantUser().tenant, serializer.validated_data
-            )
-            serialized_forms = FormSerializer(created_forms, many=True)
-
-            return Response(serialized_forms.data, status=status.HTTP_201_CREATED)
-
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 class FormGetUpdateAndDeleteView(APIView):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
@@ -99,6 +80,38 @@ class FormGetUpdateAndDeleteView(APIView):
     def delete(self, request, form_id):
         delete_form(form_id, request.user.defaultTenantUser().tenant)
         return Response(status=status.HTTP_200_OK)
+
+
+class FormImportView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
+
+    def post(self, request):
+
+        serializer = FormSerializer(data=request.data, many=True)
+
+        if serializer.is_valid():
+
+            created_forms = import_forms(
+                request.user.defaultTenantUser().tenant, serializer.validated_data
+            )
+            serialized_forms = FormSerializer(created_forms, many=True)
+
+            return Response(serialized_forms.data, status=status.HTTP_201_CREATED)
+
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FormCloneView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
+
+    def post(self, request, form_id):
+
+        form = clone_form(form_id, request.user.defaultTenantUser().tenant)
+
+        serializer = FormSerializer(form)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class CardCreateUpdateAndDeleteView(APIView):

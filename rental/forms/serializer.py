@@ -50,7 +50,8 @@ class CardSerializer(serializers.ModelSerializer):
 class FormSerializer(serializers.ModelSerializer):
 
     cards = CardSerializer(many=True, required=False)
+    inspections = InspectionSerializer(many=True, required=False)
 
     class Meta:
         model = Form
-        fields = ("id", "name", "created_at", "cards")
+        fields = ("id", "name", "created_at", "cards", "inspections")

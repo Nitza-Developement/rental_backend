@@ -76,6 +76,45 @@ def delete_form(form_id, tenant):
     raise NotFound404APIException(f"Form with ID {form_id} doesnt exists")
 
 
+def clone_form(form_id, tenant):
+
+    form = get_form(form_id, tenant)
+    form.is_active = False
+    form.save()
+
+    cards = Card.objects.filter(form=form).all()
+
+    form.pk = None
+    form._state.adding = True
+
+    form.is_active = True
+    form.tenant = tenant
+    form.save()
+
+    for card in cards:
+        fields = Field.objects.filter(card=card).all()
+
+        card.pk = None
+        card._state.adding = True
+        card.form = form
+        card.save()
+
+        for field in fields:
+            check_options = CheckOption.objects.filter(field=field).all()
+            field.pk = None
+            field._state.adding = True
+            field.card = card
+            field.save()
+
+            for option in check_options:
+                option.pk = None
+                option._state.adding = True
+                option.field = field
+                option.save()
+
+    return form
+
+
 def create_card(form, name, fields):
     card = Card.objects.create(name=name, form=form)
 
