@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from rental.toll.models import TollDue
 
+from rental.vehicle.serializer import VehiclePlateSerializer
+
 
 class TollDueSerializer(serializers.ModelSerializer):
     class Meta:

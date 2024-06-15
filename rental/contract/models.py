@@ -3,6 +3,7 @@ from rental.tenant.models import Tenant
 from rental.client.models import Client
 from rental.vehicle.models import Vehicle
 from rental.rentalPlan.models import RentalPlan
+from auditlog.models import AuditlogHistoryField
 
 
 class Contract(models.Model):
@@ -21,6 +22,7 @@ class Contract(models.Model):
     creation_date = models.DateTimeField(auto_now=True)
     active_date = models.DateTimeField(null=True, blank=True)
     end_date = models.DateTimeField(null=True, blank=True)
+    history = AuditlogHistoryField()
 
     def __str__(self) -> str:
         return f"{self.tenant} | {self.client} | {self.vehicle}"
@@ -48,6 +50,7 @@ class StageUpdate(models.Model):
     reason = models.CharField(max_length=255, null=True, blank=True)
     comments = models.CharField(max_length=255, null=True, blank=True)
     stage = models.CharField(max_length=100, choices=STAGE_CHOICES)
+    history = AuditlogHistoryField()
     contract = models.ForeignKey(
         Contract, on_delete=models.CASCADE, related_name="stages_updates"
     )
