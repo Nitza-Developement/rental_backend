@@ -14,21 +14,4 @@ class Migration(migrations.Migration):
             model_name="vehicle",
             name="model",
         ),
-        migrations.AlterModelOptions(
-            name="form",
-            options={"ordering": ["name"]},
-        ),
-        migrations.AddField(
-            model_name="checkoption",
-            name="type",
-            field=models.CharField(
-                choices=[
-                    ("DEFAULT", "default"),
-                    ("POINT_PASS", "Point pass"),
-                    ("POINT_FAIL", "Point fail"),
-                ],
-                default="DEFAULT",
-                max_length=20,
-            ),
-        ),
     ]

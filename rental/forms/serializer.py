@@ -4,15 +4,8 @@ from rental.forms.models import (
     Card,
     Field,
     FieldResponse,
-    Inspection,
     CheckOption,
 )
-
-
-class InspectionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Inspection
-        fields = ("id", "vehicle")
 
 
 class FieldResponseSerializer(serializers.ModelSerializer):
@@ -50,7 +43,6 @@ class CardSerializer(serializers.ModelSerializer):
 class FormSerializer(serializers.ModelSerializer):
 
     cards = CardSerializer(many=True, required=False)
-    inspections = InspectionSerializer(many=True, required=False)
 
     class Meta:
         model = Form

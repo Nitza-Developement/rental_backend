@@ -1,5 +1,5 @@
 from django.db import models
-from rental.models import Tenant, TenantUser, Vehicle
+from rental.models import Tenant, TenantUser
 
 
 class Form(models.Model):
@@ -13,23 +13,6 @@ class Form(models.Model):
 
     def __str__(self) -> str:
         return self.name
-
-
-class Inspection(models.Model):
-    form = models.ForeignKey(Form, on_delete=models.CASCADE, related_name="inspections")
-    tenant = models.ForeignKey(
-        Tenant, on_delete=models.CASCADE, related_name="inspections"
-    )
-    vehicle = models.ForeignKey(
-        Vehicle, on_delete=models.CASCADE, related_name="inspections"
-    )
-    tenantUser = models.ForeignKey(
-        TenantUser, on_delete=models.CASCADE, related_name="inspections"
-    )
-    created_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self) -> str:
-        return self.form.name
 
 
 class Card(models.Model):

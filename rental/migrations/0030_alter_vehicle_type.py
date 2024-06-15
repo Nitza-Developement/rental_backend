@@ -24,22 +24,4 @@ class Migration(migrations.Migration):
                 ]
             ),
         ),
-        migrations.AlterField(
-            model_name="field",
-            name="type",
-            field=models.CharField(
-                choices=[
-                    ("TEXT", "Text"),
-                    ("NUMBER", "Number"),
-                    ("SINGLE_CHECK", "Single Check"),
-                    ("IMAGE", "Image"),
-                    ("SIGNATURE", "Signature"),
-                    ("EMAIL", "Email"),
-                    ("PHONE", "Phone"),
-                    ("DATE", "Date"),
-                    ("TIME", "Time"),
-                ],
-                max_length=20,
-            ),
-        ),
     ]

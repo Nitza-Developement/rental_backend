@@ -29,6 +29,8 @@ from rental.forms.api import (
     CardCreateUpdateAndDeleteView,
 )
 
+from rental.inspections.api import InspectionListAndCreateView, FormsAndVehiclesGet
+
 urlpatterns = [
     path("login", TokenObtainPairView.as_view(), name="login"),
     path("login/refresh", TokenRefreshView.as_view(), name="refresh"),
@@ -125,4 +127,10 @@ urlpatterns = [
         name="delete-card",
     ),
     path("forms/clone", FormCloneView.as_view(), name="clone-form"),
+    path("inspections", InspectionListAndCreateView.as_view(), name="inspections"),
+    path(
+        "inspections/forms-and-vehicles",
+        FormsAndVehiclesGet.as_view(),
+        name="forms-and-vehicles",
+    ),
 ]

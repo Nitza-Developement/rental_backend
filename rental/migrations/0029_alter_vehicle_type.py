@@ -26,28 +26,4 @@ class Migration(migrations.Migration):
                 ]
             ),
         ),
-        migrations.AlterModelOptions(
-            name="form",
-            options={"ordering": ["created_at"]},
-        ),
-        migrations.AlterField(
-            model_name="card",
-            name="form",
-            field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="cards",
-                to="rental.form",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="fieldresponse",
-            name="check_option",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.SET_NULL,
-                related_name="response",
-                to="rental.checkoption",
-            ),
-        ),
     ]
