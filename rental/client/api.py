@@ -3,8 +3,18 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
-from rental.client.serializer import ClientListSerializer, ClientCreateSerializer, ClientUpdateSerializer
-from rental.client.features import delete_client, get_client, get_clients, create_client, update_client
+from rental.client.serializer import (
+    ClientListSerializer,
+    ClientCreateSerializer,
+    ClientUpdateSerializer,
+)
+from rental.client.features import (
+    delete_client,
+    get_client,
+    get_clients,
+    create_client,
+    update_client,
+)
 from rental.client.exceptions import validate_client_and_handle_errors
 from settings.utils.api import APIViewWithPagination
 from settings.utils.exceptions import BadRequest400APIException, NotFound404APIException
@@ -17,10 +27,8 @@ class ClientListAndCreateView(APIViewWithPagination):
         try:
             clients_list = get_clients(request.user.defaultTenantUser().tenant)
             paginator = self.pagination_class()
-            paginated_clients = paginator.paginate_queryset(
-                clients_list, request)
-            serialized_list = ClientListSerializer(
-                paginated_clients, many=True)
+            paginated_clients = paginator.paginate_queryset(clients_list, request)
+            serialized_list = ClientListSerializer(paginated_clients, many=True)
             return paginator.get_paginated_response(serialized_list.data)
         except Exception as e:
             raise BadRequest400APIException(str(e))
@@ -30,10 +38,10 @@ class ClientListAndCreateView(APIViewWithPagination):
         validate_client_and_handle_errors(serializer)
 
         created_client = create_client(
-            name=serializer.validated_data['name'],
-            email=serializer.validated_data['email'],
-            phone_number=serializer.validated_data['phone_number'],
-            tenant=request.user.defaultTenantUser().tenant
+            name=serializer.validated_data["name"],
+            email=serializer.validated_data["email"],
+            phone_number=serializer.validated_data["phone_number"],
+            tenant=request.user.defaultTenantUser().tenant,
         )
 
         serialized_client = ClientListSerializer(created_client)
@@ -52,15 +60,14 @@ class ClientGetUpdateAndDeleteView(APIView):
             raise BadRequest400APIException(str(e))
 
     def put(self, request, client_id):
-        serializer = ClientUpdateSerializer(
-            data=request.data | {'id': client_id})
+        serializer = ClientUpdateSerializer(data=request.data | {"id": client_id})
         validate_client_and_handle_errors(serializer)
 
         updated_client = update_client(
             client_id=client_id,
-            name=serializer.validated_data.get('name'),
-            email=serializer.validated_data.get('email'),
-            phone_number=serializer.validated_data.get('phone_number')
+            name=serializer.validated_data.get("name"),
+            email=serializer.validated_data.get("email"),
+            phone_number=serializer.validated_data.get("phone_number"),
         )
 
         serialized_client = ClientListSerializer(updated_client)

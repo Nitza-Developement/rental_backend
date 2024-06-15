@@ -5,17 +5,18 @@ from auditlog.models import AuditlogHistoryField
 
 
 class TollDue(models.Model):
-    PAID = 'Paid'
-    UNPAID = 'Unpaid'
+    PAID = "Paid"
+    UNPAID = "Unpaid"
 
-    STAGE_CHOICES = [
-        (PAID, 'Paid'),
-        (UNPAID, 'Unpaid')
-    ]
+    STAGE_CHOICES = [(PAID, "Paid"), (UNPAID, "Unpaid")]
 
     amount = models.IntegerField()
-    plate = models.ForeignKey(VehiclePlate, on_delete=models.CASCADE, related_name='toll_dues')
-    contract = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name='toll_dues')
+    plate = models.ForeignKey(
+        VehiclePlate, on_delete=models.CASCADE, related_name="toll_dues"
+    )
+    contract = models.ForeignKey(
+        Contract, on_delete=models.CASCADE, related_name="toll_dues"
+    )
     stage = models.CharField(max_length=6, choices=STAGE_CHOICES)
     invoice = models.CharField(max_length=255, null=True, blank=True)
     invoiceNumber = models.CharField(max_length=255, null=True, blank=True)
@@ -24,8 +25,8 @@ class TollDue(models.Model):
     history = AuditlogHistoryField()
 
     def __str__(self) -> str:
-        return f'{self.plate} | {self.amount} | {self.stage}'
-    
+        return f"{self.plate} | {self.amount} | {self.stage}"
+
     class Meta:
-        verbose_name = 'TollDue'
-        ordering = ['createDate']
+        verbose_name = "TollDue"
+        ordering = ["createDate"]

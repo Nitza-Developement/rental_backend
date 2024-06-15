@@ -7,13 +7,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rental', '0018_contract_note_rentalplan_contract_rental_plan_and_more'),
+        ("rental", "0018_contract_note_rentalplan_contract_rental_plan_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='stageupdate',
-            name='previous_stage',
-            field=models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='next_stages', to='rental.stageupdate'),
+            model_name="stageupdate",
+            name="previous_stage",
+            field=models.ForeignKey(
+                blank=True,
+                default=None,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="next_stages",
+                to="rental.stageupdate",
+            ),
         ),
     ]

@@ -7,18 +7,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rental', '0011_alter_customuser_options_and_more'),
+        ("rental", "0011_alter_customuser_options_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='client',
-            name='tenant',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='clients', to='rental.tenant'),
+            model_name="client",
+            name="tenant",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="clients",
+                to="rental.tenant",
+            ),
         ),
         migrations.AlterField(
-            model_name='tenantuser',
-            name='tenant',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tenantUsers', to='rental.tenant'),
+            model_name="tenantuser",
+            name="tenant",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="tenantUsers",
+                to="rental.tenant",
+            ),
         ),
     ]

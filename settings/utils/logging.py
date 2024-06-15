@@ -1,7 +1,7 @@
 import logging
 
 
-__logger = logging.getLogger('api')
+__logger = logging.getLogger("api")
 
 
 def log_error(message: str):

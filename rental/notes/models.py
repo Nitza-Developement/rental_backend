@@ -6,12 +6,14 @@ from auditlog.models import AuditlogHistoryField
 
 def get_file_path(note, filename: str):
 
-    return f'tenant/{note.contract.tenant.id}/contract/{note.contract.id}/notes/{note.id}/{filename}'
+    return f"tenant/{note.contract.tenant.id}/contract/{note.contract.id}/notes/{note.id}/{filename}"
 
 
 class Note(models.Model):
-    contract = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name='notes')
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='notes')
+    contract = models.ForeignKey(
+        Contract, on_delete=models.CASCADE, related_name="notes"
+    )
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name="notes")
     subject = models.CharField(max_length=255)
     body = models.TextField()
     createdDate = models.DateTimeField(auto_now=True)
@@ -20,9 +22,9 @@ class Note(models.Model):
     history = AuditlogHistoryField()
 
     def __str__(self) -> str:
-        return f'{self.subject} | {self.body}'
-    
+        return f"{self.subject} | {self.body}"
+
     class Meta:
-        verbose_name = 'Note'
-        verbose_name_plural = 'Notes'
-        ordering = ['createdDate']
+        verbose_name = "Note"
+        verbose_name_plural = "Notes"
+        ordering = ["createdDate"]

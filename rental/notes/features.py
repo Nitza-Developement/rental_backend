@@ -14,7 +14,7 @@ def get_note(note_id: str):
     try:
         note = Note.objects.get(id=note_id)
     except Note.DoesNotExist:
-        raise NotFound404APIException(f'Note with id {note_id} not found')
+        raise NotFound404APIException(f"Note with id {note_id} not found")
 
     return note
 
@@ -25,7 +25,7 @@ def create_note(
     subject: str,
     body: str,
     remainder: str = None,
-    file: str = None
+    file: str = None,
 ):
 
     new_note = Note.objects.create(
@@ -34,7 +34,7 @@ def create_note(
         subject=subject,
         body=body,
         remainder=remainder,
-        file=file
+        file=file,
     )
     new_note.save()
     return new_note
@@ -47,12 +47,12 @@ def update_note(
     subject: str = None,
     body: str = None,
     remainder: str = None,
-    file: str = None
+    file: str = None,
 ):
     try:
         note = Note.objects.get(id=note_id)
     except Note.DoesNotExist:
-        raise NotFound404APIException(f'Note with id {note_id} not found')
+        raise NotFound404APIException(f"Note with id {note_id} not found")
 
     if contract:
         note.contract = contract
@@ -77,4 +77,4 @@ def delete_note(note_id):
         note = Note.objects.get(id=note_id)
         note.delete()
     except Note.DoesNotExist:
-        raise NotFound404APIException(f'Note with id {note_id} not found')
+        raise NotFound404APIException(f"Note with id {note_id} not found")

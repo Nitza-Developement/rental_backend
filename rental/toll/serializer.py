@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rental.toll.models import TollDue
+
 from rental.vehicle.serializer import VehiclePlateSerializer
 
 
@@ -29,12 +30,6 @@ class TollDueSerializer(serializers.ModelSerializer):
         if value not in [TollDue.PAID, TollDue.UNPAID]:
             raise serializers.ValidationError(message="Invalid stage", code="invalid")
         return value
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation["plate"] = VehiclePlateSerializer(instance.plate).data
-
-        return representation
 
 
 class CreateTollDueSerializer(serializers.ModelSerializer):
