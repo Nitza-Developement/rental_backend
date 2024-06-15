@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view, permission_classes
 from settings.utils.api import APIViewWithPagination
 from rest_framework.permissions import IsAuthenticated
 from rental.contract.exceptions import validate_and_handle_errors
@@ -16,6 +17,7 @@ from rental.contract.features import (
     get_contracts,
     update_contract,
     create_stage_update,
+    get_contract_history
 )
 from settings.utils.exceptions import BadRequest400APIException
 from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
@@ -89,3 +91,11 @@ class GetUpdatePatchContractView(APIView):
         )  # This is to update the contract after changed the stage
         serialized_contract = ContractSerializer(contract)
         return Response(serialized_contract.data, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated, IsAdminOrStaffTenantUser])
+def get_contract_timeline(request, contract_id):
+    history_data = get_contract_history(contract_id)
+
+    return Response(history_data, status=status.HTTP_200_OK)

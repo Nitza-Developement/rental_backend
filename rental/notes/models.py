@@ -1,6 +1,7 @@
 from django.db import models
 from rental.user.models import User
 from rental.contract.models import Contract
+from auditlog.models import AuditlogHistoryField
 
 
 def get_file_path(note, filename: str):
@@ -17,7 +18,8 @@ class Note(models.Model):
     body = models.TextField()
     createdDate = models.DateTimeField(auto_now=True)
     remainder = models.DateTimeField(null=True, blank=True)
-    file = models.FileField(upload_to="notes/", null=True, blank=True)
+    file = models.FileField(upload_to=get_file_path, null=True, blank=True)
+    history = AuditlogHistoryField()
 
     def __str__(self) -> str:
         return f"{self.subject} | {self.body}"

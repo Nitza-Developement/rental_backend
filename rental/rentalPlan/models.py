@@ -1,5 +1,6 @@
 from django.db import models
 from rental.tenant.models import Tenant
+from auditlog.models import AuditlogHistoryField
 
 
 class RentalPlan(models.Model):
@@ -16,6 +17,7 @@ class RentalPlan(models.Model):
     name = models.CharField(max_length=255)
     amount = models.IntegerField(default=0)
     periodicity = models.CharField(max_length=10, choices=PERIODICITY_CHOICES)
+    history = AuditlogHistoryField()
     tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name="plans")
 
     def __str__(self) -> str:

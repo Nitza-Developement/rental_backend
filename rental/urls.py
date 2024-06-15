@@ -7,14 +7,14 @@ from rental.tenantUser.api import (
     GetUpdateAndDeleteTenantUserView,
 )
 from rental.client.api import ClientListAndCreateView, ClientGetUpdateAndDeleteView
-from rental.vehicle.api import ListAndCreateVehicleView, GetUpdateAndDeleteVehicleView
+from rental.vehicle.api import ListAndCreateVehicleView, GetUpdateAndDeleteVehicleView, get_vehicle_timeline
 from rental.rentalPlan.api import (
     ListAndCreateRentalPlansView,
     GetUpdateAndDeleteARentalPlanView,
 )
 from rental.notes.api import ListAndCreateNotesView, GetUpdateAndDeleteANoteView
 from rental.toll.api import ListAndCreateTollDuesView, GetUpdateAndDeleteATollDueView
-from rental.contract.api import ListAndCreateContractView, GetUpdatePatchContractView
+from rental.contract.api import ListAndCreateContractView, GetUpdatePatchContractView, get_contract_timeline
 from rental.tracker.api import (
     ListAndCreateTrackersView,
     ListAndCreateTrackerHeartBeatDataView,
@@ -53,6 +53,11 @@ urlpatterns = [
         GetUpdateAndDeleteVehicleView.as_view(),
         name="vehicle-actions",
     ),
+    path(
+        "vehicle/<int:vehicle_id>/history",
+        get_vehicle_timeline,
+        name="vehicle-actions",
+    ),
     path("rental-plan", ListAndCreateRentalPlansView.as_view(), name="rental-plan"),
     path(
         "rental-plan/<int:rental_plan_id>",
@@ -63,6 +68,11 @@ urlpatterns = [
     path(
         "contract/<int:contract_id>",
         GetUpdatePatchContractView.as_view(),
+        name="contract-actions",
+    ),
+    path(
+        "contract/<int:contract_id>/history",
+        get_contract_timeline,
         name="contract-actions",
     ),
     path("notes", ListAndCreateNotesView.as_view(), name="notes"),
