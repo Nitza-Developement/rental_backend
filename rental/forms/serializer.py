@@ -47,3 +47,4 @@ class FormSerializer(serializers.ModelSerializer):
     class Meta:
         model = Form
         fields = ("id", "name", "created_at", "cards", "inspections")
+        extra_kwargs = {"inspections": {"required": False}}
