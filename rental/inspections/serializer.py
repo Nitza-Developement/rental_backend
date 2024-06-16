@@ -8,4 +8,4 @@ class InspectionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Inspection
-        fields = ("id", "vehicle", "form", "created_at")
+        fields = ("id", "vehicle", "form", "created_at", "field_responses")
