@@ -16,5 +16,6 @@ class IsAdminOrStaffTenantUser(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.defaultTenantUser() and (
             request.user.defaultTenantUser().role == TenantUser.ADMIN
+            or request.user.defaultTenantUser().role == TenantUser.STAFF
             or request.user.defaultTenantUser().role == TenantUser.OWNER
         )
