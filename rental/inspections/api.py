@@ -8,8 +8,11 @@ from settings.utils.exceptions import BadRequest400APIException
 
 from rental.forms.models import Form
 from rental.models import Vehicle
-from rental.inspections.serializer import InspectionSerializer
-from rental.inspections.features import get_inspections
+from rental.inspections.serializer import (
+    InspectionSerializer,
+    CreateInspectionSerializer,
+)
+from rental.inspections.features import get_inspections, create_inspection
 
 
 class InspectionListAndCreateView(APIViewWithPagination):
@@ -27,22 +30,23 @@ class InspectionListAndCreateView(APIViewWithPagination):
 
     def post(self, request):
 
-        # serializer = FormSerializer(data=request.data)
+        serializer = CreateInspectionSerializer(
+            data=request.data, context={"request": request}
+        )
 
-        # if serializer.is_valid():
+        if serializer.is_valid():
+            inspection = create_inspection(
+                form=serializer.validated_data["form"],
+                vehicle=serializer.validated_data["vehicle"],
+                tenant=request.user.defaultTenantUser().tenant,
+                tenantUser=request.user.defaultTenantUser(),
+            )
 
-        #     created_form = create_form(
-        #         request.user.defaultTenantUser().tenant,
-        #         serializer.validated_data,
-        #     )
-        #     serialized_form = FormSerializer(created_form)
+            serialized_inspection = InspectionSerializer(inspection)
+            return Response(serialized_inspection.data, status=status.HTTP_201_CREATED)
 
-        #     return Response(serialized_form.data, status=status.HTTP_201_CREATED)
-
-        # else:
-        #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        return Response("ok")
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class FormsAndVehiclesGet(APIView):
@@ -57,9 +61,10 @@ class FormsAndVehiclesGet(APIView):
 
         return Response(
             {
-                "forms": [{"id": form.id, "name": form.name} for form in forms],
+                "forms": [{"value": form.id, "name": form.name} for form in forms],
                 "vehicles": [
-                    {"id": vehicle.id, "name": vehicle.nickname} for vehicle in vehicles
+                    {"value": vehicle.id, "name": vehicle.nickname}
+                    for vehicle in vehicles
                 ],
             }
         )
