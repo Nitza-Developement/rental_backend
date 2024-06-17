@@ -29,6 +29,8 @@ from rental.adminInline import (
     StageUpdateInline,
 )
 
+from rental.forms.models import Form, Card, Field, FieldResponse
+from rental.inspections.models import Inspection
 
 admin.site.site_title = "Fleet Admin Site"
 admin.site.site_header = "Administration Panel"
@@ -163,3 +165,28 @@ class RentalPlanAdmin(admin.ModelAdmin):
 @admin.register(VehiclePlate)
 class VehiclePlateAdmin(admin.ModelAdmin):
     list_display = ("id", "plate", "is_active")
+
+
+@admin.register(Form)
+class FormAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "created_at", "is_active")
+
+
+@admin.register(Card)
+class CardAdmin(admin.ModelAdmin):
+    list_display = ("id", "name")
+
+
+@admin.register(Field)
+class FieldAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "type")
+
+
+@admin.register(FieldResponse)
+class FieldResponseAdmin(admin.ModelAdmin):
+    list_display = ("id", "inspection", "created_at")
+
+
+@admin.register(Inspection)
+class InspectionAdmin(admin.ModelAdmin):
+    list_display = ("id", "form", "created_at")

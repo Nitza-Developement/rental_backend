@@ -10,14 +10,13 @@ from rental.tracker.models import Tracker, TrackerHeartBeatData
 from rental.vehicle.models import Vehicle, VehiclePlate, VehiclePicture
 from rental.forms.models import (
     Form,
-    Inspection,
     Card,
     Field,
     CheckOption,
     FieldResponse,
 )
 from auditlog.registry import auditlog
-
+from rental.inspections.models import Inspection
 
 auditlog.register(User)
 auditlog.register(TollDue)

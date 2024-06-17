@@ -21,7 +21,15 @@ from rental.tracker.api import (
     GetUpdateAndDeleteATrackerView,
     DeleteTrackerHeartBeatDataView,
 )
+from rental.forms.api import (
+    FormListAndCreateView,
+    FormImportView,
+    FormCloneView,
+    FormGetUpdateAndDeleteView,
+    CardCreateUpdateAndDeleteView,
+)
 
+from rental.inspections.api import InspectionListAndCreateView, FormsAndVehiclesGet
 
 urlpatterns = [
     path("login", TokenObtainPairView.as_view(), name="login"),
@@ -102,5 +110,27 @@ urlpatterns = [
         "tracker-heartbeat/<int:heartbeat_id>",
         DeleteTrackerHeartBeatDataView.as_view(),
         name="tracker-heartbeat-actions",
+    ),
+    path("forms", FormListAndCreateView.as_view(), name="forms"),
+    path(
+        "forms/<int:form_id>", FormGetUpdateAndDeleteView.as_view(), name="form-actions"
+    ),
+    path("forms/import", FormImportView.as_view(), name="import-forms"),
+    path(
+        "forms/cards",
+        CardCreateUpdateAndDeleteView.as_view(),
+        name="add-card",
+    ),
+    path(
+        "forms/cards/<int:card_id>",
+        CardCreateUpdateAndDeleteView.as_view(),
+        name="delete-card",
+    ),
+    path("forms/clone", FormCloneView.as_view(), name="clone-form"),
+    path("inspections", InspectionListAndCreateView.as_view(), name="inspections"),
+    path(
+        "inspections/forms-and-vehicles",
+        FormsAndVehiclesGet.as_view(),
+        name="forms-and-vehicles",
     ),
 ]
