@@ -12,7 +12,13 @@ from rental.inspections.serializer import (
     InspectionSerializer,
     CreateInspectionSerializer,
 )
-from rental.inspections.features import get_inspections, create_inspection
+from rental.inspections.features import (
+    get_inspections,
+    create_inspection,
+    get_inspection,
+)
+
+from rental.inspections.validators import validate_inspection_response
 
 
 class InspectionListAndCreateView(APIViewWithPagination):
@@ -49,6 +55,19 @@ class InspectionListAndCreateView(APIViewWithPagination):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class InspectionGetUpdateAndDeleteView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
+
+    def get(self, request, inspection_id):
+
+        inspection = get_inspection(
+            inspection_id, request.user.defaultTenantUser().tenant
+        )
+        serialized_inspection = InspectionSerializer(inspection)
+
+        return Response(serialized_inspection.data, status=status.HTTP_200_OK)
+
+
 class FormsAndVehiclesGet(APIView):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
@@ -68,3 +87,23 @@ class FormsAndVehiclesGet(APIView):
                 ],
             }
         )
+
+
+class InspectionCreateResponseView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
+
+    def post(self, request):
+
+        validate_inspection_response(request.data.dict(), request)
+
+        return Response("ok")
+
+        # serializer = CreateInspectionResponseSerializer(
+        #     data=request.data, context={"request": request}
+        # )
+
+        # if serializer.is_valid():
+
+        #     return Response(serializer.data, status=status.HTTP_200_OK)
+
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

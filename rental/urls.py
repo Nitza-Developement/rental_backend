@@ -7,14 +7,22 @@ from rental.tenantUser.api import (
     GetUpdateAndDeleteTenantUserView,
 )
 from rental.client.api import ClientListAndCreateView, ClientGetUpdateAndDeleteView
-from rental.vehicle.api import ListAndCreateVehicleView, GetUpdateAndDeleteVehicleView, get_vehicle_timeline
+from rental.vehicle.api import (
+    ListAndCreateVehicleView,
+    GetUpdateAndDeleteVehicleView,
+    get_vehicle_timeline,
+)
 from rental.rentalPlan.api import (
     ListAndCreateRentalPlansView,
     GetUpdateAndDeleteARentalPlanView,
 )
 from rental.notes.api import ListAndCreateNotesView, GetUpdateAndDeleteANoteView
 from rental.toll.api import ListAndCreateTollDuesView, GetUpdateAndDeleteATollDueView
-from rental.contract.api import ListAndCreateContractView, GetUpdatePatchContractView, get_contract_timeline
+from rental.contract.api import (
+    ListAndCreateContractView,
+    GetUpdatePatchContractView,
+    get_contract_timeline,
+)
 from rental.tracker.api import (
     ListAndCreateTrackersView,
     ListAndCreateTrackerHeartBeatDataView,
@@ -29,7 +37,12 @@ from rental.forms.api import (
     CardCreateUpdateAndDeleteView,
 )
 
-from rental.inspections.api import InspectionListAndCreateView, FormsAndVehiclesGet
+from rental.inspections.api import (
+    InspectionListAndCreateView,
+    FormsAndVehiclesGet,
+    InspectionGetUpdateAndDeleteView,
+    InspectionCreateResponseView,
+)
 
 urlpatterns = [
     path("login", TokenObtainPairView.as_view(), name="login"),
@@ -124,7 +137,7 @@ urlpatterns = [
     path(
         "forms/cards/<int:card_id>",
         CardCreateUpdateAndDeleteView.as_view(),
-        name="delete-card",
+        name="card-actions",
     ),
     path("forms/clone", FormCloneView.as_view(), name="clone-form"),
     path("inspections", InspectionListAndCreateView.as_view(), name="inspections"),
@@ -132,5 +145,15 @@ urlpatterns = [
         "inspections/forms-and-vehicles",
         FormsAndVehiclesGet.as_view(),
         name="forms-and-vehicles",
+    ),
+    path(
+        "inspections/<int:inspection_id>",
+        InspectionGetUpdateAndDeleteView.as_view(),
+        name="inspections-actions",
+    ),
+    path(
+        "inspections/response",
+        InspectionCreateResponseView.as_view(),
+        name="create-inspection-response",
     ),
 ]
