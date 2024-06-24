@@ -16,6 +16,7 @@ from rental.inspections.features import (
     get_inspections,
     create_inspection,
     get_inspection,
+    create_inspection_response,
 )
 
 from rental.inspections.validators import validate_inspection_response
@@ -94,16 +95,20 @@ class InspectionCreateResponseView(APIView):
 
     def post(self, request):
 
-        validate_inspection_response(request.data.dict(), request)
+        try:
+            validate_inspection_response(
+                request.data.dict(), request.user.defaultTenantUser().tenant
+            )
 
-        return Response("ok")
+            inspection = create_inspection_response(
+                request.data.dict(),
+                request.user.defaultTenantUser().tenant,
+                request.user.defaultTenantUser(),
+            )
 
-        # serializer = CreateInspectionResponseSerializer(
-        #     data=request.data, context={"request": request}
-        # )
+            serialized_inspection = InspectionSerializer(inspection)
 
-        # if serializer.is_valid():
+            return Response(serialized_inspection.data, status=status.HTTP_201_CREATED)
 
-        #     return Response(serializer.data, status=status.HTTP_200_OK)
-
-        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as errors:
+            raise BadRequest400APIException(str(errors))

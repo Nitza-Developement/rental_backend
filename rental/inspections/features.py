@@ -1,4 +1,5 @@
 from rental.inspections.models import Inspection
+from rental.forms.models import FieldResponse, Field
 from settings.utils.exceptions import NotFound404APIException
 
 
@@ -22,3 +23,33 @@ def create_inspection(form, vehicle, tenant, tenantUser):
         tenant=tenant,
         tenantUser=tenantUser,
     )
+
+
+def create_inspection_response(data: dict, tenant, tenantUser):
+    print(data)
+
+    inspection = get_inspection(data.pop("inspection"), tenant)
+
+    for field_id in data.keys():
+        content = data[field_id]
+
+        field = Field.objects.get(id=field_id)
+
+
+        if field.type in (Field.TEXT, Field.DATE, Field.TIME, Field.PHONE):
+            FieldResponse.objects.create(
+                field=field,
+                tenantUser=tenantUser,
+                inspection=inspection,
+                content=content
+
+            )
+
+
+        # FieldResponse.objects.create(
+
+        # )
+
+    print(inspection)
+
+    return inspection

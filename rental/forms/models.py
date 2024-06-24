@@ -84,7 +84,6 @@ class FieldResponse(models.Model):
     note = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now=True)
     content = models.TextField(blank=True, null=True)
-    checked = models.BooleanField(blank=True, null=True)
     field = models.ForeignKey(
         Field, on_delete=models.CASCADE, related_name="field_response"
     )
