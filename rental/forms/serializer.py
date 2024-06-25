@@ -12,7 +12,7 @@ class FieldResponseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FieldResponse
-        fields = ("inspection", "note", "content", "checked")
+        fields = ("note", "content", "check_option")
 
 
 class CheckOptionSerializer(serializers.ModelSerializer):

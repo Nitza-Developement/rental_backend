@@ -83,6 +83,7 @@ class CheckOption(models.Model):
 class FieldResponse(models.Model):
     note = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now=True)
+
     content = models.TextField(blank=True, null=True)
     field = models.ForeignKey(
         Field, on_delete=models.CASCADE, related_name="field_response"
@@ -90,7 +91,7 @@ class FieldResponse(models.Model):
     tenantUser = models.ForeignKey(
         TenantUser, on_delete=models.CASCADE, related_name="field_responses"
     )
-    check_option = models.ForeignKey(
+    check_option_selected = models.ForeignKey(
         CheckOption,
         on_delete=models.SET_NULL,
         null=True,
@@ -105,4 +106,4 @@ class FieldResponse(models.Model):
     )
 
     def __str__(self) -> str:
-        return str(self.inspection)
+        return f"{self.inspection} {self.field.name}"
