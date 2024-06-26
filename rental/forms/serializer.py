@@ -7,12 +7,29 @@ from rental.forms.models import (
     CheckOption,
 )
 
+from settings.settings import MINIO_STORAGE_MEDIA_BUCKET_NAME
+from settings.utils.minio_client import client
+
 
 class FieldResponseSerializer(serializers.ModelSerializer):
 
+    url_file = serializers.SerializerMethodField()
+
     class Meta:
         model = FieldResponse
-        fields = ("note", "content", "check_option")
+        fields = ("note", "content", "check_option_selected", "url_file")
+
+    def get_url_file(self, obj):
+
+        if obj.field.type in (Field.IMAGE, Field.SIGNATURE):
+
+            url = client.presigned_get_object(
+                MINIO_STORAGE_MEDIA_BUCKET_NAME, obj.content
+            )
+
+            return url
+
+        return None
 
 
 class CheckOptionSerializer(serializers.ModelSerializer):
@@ -23,12 +40,34 @@ class CheckOptionSerializer(serializers.ModelSerializer):
 
 class FieldSerializer(serializers.ModelSerializer):
 
-    field_response = FieldResponseSerializer(required=False, many=True)
     check_options = CheckOptionSerializer(required=False, many=True)
+    response = serializers.SerializerMethodField()
 
     class Meta:
         model = Field
-        fields = ("id", "name", "type", "required", "check_options", "field_response")
+        fields = (
+            "id",
+            "name",
+            "type",
+            "required",
+            "check_options",
+            "response",
+        )
+
+    def get_response(self, field):
+
+        inspection_id = self.context.get("inspection_id")
+
+        if inspection_id:
+
+            response = FieldResponse.objects.filter(
+                inspection__id=inspection_id,
+                field__id=field.id,
+            ).first()
+
+            return FieldResponseSerializer(response).data
+
+        return None
 
 
 class CardSerializer(serializers.ModelSerializer):

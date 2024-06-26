@@ -5,9 +5,16 @@ from rental.models import Vehicle
 from rental.forms.serializer import FormSerializer
 
 
+class VehicleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vehicle
+        fields = ("id", "vin", "model")
+
+
 class InspectionSerializer(serializers.ModelSerializer):
     form = FormSerializer(required=False)
     completed = serializers.SerializerMethodField()
+    vehicle = VehicleSerializer(required=False)
 
     class Meta:
         model = Inspection

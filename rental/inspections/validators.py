@@ -66,7 +66,6 @@ def validate_field_value(field: Field, value):
     elif field.type == Field.SINGLE_CHECK:
         valid_options = [option.id for option in field.check_options.all()]
 
-        print(value)
 
         if not value.isnumeric():
             raise ValueError(f"Field {field.id} must be a number")

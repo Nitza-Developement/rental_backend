@@ -64,7 +64,9 @@ class InspectionGetUpdateAndDeleteView(APIView):
         inspection = get_inspection(
             inspection_id, request.user.defaultTenantUser().tenant
         )
-        serialized_inspection = InspectionSerializer(inspection)
+        serialized_inspection = InspectionSerializer(
+            inspection, context={"inspection_id": inspection_id}
+        )
 
         return Response(serialized_inspection.data, status=status.HTTP_200_OK)
 
@@ -74,7 +76,9 @@ class FormsAndVehiclesGet(APIView):
 
     def get(self, request):
 
-        forms = Form.objects.filter(tenant=request.user.defaultTenantUser().tenant)
+        forms = Form.objects.filter(
+            tenant=request.user.defaultTenantUser().tenant, is_active=True
+        )
         vehicles = Vehicle.objects.filter(
             tenant=request.user.defaultTenantUser().tenant
         )

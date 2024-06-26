@@ -1,15 +1,8 @@
 from rental.inspections.models import Inspection
-from django.core.files.uploadedfile import InMemoryUploadedFile
 from rental.forms.models import FieldResponse, Field, CheckOption
 from settings.utils.exceptions import NotFound404APIException
-from minio import Minio
-from settings.settings import (
-    MINIO_STORAGE_ACCESS_KEY,
-    MINIO_STORAGE_SECRET_KEY,
-    MINIO_STORAGE_ENDPOINT,
-    MINIO_STORAGE_USE_HTTPS,
-    MINIO_STORAGE_MEDIA_BUCKET_NAME,
-)
+from settings.settings import MINIO_STORAGE_MEDIA_BUCKET_NAME
+from settings.utils.minio_client import client
 
 
 def get_inspection(inspection_id, tenant):
@@ -37,17 +30,6 @@ def create_inspection(form, vehicle, tenant, tenantUser):
 def create_inspection_response(data: dict, tenant, tenantUser):
 
     inspection = get_inspection(data.pop("inspection"), tenant)
-
-    client = Minio(
-        endpoint=MINIO_STORAGE_ENDPOINT,
-        access_key=MINIO_STORAGE_ACCESS_KEY,
-        secret_key=MINIO_STORAGE_SECRET_KEY,
-        secure=MINIO_STORAGE_USE_HTTPS,
-    )
-
-    found = client.bucket_exists(MINIO_STORAGE_MEDIA_BUCKET_NAME)
-    if not found:
-        client.make_bucket(MINIO_STORAGE_MEDIA_BUCKET_NAME)
 
     for field_id in data.keys():
 
@@ -83,7 +65,7 @@ def create_inspection_response(data: dict, tenant, tenantUser):
                 field=field,
                 tenantUser=tenantUser,
                 inspection=inspection,
-                check_option=check_option,
+                check_option_selected=check_option,
                 note=data.get(f"{field_id}:note"),
             )
 
@@ -102,7 +84,7 @@ def create_inspection_response(data: dict, tenant, tenantUser):
 
             result = client.put_object(
                 bucket_name=MINIO_STORAGE_MEDIA_BUCKET_NAME,
-                object_name=f"/inspections/{inspection.id}/{file_name}",
+                object_name=f"inspections/{inspection.id}/{file_name}",
                 data=file,
                 length=length_file,
             )
