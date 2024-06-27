@@ -1,6 +1,8 @@
+from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework.permissions import IsAuthenticated
 from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
 from settings.utils.api import APIViewWithPagination
@@ -17,6 +19,7 @@ from rental.inspections.features import (
     create_inspection,
     get_inspection,
     create_inspection_response,
+    create_inspection_pdf,
 )
 
 from rental.inspections.validators import validate_inspection_response
@@ -59,14 +62,21 @@ class InspectionListAndCreateView(APIViewWithPagination):
 class InspectionGetUpdateAndDeleteView(APIView):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
-    def get(self, request, inspection_id):
+    def get(self, request: Request, inspection_id):
 
         inspection = get_inspection(
             inspection_id, request.user.defaultTenantUser().tenant
         )
+
         serialized_inspection = InspectionSerializer(
             inspection, context={"inspection_id": inspection_id}
         )
+
+        create_pdf = request.query_params.get("create_pdf")
+
+        if create_pdf:
+
+            return create_inspection_pdf(serialized_inspection.data)
 
         return Response(serialized_inspection.data, status=status.HTTP_200_OK)
 
