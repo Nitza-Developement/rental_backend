@@ -8,3 +8,4 @@ from rental.seeders.vehicle import (
 from rental.seeders.rentalPlan import RentalPlanSeeder
 from rental.seeders.client import ClientSeeder
 from rental.seeders.contract import ContractSeeder
+from rental.seeders.inspections import InspectionSeeder

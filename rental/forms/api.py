@@ -141,6 +141,7 @@ class CardCreateUpdateAndDeleteView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, card_id):
+
         delete_card(card_id)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
