@@ -8,7 +8,7 @@ from django_seeding.seeder_registry import SeederRegistry
 @SeederRegistry.register
 class InspectionSeeder(seeders.Seeder):
     id = "InspectionSeeder"
-    priority = 3
+    priority = 9
 
     def seed(self):
         tenants = Tenant.objects.all()
