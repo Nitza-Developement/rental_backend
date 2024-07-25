@@ -6,11 +6,14 @@ from rental.user.api import (
     update_profile, 
     get_user_data
 )
+
 from rental.tenant.api import ListAndCreateTenantsView, GetUpdateAndDeleteATenantView
 from rental.tenantUser.api import (
     ListAndCreateTenantUserView,
     GetUpdateAndDeleteTenantUserView,
 )
+from rental.user.api import LogoutView, update_profile, get_user_data
+
 from rental.client.api import ClientListAndCreateView, ClientGetUpdateAndDeleteView
 from rental.vehicle.api import (
     ListAndCreateVehicleView,
@@ -49,6 +52,8 @@ from rental.inspections.api import (
     InspectionCreateResponseView,
 )
 
+
+from rental.contract_form.api import ContractFormListAndCreateView
 
 urlpatterns = [
     path("login", CustomTokenObtainPairView.as_view(), name="login"),
@@ -161,5 +166,8 @@ urlpatterns = [
         "inspections/response",
         InspectionCreateResponseView.as_view(),
         name="create-inspection-response",
+    ),
+    path(
+        "contract-forms", ContractFormListAndCreateView.as_view(), name="contract-forms"
     ),
 ]
