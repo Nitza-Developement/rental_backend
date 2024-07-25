@@ -5,4 +5,4 @@ from rental.contract_form.models import ContractFormTemplate
 class ContractFormTemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContractFormTemplate
-        fields = "__all__"
+        fields = ("id", "name", "template", "user", "tenant")

@@ -2,12 +2,17 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
+
 from settings.utils.api import APIViewWithPagination
 from settings.utils.exceptions import BadRequest400APIException
 
+from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
 from rental.contract_form.serializer import ContractFormTemplateSerializer
-from rental.contract_form.features import get_contract_form_templates
+
+from rental.contract_form.features import (
+    get_contract_form_templates,
+    create_contract_form_template,
+)
 
 
 class ContractFormListAndCreateView(APIViewWithPagination):
@@ -29,4 +34,13 @@ class ContractFormListAndCreateView(APIViewWithPagination):
 
     def post(self, request):
 
-        return Response("ok")
+        serializer = ContractFormTemplateSerializer(data=request.data)
+
+        if serializer.is_valid():
+
+            form = create_contract_form_template(**serializer.validated_data)
+            serialized_form = ContractFormTemplateSerializer(form)
+
+            return Response(serialized_form.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
