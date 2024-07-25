@@ -158,6 +158,5 @@ class CardCreateUpdateAndDeleteView(APIView):
             )
             serialized_card = CardSerializer(card)
             return Response(serialized_card.data, status=status.HTTP_200_OK)
-        else:
-            print(serializer.errors)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
