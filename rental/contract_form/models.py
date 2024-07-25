@@ -10,5 +10,8 @@ class ContractFormTemplate(models.Model):
     is_active = models.BooleanField(default=True)
     name = models.CharField(max_length=255)
 
+    class Meta:
+        ordering = ["-created_at"]
+
     def __str__(self):
         return f"{self.name}"
