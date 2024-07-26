@@ -98,8 +98,8 @@ class FormImportView(APIView):
 
             return Response(serialized_forms.data, status=status.HTTP_201_CREATED)
 
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class FormCloneView(APIView):
@@ -158,5 +158,5 @@ class CardCreateUpdateAndDeleteView(APIView):
             )
             serialized_card = CardSerializer(card)
             return Response(serialized_card.data, status=status.HTTP_200_OK)
-            
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
