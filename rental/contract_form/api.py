@@ -12,6 +12,9 @@ from rental.contract_form.serializer import ContractFormTemplateSerializer
 from rental.contract_form.features import (
     get_contract_form_templates,
     create_contract_form_template,
+    get_contract_form_template,
+    delete_contract_form_template,
+    update_contract_form_template,
 )
 
 
@@ -51,11 +54,31 @@ class ContractFormGetUpdateAndDeleteView(APIView):
 
     def get(self, request, pk):
 
-        return Response("ok")
+        tenant = request.user.defaultTenantUser().tenant
+        contract_form = get_contract_form_template(tenant, pk)
+        serializer = ContractFormTemplateSerializer(contract_form)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, pk):
 
-        return Response("ok")
+        tenant = request.user.defaultTenantUser().tenant
+        contract_form = get_contract_form_template(tenant, pk)
+
+        serializer = ContractFormTemplateSerializer(contract_form, data=request.data)
+
+        if serializer.is_valid():
+
+            form = update_contract_form_template(
+                contract_form, **serializer.validated_data
+            )
+            serialized_form = ContractFormTemplateSerializer(form)
+
+            return Response(serialized_form.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        return Response("ok")
+        tenant = request.user.defaultTenantUser().tenant
+        delete_contract_form_template(tenant, pk)
+        return Response("ok", status=status.HTTP_200_OK)
