@@ -44,3 +44,18 @@ class ContractFormListAndCreateView(APIViewWithPagination):
             return Response(serialized_form.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ContractFormGetUpdateAndDeleteView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
+
+    def get(self, request, pk):
+
+        return Response("ok")
+
+    def put(self, request, pk):
+
+        return Response("ok")
+
+    def delete(self, request, pk):
+        return Response("ok")
