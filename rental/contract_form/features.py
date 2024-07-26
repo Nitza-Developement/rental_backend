@@ -9,13 +9,8 @@ def get_contract_form_templates(tenant):
     return ContractFormTemplate.objects.filter(tenant=tenant)
 
 
-def create_contract_form_template(tenant, user, template, name):
+def create_contract_form_template(**data):
     """
     Create a contract form template
     """
-    return ContractFormTemplate.objects.create(
-        tenant=tenant,
-        user=user,
-        template=template,
-        name=name,
-    )
+    return ContractFormTemplate.objects.create(**data)

@@ -5,4 +5,5 @@ from rental.contract_form.models import ContractFormTemplate
 class ContractFormTemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContractFormTemplate
-        fields = ("id", "name", "template", "user", "tenant")
+        fields = ("id", "name", "template", "user", "tenant", "created_at")
+        extra_kwargs = {"template" : {"required" : False}}
