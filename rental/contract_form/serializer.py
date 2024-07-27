@@ -6,4 +6,8 @@ class ContractFormTemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContractFormTemplate
         fields = ("id", "name", "template", "user", "tenant", "created_at")
-        extra_kwargs = {"template" : {"required" : False}}
+        extra_kwargs = {
+            "template": {"required": False},
+            "user": {"required": False},
+            "tenant": {"required": False},
+        }
