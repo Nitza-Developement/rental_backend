@@ -11,3 +11,13 @@ class ContractFormTemplateSerializer(serializers.ModelSerializer):
             "user": {"required": False},
             "tenant": {"required": False},
         }
+
+
+class UpdateContractFormTemplateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContractFormTemplate
+        fields = ("name", "template")
+        extra_kwargs = {
+            "template": {"required": False},
+            "name": {"required": False},
+        }

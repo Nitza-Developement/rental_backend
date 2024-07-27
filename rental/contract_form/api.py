@@ -7,7 +7,10 @@ from settings.utils.api import APIViewWithPagination
 from settings.utils.exceptions import BadRequest400APIException
 
 from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
-from rental.contract_form.serializer import ContractFormTemplateSerializer
+from rental.contract_form.serializer import (
+    ContractFormTemplateSerializer,
+    UpdateContractFormTemplateSerializer,
+)
 
 from rental.contract_form.features import (
     get_contract_form_templates,
@@ -41,7 +44,13 @@ class ContractFormListAndCreateView(APIViewWithPagination):
 
         if serializer.is_valid():
 
-            form = create_contract_form_template(**serializer.validated_data)
+            tenant = request.user.defaultTenantUser().tenant
+            user = request.user.defaultTenantUser()
+
+            data = {"tenant": tenant, "user": user}
+            data.update(serializer.validated_data)
+
+            form = create_contract_form_template(**data)
             serialized_form = ContractFormTemplateSerializer(form)
 
             return Response(serialized_form.data, status=status.HTTP_201_CREATED)
@@ -65,7 +74,9 @@ class ContractFormGetUpdateAndDeleteView(APIView):
         tenant = request.user.defaultTenantUser().tenant
         contract_form = get_contract_form_template(tenant, pk)
 
-        serializer = ContractFormTemplateSerializer(contract_form, data=request.data)
+        serializer = UpdateContractFormTemplateSerializer(
+            contract_form, data=request.data
+        )
 
         if serializer.is_valid():
 
