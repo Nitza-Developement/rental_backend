@@ -55,6 +55,8 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "minio_storage",
     "auditlog",
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
     "rental",
 ]
 
@@ -70,6 +72,9 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "auditlog.middleware.AuditlogMiddleware",
 ]
+
+# crum
+MIDDLEWARE += ("crum.CurrentRequestUserMiddleware",)
 
 ROOT_URLCONF = "settings.urls"
 
@@ -134,6 +139,7 @@ REST_FRAMEWORK = {
     "DATETIME_FORMAT": "%d-%m-%Y - %H:%M:%S",
     "django_paginator_class": "settings.utils.pagination.DefaultPagination",
     "EXCEPTION_HANDLER": "settings.utils.exceptions.default_api_exception_handler",
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 
@@ -273,3 +279,25 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Project API",
+    "DESCRIPTION": "",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SCHEMA_PATH_PREFIX": "/api/v[0-9]",
+    "SCHEMA_PATH_PREFIX_INSERT": "",   
+    "SWAGGER_UI_DIST": "SIDECAR",
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+    "REDOC_DIST": "SIDECAR",
+    "ENABLE_DJANGO_DEPLOY_CHECK": True,
+    # "TAGS": [],
+    # "EXTERNAL_DOCS": {},
+    # "EXTENSIONS_INFO": {},
+    # "EXTENSIONS_ROOT": {},
+    # "SERVE_PUBLIC": True,
+    # "SERVE_PERMISSIONS": [],
+    # "SERVE_AUTHENTICATION": None,
+    # OTHER SETTINGS
+    "COMPONENT_SPLIT_REQUEST": True,
+}
