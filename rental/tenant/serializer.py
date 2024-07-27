@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rental.tenant.models import Tenant
 from rental.shared_serializers.serializers import InnerTenantUserSerializer
@@ -10,6 +11,7 @@ class TenantSerializer(serializers.ModelSerializer):
 
     owner = serializers.SerializerMethodField()
 
+    @extend_schema_field(InnerTenantUserSerializer())
     def get_owner(self, tenant: Tenant):
         return InnerTenantUserSerializer(tenant.owner(), read_only=True).data
 
