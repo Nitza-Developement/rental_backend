@@ -1,3 +1,5 @@
+from drf_spectacular.utils import extend_schema, inline_serializer, OpenApiParameter
+from rest_framework import serializers
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -8,14 +10,30 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import api_view, permission_classes
 from rental.user.serializer import UpdateUserSerializer, UserDataSerializer
 from rental.user.exceptions import validate_user_and_handle_errors
-from settings.utils.exceptions import BadRequest400APIException
+from settings.utils.exceptions import BadRequest400APIException, Unauthorized401APIException
 from rental.shared_serializers.serializers import UserProfileSerializer
 
 
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        tags=['auth'],
+        request=inline_serializer(
+            name='RefreshTokenRequest',
+            fields={
+                'refreshToken': serializers.CharField()
+            }
+        ),
+        responses={
+            200: None, 
+            400: BadRequest400APIException.schema_response()
+        },
+    )
     def post(self, request):
+        """
+        Descripción del endpoint
+        """
         try:
             refresh_token = request.data["refreshToken"]
             token = RefreshToken(refresh_token)
@@ -25,9 +43,19 @@ class LogoutView(APIView):
             raise BadRequest400APIException(str(e))
 
 
+@extend_schema(
+    tags=['auth'],
+    responses={
+        200: UserDataSerializer,
+        401: Unauthorized401APIException.schema_response()
+    },
+)
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_user_data(request):
+    """
+    Descripción del endpoint
+    """
     user = request.user
     user = get_user(user.id)
 
@@ -36,6 +64,16 @@ def get_user_data(request):
     return Response(serialized_user.data, status=status.HTTP_200_OK)
 
 
+@extend_schema(
+    tags=['auth'],
+    request = UpdateUserSerializer,
+    responses = {
+        200: UserProfileSerializer,
+        400: BadRequest400APIException.schema_response(),
+        401: Unauthorized401APIException.schema_response()
+
+    },
+)
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated, IsSelf])
 def update_profile(request):

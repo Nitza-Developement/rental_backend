@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiResponse
 from rest_framework import status
 from rest_framework.response import Response
 from settings.utils.api import APIViewWithPagination
@@ -16,7 +17,8 @@ from rental.tenant.serializer import (
     UpdateTenantSerializer,
 )
 from rental.tenant.exceptions import validate_tenant_and_handle_errors
-from settings.utils.exceptions import BadRequest400APIException
+from settings.utils.exceptions import BadRequest400APIException, Unauthorized401APIException
+
 
 
 class ListAndCreateTenantsView(APIViewWithPagination):
@@ -30,7 +32,24 @@ class ListAndCreateTenantsView(APIViewWithPagination):
 
         return super().get_permissions()
 
+    @extend_schema(
+        tags=['tenant'],
+        parameters=[
+            OpenApiParameter(name='searchText', type=str, description='descripción del parámetro aquí .. ', required=False),
+            OpenApiParameter(name='orderBy', type=str, description='descripción del parámetro aquí .. ', required=False),
+            OpenApiParameter(name='asc', type=str, description='descripción del parámetro aquí .. ', required=False),
+        ],
+        responses={
+            200 : TenantSerializer(many=True),
+            400: BadRequest400APIException.schema_response(),
+            401: Unauthorized401APIException.schema_response()
+
+        }
+    )
     def get(self, request):
+        """
+        Descripción del endpoint aquí ...
+        """
         search_text = request.query_params.get("searchText", None)
         order_by = request.query_params.get("orderBy", "name")
         asc = request.query_params.get("asc", None)
@@ -49,7 +68,20 @@ class ListAndCreateTenantsView(APIViewWithPagination):
         except Exception as e:
             raise BadRequest400APIException(str(e))
 
+    @extend_schema(
+        tags=['tenant'],
+        request = CreateTenantSerializer,
+        responses={
+            200 : TenantSerializer(many=True),
+            400: BadRequest400APIException.schema_response(),
+            401: Unauthorized401APIException.schema_response()
+
+        }
+    )
     def post(self, request):
+        """
+        Descripción del endpoint aquí ...
+        """
         serializer = CreateTenantSerializer(data=request.data)
         validate_tenant_and_handle_errors(serializer)
 
