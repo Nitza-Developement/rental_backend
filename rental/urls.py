@@ -1,6 +1,11 @@
 from django.urls import path
-from rental.user.api import LogoutView, update_profile, get_user_data
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rental.user.api import (
+    CustomTokenObtainPairView, 
+    CustomTokenRefreshView, 
+    LogoutView, 
+    update_profile, 
+    get_user_data
+)
 from rental.tenant.api import ListAndCreateTenantsView, GetUpdateAndDeleteATenantView
 from rental.tenantUser.api import (
     ListAndCreateTenantUserView,
@@ -44,9 +49,10 @@ from rental.inspections.api import (
     InspectionCreateResponseView,
 )
 
+
 urlpatterns = [
-    path("login", TokenObtainPairView.as_view(), name="login"),
-    path("login/refresh", TokenRefreshView.as_view(), name="refresh"),
+    path("login", CustomTokenObtainPairView.as_view(), name="login"),
+    path("login/refresh", CustomTokenRefreshView.as_view(), name="refresh"),
     path("logout", LogoutView.as_view(), name="logout"),
     path("user", get_user_data, name="user-data"),
     path("profile", update_profile, name="update-profile"),

@@ -12,6 +12,16 @@ from rental.user.serializer import UpdateUserSerializer, UserDataSerializer
 from rental.user.exceptions import validate_user_and_handle_errors
 from settings.utils.exceptions import BadRequest400APIException, Unauthorized401APIException
 from rental.shared_serializers.serializers import UserProfileSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
+
+@extend_schema(tags=['auth'])
+class CustomTokenObtainPairView(TokenObtainPairView):
+    pass
+
+@extend_schema(tags=['auth'])
+class CustomTokenRefreshView(TokenRefreshView):
+    pass
 
 
 class LogoutView(APIView):
