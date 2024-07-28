@@ -5,6 +5,8 @@ from rental.shared_serializers.serializers import InnerTenantUserSerializer
 
 
 class TenantSerializer(serializers.ModelSerializer):
+    tenantUsers= InnerTenantUserSerializer(many=True)
+
     class Meta:
         model = Tenant
         fields = ["id", "email", "name", "isAdmin", "owner", "tenantUsers"]

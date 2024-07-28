@@ -45,6 +45,10 @@ class BadRequest400APIException(APIException):
             response=BadRequest400APIException.BadRequest400Schema
         )
 
+    @staticmethod
+    def schema_serializers():
+        return BadRequest400APIException.BadRequest400Schema()
+
 class NotFound404APIException(APIException):
 
     def __init__(self, detail: str):

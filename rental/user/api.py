@@ -42,7 +42,7 @@ class LogoutView(APIView):
     )
     def post(self, request):
         """
-        Descripción del endpoint
+        Endpoint that invalidates a user's refresh token in the application.
         """
         try:
             refresh_token = request.data["refreshToken"]
@@ -64,7 +64,7 @@ class LogoutView(APIView):
 @permission_classes([IsAuthenticated])
 def get_user_data(request):
     """
-    Descripción del endpoint
+    Endpoint to return the data of the currently authenticated user
     """
     user = request.user
     user = get_user(user.id)
@@ -87,7 +87,9 @@ def get_user_data(request):
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated, IsSelf])
 def update_profile(request):
-
+    """
+    Endpoint to edit the data of the currently authenticated user
+    """
     user = request.user
     serializer = UpdateUserSerializer(
         data={
