@@ -1,4 +1,4 @@
-from drf_spectacular.utils import extend_schema, inline_serializer, OpenApiParameter
+from drf_spectacular.utils import extend_schema, inline_serializer, OpenApiResponse
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.views import APIView
@@ -36,12 +36,18 @@ class LogoutView(APIView):
             }
         ),
         responses={
-            200: None, 
+            200: OpenApiResponse(
+                description="Successful response"
+            ),
             400: BadRequest400APIException.schema_response()
         },
     )
     def post(self, request):
         """
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
         Endpoint that invalidates a user's refresh token in the application.
         """
         try:
@@ -64,6 +70,10 @@ class LogoutView(APIView):
 @permission_classes([IsAuthenticated])
 def get_user_data(request):
     """
+    This method requires the user to be authenticated in order to be used.
+    Authentication is performed by using a JWT (JSON Web Token) that is included
+    in the HTTP request header.
+
     Endpoint to return the data of the currently authenticated user
     """
     user = request.user
@@ -88,6 +98,13 @@ def get_user_data(request):
 @permission_classes([IsAuthenticated, IsSelf])
 def update_profile(request):
     """
+    This method requires the user to be authenticated in order to be used.
+    Authentication is performed by using a JWT (JSON Web Token) that is included
+    in the HTTP request header.
+
+    This endpoint requires that the authenticated user matches the one you
+    are trying to edit.
+
     Endpoint to edit the data of the currently authenticated user
     """
     user = request.user
