@@ -31,7 +31,7 @@ from rental.adminInline import (
 
 from rental.forms.models import Form, Card, Field, FieldResponse
 from rental.inspections.models import Inspection
-from rental.contract_form.models import ContractFormTemplate
+from rental.contract_form.models import ContractFormTemplate , ContractForm
 
 admin.site.site_title = "Fleet Admin Site"
 admin.site.site_header = "Administration Panel"
@@ -195,4 +195,10 @@ class InspectionAdmin(admin.ModelAdmin):
 
 @admin.register(ContractFormTemplate)
 class ContractFormTemplateAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "created_at")
+
+
+
+@admin.register(ContractForm)
+class ContractFormAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "created_at")
