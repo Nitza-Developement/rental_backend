@@ -3,6 +3,8 @@ from drf_spectacular.utils import extend_schema, PolymorphicProxySerializer, Ope
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+
+from rental.tenantUser.swagger_serializer import TenantUserCreateSwaggerRepresentationSerializer
 from settings.utils.api import APIViewWithPagination
 from rest_framework.permissions import IsAuthenticated
 from rental.tenantUser.permissions import IsAdminTenantUser
@@ -56,7 +58,7 @@ class ListAndCreateTenantUserView(APIViewWithPagination):
             raise BadRequest400APIException(str(e))
 
     @extend_schema(
-        request=TenantUserCreateSerializer(),
+        request=TenantUserCreateSwaggerRepresentationSerializer(),
         responses={
             200: TenantUserListSerializer(),
             400: PolymorphicProxySerializer(
