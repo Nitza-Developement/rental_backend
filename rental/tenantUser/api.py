@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, PolymorphicProxySerializer, OpenApiResponse
 from rest_framework import status
@@ -8,7 +9,12 @@ from rental.tenantUser.swagger_serializer import TenantUserCreateSwaggerRepresen
 from settings.utils.api import APIViewWithPagination
 from rest_framework.permissions import IsAuthenticated
 from rental.tenantUser.permissions import IsAdminTenantUser
-from settings.utils.exceptions import BadRequest400APIException, Unauthorized401APIException, NotFound404APIException
+from settings.utils.exceptions import (
+    BadRequest400APIException,
+    Unauthorized401APIException,
+    NotFound404APIException,
+    InternalServerError500APIException,
+)
 from rental.tenantUser.exceptions import validate_tenantUser_and_handle_errors, ErrorTenantUserInvalidRole
 from rental.tenantUser.serializer import (
     TenantUserListSerializer,
@@ -93,15 +99,22 @@ class ListAndCreateTenantUserView(APIViewWithPagination):
         )
         validate_tenantUser_and_handle_errors(serializer)
 
-        created_tenantUser = create_tenantUser(
-            email=request.data.get("email"),
-            role=serializer.validated_data["role"],
-            tenant=serializer.validated_data["tenant"],
-            is_default=serializer.validated_data["is_default"],
-        )
+        try:
+            created_tenantUser = create_tenantUser(
+                email=request.data.get("email"),
+                role=serializer.validated_data["role"],
+                tenant=serializer.validated_data["tenant"],
+                is_default=serializer.validated_data["is_default"],
+            )
 
-        serialized_tenantUser = TenantUserListSerializer(created_tenantUser)
-        return Response(serialized_tenantUser.data, status=status.HTTP_201_CREATED)
+            serialized_tenantUser = TenantUserListSerializer(created_tenantUser)
+            return Response(
+                serialized_tenantUser.data, status=status.HTTP_201_CREATED
+            )
+        except ValidationError as ex:
+            raise BadRequest400APIException(str(ex.message))
+        except Exception as ex:
+            raise InternalServerError500APIException()
 
 
 class GetUpdateAndDeleteTenantUserView(APIView):
