@@ -4,7 +4,9 @@ from django.contrib.auth import get_user_model
 from faker import Faker
 
 from rental.models import Tenant, TenantUser
-from tests.rental.auth.utils.custom_test_user import CustomTestUser
+from tests.rental.tenant_user.utils.custom_tenant_test_user import (
+    CustomTenantTestUser,
+)
 
 faker = Faker()
 
@@ -20,16 +22,15 @@ class TenantUserMixin:
         )
         return tenant
 
-    def create_tenant_user(self) -> CustomTestUser:
+    def create_tenant_user(self) -> CustomTenantTestUser:
+        email = faker.email()
         password = faker.password(length=8)
-        User.objects.create_user(email=faker.email(), password=password)
-        tenant = Tenant.objects.create(
-            email=self.admin_email, name="tenant_admin", isAdmin=True
-        )
+        user = User.objects.create_user(email=email, password=password)
+        tenant = Tenant.objects.create(email=email, name=email, isAdmin=True)
         tenant_user = TenantUser.objects.create(
-            role=TenantUser.ADMIN,
+            role=TenantUser.OWNER,
             tenant=tenant,
-            user=self.admin_user,
+            user=user,
             is_default=True,
         )
-        return tenant_user
+        return CustomTenantTestUser(tenant_user=tenant_user, password=password)

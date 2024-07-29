@@ -1,5 +1,5 @@
 import json
-from typing import Optional
+from typing import Callable, Dict, Optional, TypeVar
 
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -12,6 +12,8 @@ from tests.rental.auth.utils.custom_test_user import CustomTestUser
 faker = Faker()
 
 User = get_user_model()
+
+T = TypeVar("T")
 
 
 class UserMixin:
@@ -101,3 +103,48 @@ class UserMixin:
 
     def clear_authentication_in_the_header(self):
         self.client.credentials(HTTP_AUTHORIZATION="")
+
+    def assertKey(
+        self,
+        response_dict: Dict,
+        key: str,
+        expected: Optional[T] = None,
+        expected_none: bool = False,
+    ) -> T:
+        self.assertEqual(True, key in response_dict)
+        value: T = response_dict[key]
+        if expected is not None:
+            self.assertEqual(value, expected)
+        else:
+            self.assertEqual(expected_none, value is None)
+        return value
+
+    def validate_data_in_list_pagination(
+        self,
+        response_dict: Dict,
+        total_count: int,
+        len_list: int,
+        expected_next: bool,
+        expected_previous: bool,
+        schema_validator: Callable[[Dict], None],
+    ):
+        self.assertKey(
+            response_dict=response_dict, key="count", expected=total_count
+        )
+        self.assertKey(
+            response_dict=response_dict,
+            key="next",
+            expected_none=not expected_next,
+        )
+        self.assertKey(
+            response_dict=response_dict,
+            key="previous",
+            expected_none=not expected_previous,
+        )
+        self.assertEqual(True, "results" in response_dict)
+        results = response_dict["results"]
+        self.assertIsInstance(results, list)
+        self.assertEqual(len_list, len(results))
+        for result in results:
+            self.assertIsInstance(result, dict)
+            schema_validator(result)
