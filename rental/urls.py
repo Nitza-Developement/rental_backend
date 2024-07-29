@@ -54,8 +54,9 @@ from rental.inspections.api import (
 
 
 from rental.contract_form.api import (
+    ContractFormTemplateListAndCreateView,
+    ContractFormTemplateGetUpdateAndDeleteView,
     ContractFormListAndCreateView,
-    ContractFormGetUpdateAndDeleteView,
 )
 
 urlpatterns = [
@@ -171,11 +172,18 @@ urlpatterns = [
         name="create-inspection-response",
     ),
     path(
-        "contract-forms", ContractFormListAndCreateView.as_view(), name="contract-forms"
+        "contract-forms-template",
+        ContractFormTemplateListAndCreateView.as_view(),
+        name="contract-forms-template",
     ),
     path(
-        "contract-forms/<int:pk>",
-        ContractFormGetUpdateAndDeleteView.as_view(),
-        name="contract-form-action",
+        "contract-forms-template/<int:pk>",
+        ContractFormTemplateGetUpdateAndDeleteView.as_view(),
+        name="contract-forms-template-action",
+    ),
+    path(
+        "contract-forms",
+        ContractFormListAndCreateView.as_view(),
+        name="contract-forms",
     ),
 ]
