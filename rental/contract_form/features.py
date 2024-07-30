@@ -1,5 +1,5 @@
 # pylint: disable=no-member
-from rental.contract_form.models import ContractFormTemplate
+from rental.contract_form.models import ContractFormTemplate, ContractForm
 from settings.utils.exceptions import NotFound404APIException
 
 
@@ -39,6 +39,24 @@ def delete_contract_form_template(tenant, id):
         form.save()
 
 
+def clone_contract_form_template(form: ContractFormTemplate):
+    """
+    Clone a contract form template
+    """
+
+    # TODO: hacer que la fecha se la misma que la del original
+
+    form.is_active = False
+    form.save()
+
+    form.pk = None
+    form._state.adding = True
+    form.is_active = True
+    form.save()
+
+    return form
+
+
 def update_contract_form_template(instance, **data):
     """
     Update a contract form template
@@ -46,3 +64,17 @@ def update_contract_form_template(instance, **data):
     ContractFormTemplate.objects.filter(id=instance.id).update(**data)
 
     return ContractFormTemplate.objects.get(id=instance.id)
+
+
+def get_contract_forms(tenant):
+    """
+    Get all contract form
+    """
+    return ContractForm.objects.filter(tenant=tenant)
+
+
+def create_contract_form(**data):
+    """
+    Create a contract form
+    """
+    return ContractForm.objects.create(**data)
