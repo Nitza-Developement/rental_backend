@@ -74,7 +74,7 @@ class TestListTenantUser(AuthAPITestCase, TenantUserMixin):
 
         custom_tenant_test_user: CustomTenantTestUser = self.list_tenant_user[0]
         self.login(
-            email=custom_tenant_test_user.tenant_user.user.email,
+            email=custom_tenant_test_user.default_tenant_user.user.email,
             password=custom_tenant_test_user.password,
         )
         self.put_authentication_in_the_header()
