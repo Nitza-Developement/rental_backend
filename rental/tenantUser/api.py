@@ -172,6 +172,12 @@ class GetUpdateAndDeleteTenantUserView(APIView):
         in the HTTP request header.
 
         Endpoint for editing a TenantUser.
+
+        If the default entity status is changed to false, the default value is assigned
+        to the next available entity.
+
+        Therefore, this action can only be performed if there are more than one entity
+        of this type.
         """
         serializer = TenantUserUpdateSerializer(data=request.data)
         validate_tenantUser_and_handle_errors(serializer)
