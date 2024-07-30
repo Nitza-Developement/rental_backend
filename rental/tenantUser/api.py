@@ -150,8 +150,10 @@ class GetUpdateAndDeleteTenantUserView(APIView):
             tenant_user = get_tenantUser(tenantUser_id)
             serialized_tenant_user = TenantUserListSerializer(tenant_user)
             return Response(serialized_tenant_user.data, status=status.HTTP_200_OK)
+        except NotFound404APIException as e:
+            raise e
         except Exception as e:
-            raise BadRequest400APIException(str(e))
+            raise InternalServerError500APIException(str(e))
 
     @extend_schema(
         request=TenantUserUpdateSerializer(),
