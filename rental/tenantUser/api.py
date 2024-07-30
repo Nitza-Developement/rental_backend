@@ -120,12 +120,6 @@ class ListAndCreateTenantUserView(APIViewWithPagination):
 class GetUpdateAndDeleteTenantUserView(APIView):
     permission_classes = [IsAuthenticated, IsAdminTenantUser]
 
-    def get_permissions(self):
-        if self.request.method in ["PUT"]:
-
-            return [IsAuthenticated()]
-
-        return super().get_permissions()
 
     @extend_schema(
         responses={
@@ -181,19 +175,21 @@ class GetUpdateAndDeleteTenantUserView(APIView):
         """
         serializer = TenantUserUpdateSerializer(data=request.data)
         validate_tenantUser_and_handle_errors(serializer)
-
-        updated_tenant_user = update_tenantUser(
-            tenant_user_id=tenantUser_id,
-            is_default=serializer.validated_data.get("is_default"),
-            tenant=serializer.validated_data.get("tenant"),
-            role=serializer.validated_data.get("role"),
-            email=request.data.get("email"),
-            old_email=request.data.get("oldEmail"),
-        )
-
-        serialized_tenant_user = TenantUserListSerializer(updated_tenant_user)
-        return Response(serialized_tenant_user.data, status=status.HTTP_200_OK)
-
+        try:
+            updated_tenant_user = update_tenantUser(
+                tenant_user_id=tenantUser_id,
+                is_default=serializer.validated_data.get("is_default"),
+            )
+            serialized_tenant_user = TenantUserListSerializer(updated_tenant_user)
+            return Response(serialized_tenant_user.data, status=status.HTTP_200_OK)
+        except ValidationError as ex:
+            raise BadRequest400APIException(str(ex.message))
+        except BadRequest400APIException as ex:
+            raise ex
+        except NotFound404APIException as ex:
+            raise ex
+        except Exception as ex:
+            raise InternalServerError500APIException()
     @extend_schema(
         responses={
             200: OpenApiResponse(

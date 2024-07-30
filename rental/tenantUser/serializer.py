@@ -45,15 +45,6 @@ class TenantUserCreateSerializer(serializers.ModelSerializer):
 class TenantUserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = TenantUser
-        fields = ["role", "tenant", "is_default"]
-        extra_kwargs = {
-            "is_default": {"allow_null": True},
-            "tenant": {"required": False},
-        }
+        fields = ["is_default"]
 
-    def validate_role(self, value):
-        if value not in [TenantUser.ADMIN, TenantUser.STAFF, TenantUser.OWNER]:
-            raise serializers.ValidationError(
-                "Invalid role. Choices are 'Admin', 'Staff', or 'Owner'."
-            )
-        return value
+

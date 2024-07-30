@@ -20,7 +20,7 @@ class TestRetrieveTenantUser(AuthAPITestCase, TenantUserMixin):
             self.create_tenant_user() for _ in range(2)
         ]
         self.owner = CustomTestUser(
-            user=self.list_tenant_user[0].tenant_user.user,
+            user=self.list_tenant_user[0].default_tenant_user.user,
             password=self.list_tenant_user[0].password,
         )
 
@@ -63,13 +63,14 @@ class TestRetrieveTenantUser(AuthAPITestCase, TenantUserMixin):
 
     def test_retrieve_tenant_user(self):
         self.call_tenant_user_create(
-            entity_id=self.list_tenant_user[0].tenant_user.id, unauthorized=True
+            entity_id=self.list_tenant_user[0].default_tenant_user.id,
+            unauthorized=True,
         )
         self.login(custom_user=self.owner)
         self.put_authentication_in_the_header()
         not_found_id = (
-            self.list_tenant_user[0].tenant_user.id
-            + self.list_tenant_user[1].tenant_user.id
+            self.list_tenant_user[0].default_tenant_user.id
+            + self.list_tenant_user[1].default_tenant_user.id
         )
         self.call_tenant_user_create(
             entity_id=not_found_id,
@@ -77,5 +78,5 @@ class TestRetrieveTenantUser(AuthAPITestCase, TenantUserMixin):
         )
         for custom_tenant_test_user in self.list_tenant_user:
             self.call_tenant_user_create(
-                entity_id=custom_tenant_test_user.tenant_user.id,
+                entity_id=custom_tenant_test_user.default_tenant_user.id,
             )
