@@ -6,11 +6,14 @@ from rental.user.api import (
     update_profile, 
     get_user_data
 )
+
 from rental.tenant.api import ListAndCreateTenantsView, GetUpdateAndDeleteATenantView
 from rental.tenantUser.api import (
     ListAndCreateTenantUserView,
     GetUpdateAndDeleteTenantUserView,
 )
+from rental.user.api import LogoutView, update_profile, get_user_data
+
 from rental.client.api import ClientListAndCreateView, ClientGetUpdateAndDeleteView
 from rental.vehicle.api import (
     ListAndCreateVehicleView,
@@ -49,6 +52,13 @@ from rental.inspections.api import (
     InspectionCreateResponseView,
 )
 
+
+from rental.contract_form.api import (
+    ContractFormTemplateListAndCreateView,
+    ContractFormTemplateGetUpdateAndDeleteView,
+    ContractFormTemplateCloneView,
+    ContractFormListAndCreateView,
+)
 
 urlpatterns = [
     path("login", CustomTokenObtainPairView.as_view(), name="login"),
@@ -161,5 +171,25 @@ urlpatterns = [
         "inspections/response",
         InspectionCreateResponseView.as_view(),
         name="create-inspection-response",
+    ),
+    path(
+        "contract-forms-template",
+        ContractFormTemplateListAndCreateView.as_view(),
+        name="contract-forms-template",
+    ),
+    path(
+        "contract-forms-template/<int:pk>",
+        ContractFormTemplateGetUpdateAndDeleteView.as_view(),
+        name="contract-forms-template-action",
+    ),
+    path(
+        "contract-forms-template/clone",
+        ContractFormTemplateCloneView.as_view(),
+        name="contract-forms-template-clone",
+    ),
+    path(
+        "contract-forms",
+        ContractFormListAndCreateView.as_view(),
+        name="contract-forms",
     ),
 ]
