@@ -75,8 +75,8 @@ class ListAndCreateTenantUserView(APIViewWithPagination):
                                 ],
                                 resource_type_field_name="error"
                             ),
-            401: Unauthorized401APIException.schema_response()
-
+            401: Unauthorized401APIException.schema_response(),
+            500: InternalServerError500APIException.schema_response()
         }
     )
     def post(self, request):
@@ -130,9 +130,9 @@ class GetUpdateAndDeleteTenantUserView(APIView):
     @extend_schema(
         responses={
             200: TenantUserListSerializer(),
-            400: BadRequest400APIException.schema_response(),
             401: Unauthorized401APIException.schema_response(),
-            404: NotFound404APIException.schema_response()
+            404: NotFound404APIException.schema_response(),
+            500: InternalServerError500APIException.schema_response()
         }
     )
     def get(self, request, tenantUser_id):
