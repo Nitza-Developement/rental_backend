@@ -11,6 +11,7 @@ class ContractFormTemplateSerializer(serializers.ModelSerializer):
             "template": {"required": False},
             "user": {"required": False},
             "tenant": {"required": False},
+            "contracts": {"required": False},
         }
 
 
