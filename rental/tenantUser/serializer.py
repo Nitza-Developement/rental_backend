@@ -13,6 +13,8 @@ class OwnerTenantUserSerializer(serializers.ModelSerializer):
 
 
 class TenantUserListSerializer(serializers.ModelSerializer):
+    tenant=TenantSerializer()
+    user=UserProfileSerializer()
     class Meta:
         model = TenantUser
         fields = ["id", "role", "tenant", "user", "is_default"]

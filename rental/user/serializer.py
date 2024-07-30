@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rental.user.models import User
 from django.core.validators import validate_email
@@ -13,11 +14,13 @@ class UserDataSerializer(serializers.ModelSerializer):
     defaultTenantUser = serializers.SerializerMethodField()
     tenantUsers = serializers.SerializerMethodField()
 
+    @extend_schema_field(TenantUserListSerializer())
     def get_tenantUsers(self, user: User):
         return TenantUserListSerializer(
             user.tenantUsers, many=True, read_only=True
         ).data
 
+    @extend_schema_field(TenantUserListSerializer())
     def get_defaultTenantUser(self, user: User):
         return TenantUserListSerializer(user.defaultTenantUser(), read_only=True).data
 

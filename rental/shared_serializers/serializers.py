@@ -9,6 +9,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class InnerTenantUserSerializer(serializers.ModelSerializer):
+    user=UserProfileSerializer()
     class Meta:
         model = TenantUser
         fields = ["id", "role", "user"]
