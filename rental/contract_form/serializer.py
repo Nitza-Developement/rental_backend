@@ -1,12 +1,34 @@
 from rest_framework import serializers
-from rental.contract_form.models import ContractFormTemplate, ContractForm
+from rental.contract_form.models import (
+    ContractFormTemplate,
+    ContractForm,
+    ContractFormField,
+)
+
+
+class ContractFormFieldSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ContractFormField
+        fields = ("type", "placeholder")
 
 
 class ContractFormTemplateSerializer(serializers.ModelSerializer):
 
+    fields = ContractFormFieldSerializer(many=True, read_only=True)
+
     class Meta:
         model = ContractFormTemplate
-        fields = ("id", "name", "template", "user", "tenant", "created_at", "contracts")
+        fields = (
+            "id",
+            "name",
+            "template",
+            "user",
+            "tenant",
+            "created_at",
+            "contracts",
+            "fields",
+        )
         extra_kwargs = {
             "template": {"required": False},
             "user": {"required": False},
@@ -16,9 +38,12 @@ class ContractFormTemplateSerializer(serializers.ModelSerializer):
 
 
 class UpdateContractFormTemplateSerializer(serializers.ModelSerializer):
+
+    fields = ContractFormFieldSerializer(many=True)
+
     class Meta:
         model = ContractFormTemplate
-        fields = ("name", "template")
+        fields = ("name", "template", "fields")
         extra_kwargs = {
             "template": {"required": False},
             "name": {"required": False},

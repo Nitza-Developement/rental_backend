@@ -17,6 +17,30 @@ class ContractFormTemplate(models.Model):
         return f"{self.name}"
 
 
+class ContractFormField(models.Model):
+
+    TEXT = "TEXT"
+    NUMBER = "NUMBER"
+    SIGNATURE = "SIGNATURE"
+    EMAIL = "EMAIL"
+    PHONE = "PHONE"
+
+    FORM_FIELD_TYPES = (
+        (TEXT, "Text"),
+        (NUMBER, "Number"),
+        (SIGNATURE, "Signature"),
+        (EMAIL, "Email"),
+        (PHONE, "Phone"),
+    )
+
+    template = models.ForeignKey(
+        ContractFormTemplate, on_delete=models.CASCADE, related_name="fields"
+    )
+    placeholder = models.CharField(max_length=255)
+    type = models.CharField(max_length=20, choices=FORM_FIELD_TYPES)
+    required = models.BooleanField(default=True)
+
+
 class ContractForm(models.Model):
     tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
     user = models.ForeignKey(TenantUser, on_delete=models.CASCADE)
