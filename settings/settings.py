@@ -282,7 +282,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Project API",
-    "DESCRIPTION": "",
+    "DESCRIPTION": """
+Authenticate using the `/api/v1/login` endpoint
+
+From this, obtain the value of the `access` field in the response
+
+Then press the button in the upper right corner `Authorize` and put this token in the text box and press `Authorize`
+
+To prove that you are authenticated, you can use the `[GET]` `/api/v1/user` endpoint
+    """,
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "SCHEMA_PATH_PREFIX": "/api/v[0-9]",
