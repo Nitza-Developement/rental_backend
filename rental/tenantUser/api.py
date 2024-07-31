@@ -215,6 +215,12 @@ class GetUpdateAndDeleteTenantUserView(APIView):
         or owner role.
 
         Endpoint to delete a TenantUser.
+
+        If the default entity status is deleted, the default value is assigned
+        to the next available entity.
+
+        If the default entity is deleted and there is no other available, then
+        the user is also deleted.
         """
         delete_tenantUser(tenantUser_id)
         return Response(status=status.HTTP_200_OK)

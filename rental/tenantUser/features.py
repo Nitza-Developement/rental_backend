@@ -114,7 +114,10 @@ def delete_tenantUser(tenant_user_id):
             new_default_tenantUser.full_clean()
             new_default_tenantUser.save()
         else:
-            delete_user(tenant_user.user.id)
+            user_id=tenant_user.user.id
+            tenant_user.delete()
+            delete_user(user_id)
+            return True
     if tenant_user:
         tenant_user.delete()
         return True
