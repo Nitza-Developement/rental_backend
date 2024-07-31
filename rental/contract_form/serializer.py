@@ -39,7 +39,7 @@ class ContractFormTemplateSerializer(serializers.ModelSerializer):
 
 class UpdateContractFormTemplateSerializer(serializers.ModelSerializer):
 
-    fields = ContractFormFieldSerializer(many=True)
+    fields = ContractFormFieldSerializer(many=True, required=False)
 
     class Meta:
         model = ContractFormTemplate

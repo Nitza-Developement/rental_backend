@@ -61,24 +61,26 @@ def clone_contract_form_template(form: ContractFormTemplate):
     return form
 
 
-def update_contract_form_template(instance, fields, **data):
+def update_contract_form_template(instance, fields=None, **data):
     """
     Update a contract form template
     """
     ContractFormTemplate.objects.filter(id=instance.id).update(**data)
 
-    ContractFormField.objects.filter(template=instance).delete()
+    if fields:
 
-    ContractFormField.objects.bulk_create(
-        [
-            ContractFormField(
-                template=instance,
-                placeholder=field.get("placeholder"),
-                type=field.get("type"),
-            )
-            for field in fields
-        ]
-    )
+        ContractFormField.objects.filter(template=instance).delete()
+
+        ContractFormField.objects.bulk_create(
+            [
+                ContractFormField(
+                    template=instance,
+                    placeholder=field.get("placeholder"),
+                    type=field.get("type"),
+                )
+                for field in fields
+            ]
+        )
 
     return ContractFormTemplate.objects.get(id=instance.id)
 
