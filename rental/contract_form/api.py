@@ -25,6 +25,7 @@ from rental.contract_form.features import (
     get_contract_forms,
     create_contract_form,
     clone_contract_form_template,
+    get_contract_form,
 )
 
 
@@ -167,3 +168,19 @@ class ContractFormListAndCreateView(APIViewWithPagination):
             return Response(serialized_form.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ContractFormGetAndUpdateView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
+
+    def get(self, request, pk):
+
+        tenant = request.user.defaultTenantUser().tenant
+        contract_form = get_contract_form(tenant, pk)
+        serializer = ContractFormSerializer(contract_form)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, pk):
+
+        return Response("ok", status=status.HTTP_200_OK)

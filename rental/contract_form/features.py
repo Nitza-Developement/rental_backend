@@ -98,3 +98,15 @@ def create_contract_form(**data):
     """
 
     return ContractForm.objects.create(**data)
+
+
+def get_contract_form(tenant, id):
+    """
+    Get a contract form
+    """
+    try:
+        return ContractForm.objects.get(tenant=tenant, id=id)
+    except ContractForm.DoesNotExist as error:
+        raise NotFound404APIException(
+            f"Contract form with ID {id} doesnt exists"
+        ) from error

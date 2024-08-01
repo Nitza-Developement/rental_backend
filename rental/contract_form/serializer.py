@@ -10,7 +10,7 @@ class ContractFormFieldSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ContractFormField
-        fields = ("type", "placeholder")
+        fields = ("id", "type", "placeholder", "required")
 
 
 class ContractFormTemplateSerializer(serializers.ModelSerializer):

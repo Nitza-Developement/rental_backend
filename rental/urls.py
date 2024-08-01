@@ -1,10 +1,10 @@
 from django.urls import path
 from rental.user.api import (
-    CustomTokenObtainPairView, 
-    CustomTokenRefreshView, 
-    LogoutView, 
-    update_profile, 
-    get_user_data
+    CustomTokenObtainPairView,
+    CustomTokenRefreshView,
+    LogoutView,
+    update_profile,
+    get_user_data,
 )
 
 from rental.tenant.api import ListAndCreateTenantsView, GetUpdateAndDeleteATenantView
@@ -58,6 +58,7 @@ from rental.contract_form.api import (
     ContractFormTemplateGetUpdateAndDeleteView,
     ContractFormTemplateCloneView,
     ContractFormListAndCreateView,
+    ContractFormGetUpdateAndDeleteView,
 )
 
 urlpatterns = [
@@ -191,5 +192,10 @@ urlpatterns = [
         "contract-forms",
         ContractFormListAndCreateView.as_view(),
         name="contract-forms",
+    ),
+    path(
+        "contract-forms/<int:pk>",
+        ContractFormGetUpdateAndDeleteView.as_view(),
+        name="contract-form-action",
     ),
 ]
