@@ -8,7 +8,7 @@ from rental.forms.models import (
 )
 
 from settings.settings import MINIO_STORAGE_MEDIA_BUCKET_NAME
-from settings.utils.minio_client import client
+from settings.utils.minio_client import minio_client
 
 
 class FieldResponseSerializer(serializers.ModelSerializer):
@@ -23,7 +23,7 @@ class FieldResponseSerializer(serializers.ModelSerializer):
 
         if obj.field.type in (Field.IMAGE, Field.SIGNATURE):
 
-            url = client.presigned_get_object(
+            url = minio_client().presigned_get_object(
                 MINIO_STORAGE_MEDIA_BUCKET_NAME, obj.content
             )
 
@@ -64,6 +64,9 @@ class FieldSerializer(serializers.ModelSerializer):
                 inspection__id=inspection_id,
                 field__id=field.id,
             ).first()
+
+            if not response:
+                return None
 
             return FieldResponseSerializer(response).data
 
