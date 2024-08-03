@@ -52,3 +52,9 @@ class ContractForm(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
+
+class ContractFormFieldResponse(models.Model):
+    form = models.ForeignKey(ContractForm, on_delete=models.CASCADE)
+    field = models.ForeignKey(ContractFormField, on_delete=models.CASCADE)
+    content = models.CharField(max_length=300)
