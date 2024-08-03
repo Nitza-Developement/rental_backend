@@ -26,7 +26,9 @@ from rental.contract_form.features import (
     create_contract_form,
     clone_contract_form_template,
     get_contract_form,
+    create_contract_form_response,
 )
+from rental.contract_form.validators import validate_contract_form_response
 
 
 class ContractFormTemplateListAndCreateView(APIViewWithPagination):
@@ -170,17 +172,35 @@ class ContractFormListAndCreateView(APIViewWithPagination):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ContractFormGetAndUpdateView(APIView):
+class ContractFormGetView(APIView):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
     def get(self, request, pk):
 
         tenant = request.user.defaultTenantUser().tenant
         contract_form = get_contract_form(tenant, pk)
-        serializer = ContractFormSerializer(contract_form)
+        serializer = ContractFormSerializer(
+            contract_form, context={"contract_form_id": pk}
+        )
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def put(self, request, pk):
 
-        return Response("ok", status=status.HTTP_200_OK)
+class ContractFormFieldResponseCreateView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
+
+    def post(self, request):
+
+        tenant = request.user.defaultTenantUser().tenant
+
+        try:
+            validate_contract_form_response(tenant, request.data.dict())
+            contract_form = create_contract_form_response(tenant, request.data.dict())
+            serialized_form = ContractFormSerializer(
+                contract_form, context={"contract_form_id": contract_form.id}
+            )
+
+            return Response(serialized_form.data, status=status.HTTP_201_CREATED)
+
+        except Exception as error:
+            raise BadRequest400APIException(str(error)) from error

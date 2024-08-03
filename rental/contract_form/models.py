@@ -40,6 +40,9 @@ class ContractFormField(models.Model):
     type = models.CharField(max_length=20, choices=FORM_FIELD_TYPES)
     required = models.BooleanField(default=True)
 
+    def __str__(self) -> str:
+        return f"{self.type} - {self.template}"
+
 
 class ContractForm(models.Model):
     tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
@@ -52,6 +55,9 @@ class ContractForm(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class ContractFormFieldResponse(models.Model):

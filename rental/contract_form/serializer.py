@@ -3,14 +3,57 @@ from rental.contract_form.models import (
     ContractFormTemplate,
     ContractForm,
     ContractFormField,
+    ContractFormFieldResponse,
 )
+from settings.settings import MINIO_STORAGE_MEDIA_BUCKET_NAME
+from settings.utils.minio_client import minio_client
+
+
+class ContractFormFieldResponseSerializer(serializers.ModelSerializer):
+    url_file = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ContractFormFieldResponse
+        fields = ("id", "content", "url_file")
+
+    def get_url_file(self, obj):
+
+        if obj.field.type == ContractFormField.SIGNATURE:
+
+            url = minio_client().presigned_get_object(
+                MINIO_STORAGE_MEDIA_BUCKET_NAME, obj.content
+            )
+
+            return url
+
+        return None
 
 
 class ContractFormFieldSerializer(serializers.ModelSerializer):
 
+    response = serializers.SerializerMethodField()
+
     class Meta:
         model = ContractFormField
-        fields = ("id", "type", "placeholder", "required")
+        fields = ("id", "type", "placeholder", "required", "response")
+
+    def get_response(self, field):
+
+        contract_form_id = self.context.get("contract_form_id")
+        if contract_form_id:
+
+            response = ContractFormFieldResponse.objects.filter(
+                form_id=contract_form_id,
+                field_id=field.id,
+            ).first()
+
+
+            if not response:
+                return None
+
+            return ContractFormFieldResponseSerializer(response).data
+
+        return None
 
 
 class ContractFormTemplateSerializer(serializers.ModelSerializer):
@@ -67,10 +110,15 @@ class CloneContractFormTemplateSerializer(serializers.Serializer):
 
 class ContractFormSerializer(serializers.ModelSerializer):
     template = ContractFormTemplateSerializer()
+    completed = serializers.SerializerMethodField()
 
     class Meta:
         model = ContractForm
-        fields = ("id", "name", "template", "user", "tenant", "created_at")
+        fields = ("id", "name", "template", "user", "tenant", "created_at", "completed")
+
+    def get_completed(self, contract_form):
+        print(contract_form)
+        return ContractFormFieldResponse.objects.filter(form=contract_form).exists()
 
 
 class CreateContractFormSerializer(serializers.ModelSerializer):

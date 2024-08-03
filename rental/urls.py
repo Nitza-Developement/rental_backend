@@ -58,7 +58,8 @@ from rental.contract_form.api import (
     ContractFormTemplateGetUpdateAndDeleteView,
     ContractFormTemplateCloneView,
     ContractFormListAndCreateView,
-    ContractFormGetAndUpdateView,
+    ContractFormGetView,
+    ContractFormFieldResponseCreateView,
 )
 
 urlpatterns = [
@@ -195,7 +196,12 @@ urlpatterns = [
     ),
     path(
         "contract-forms/<int:pk>",
-        ContractFormGetAndUpdateView.as_view(),
+        ContractFormGetView.as_view(),
         name="contract-form-action",
+    ),
+    path(
+        "contract-forms/response",
+        ContractFormFieldResponseCreateView.as_view(),
+        name="contract-form-response",
     ),
 ]
