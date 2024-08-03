@@ -32,12 +32,13 @@ SECRET_KEY = config("SECRET_KEY")
 
 DEBUG = config("DEBUG", cast=bool)
 APPEND_SLASH = False
-ALLOWED_HOSTS = [
-    "rental.towithouston.com",
-    "localhost",
-    "127.0.0.1",
-]
+ALLOWED_HOSTS = config('ALLOWED_HOSTS',
+                       default="rental.towithouston.com localhost 127.0.0.1",
+                       cast=lambda v: [s.strip() for s in v.split(' ')])
 CORS_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS',
+                       default="http://localhost:8687",
+                       cast=lambda v: [s.strip() for s in v.split(' ')])
 
 # Application definition
 
@@ -61,6 +62,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -68,7 +70,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "auditlog.middleware.AuditlogMiddleware",
 ]
