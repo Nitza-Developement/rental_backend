@@ -47,7 +47,6 @@ class ContractFormFieldSerializer(serializers.ModelSerializer):
                 field_id=field.id,
             ).first()
 
-
             if not response:
                 return None
 
@@ -117,7 +116,6 @@ class ContractFormSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "template", "user", "tenant", "created_at", "completed")
 
     def get_completed(self, contract_form):
-        print(contract_form)
         return ContractFormFieldResponse.objects.filter(form=contract_form).exists()
 
 
