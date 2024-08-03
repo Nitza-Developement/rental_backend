@@ -4,7 +4,7 @@ from rental.inspections.models import Inspection
 from rental.forms.models import FieldResponse, Field, CheckOption
 from settings.utils.exceptions import NotFound404APIException
 from settings.settings import MINIO_STORAGE_MEDIA_BUCKET_NAME
-from settings.utils.minio_client import client
+from settings.utils.minio_client import minio_client
 from django.template import loader
 
 
@@ -77,7 +77,6 @@ def create_inspection_response(data: dict, tenant, tenantUser):
         elif field.type in (Field.SIGNATURE, Field.IMAGE):
 
             file = response.file
-            # Restablece la posición del puntero al inicio del búfer
             file.seek(0)
 
             length_file = len(response.file.getvalue())
@@ -87,7 +86,7 @@ def create_inspection_response(data: dict, tenant, tenantUser):
             else:
                 file_name = f"image-{field.id}.png"
 
-            result = client.put_object(
+            result = minio_client().put_object(
                 bucket_name=MINIO_STORAGE_MEDIA_BUCKET_NAME,
                 object_name=f"inspections/{inspection.id}/{file_name}",
                 data=file,
