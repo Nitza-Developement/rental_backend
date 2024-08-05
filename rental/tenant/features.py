@@ -60,15 +60,26 @@ def update_tenant(
         tenant.isAdmin = isAdmin
 
     if ownerId:
-        old_owner = TenantUser.objects.get(role=TenantUser.OWNER)
+
+        try:
+            old_owner = TenantUser.objects.get(role=TenantUser.OWNER)
+        except TenantUser.DoesNotExist:
+            raise NotFound404APIException(f"Tenant User with role {TenantUser.OWNER} not found")
+
+        try:
+            tenantUser_to_be_owner = TenantUser.objects.get(id=ownerId)
+        except TenantUser.DoesNotExist:
+            raise NotFound404APIException(f"Tenant User with id {ownerId} not found")
+
         if old_owner:
             old_owner.role = TenantUser.STAFF
             old_owner.full_clean()
             old_owner.save()
-        tenantUser_to_be_owner = TenantUser.objects.get(id=ownerId)
         tenantUser_to_be_owner.role = TenantUser.OWNER
         tenantUser_to_be_owner.full_clean()
         tenantUser_to_be_owner.save()
+
+
 
     tenant.full_clean()
     tenant.save()

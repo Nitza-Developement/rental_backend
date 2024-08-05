@@ -5,14 +5,14 @@ from django.urls import reverse
 from rest_framework import status
 
 from rental.tenant.models import Tenant
-
-from ..auth.parent_case.auth_api_test_case import AuthAPITestCase
-from .mixins.tenant_user_mixin import TenantUserMixin
+from tests.rental.tenant.parent_case.tenant_api_test_case import (
+    TenantApiTestCase,
+)
 
 User = get_user_model()
 
 
-class TestTenantUserCreate(AuthAPITestCase, TenantUserMixin):
+class TestTenantUserCreate(TenantApiTestCase):
     def call_tenant_user_create(
         self,
         user: User,
