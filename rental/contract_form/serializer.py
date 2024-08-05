@@ -113,7 +113,15 @@ class ContractFormSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ContractForm
-        fields = ("id", "name", "template", "user", "tenant", "created_at", "completed")
+        fields = (
+            "id",
+            "name",
+            "template",
+            "user",
+            "tenant",
+            "created_at",
+            "completed",
+        )
 
     def get_completed(self, contract_form):
         return ContractFormFieldResponse.objects.filter(form=contract_form).exists()

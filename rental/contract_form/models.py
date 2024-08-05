@@ -57,10 +57,12 @@ class ContractForm(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self) -> str:
-        return self.name
+        return str(self.name)
 
 
 class ContractFormFieldResponse(models.Model):
-    form = models.ForeignKey(ContractForm, on_delete=models.CASCADE)
+    form = models.ForeignKey(
+        ContractForm, on_delete=models.CASCADE, related_name="responses"
+    )
     field = models.ForeignKey(ContractFormField, on_delete=models.CASCADE)
     content = models.CharField(max_length=300)
