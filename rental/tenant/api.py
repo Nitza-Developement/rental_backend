@@ -72,7 +72,7 @@ class ListAndCreateTenantsView(APIViewWithPagination):
         tags=['tenant'],
         request = CreateTenantSerializer,
         responses={
-            200 : TenantSerializer(many=True),
+            200: TenantSerializer,
             400: BadRequest400APIException.schema_response(),
             401: Unauthorized401APIException.schema_response()
 
@@ -80,7 +80,13 @@ class ListAndCreateTenantsView(APIViewWithPagination):
     )
     def post(self, request):
         """
-        Descripción del endpoint aquí ...
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        This endpoint requires the authenticated user to have the administrator role.
+
+        Endpoint for creating a Tenant.
         """
         serializer = CreateTenantSerializer(data=request.data)
         validate_tenant_and_handle_errors(serializer)
