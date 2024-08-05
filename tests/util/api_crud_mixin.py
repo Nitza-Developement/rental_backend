@@ -1,0 +1,36 @@
+import json
+from typing import Any, Dict
+
+from rest_framework import status
+
+
+class ApiCrudMixin:
+    def call_create(
+        self,
+        url: str,
+        payload: Dict[str, Any],
+        unauthorized: bool = False,
+        forbidden: bool = False,
+        bad_request: bool = False,
+        print_json_response: bool = False,
+    ):
+        response = self.client.post(url, payload)
+        if print_json_response:
+            response_dict = json.loads(str(response.content, encoding="utf8"))
+            pretty = json.dumps(response_dict, indent=4)
+            print(pretty)
+        if unauthorized:
+            self.assertEqual(
+                response.status_code,
+                status.HTTP_401_UNAUTHORIZED,
+            )
+            return
+        elif bad_request:
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            return
+        elif forbidden:
+            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+            return
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response_dict = json.loads(str(response.content, encoding="utf8"))
+        return response_dict
