@@ -172,6 +172,9 @@ class GetUpdateAndDeleteTenantUserView(APIView):
         Authentication is performed by using a JWT (JSON Web Token) that is included
         in the HTTP request header.
 
+        This endpoint requires the authenticated user to have the administrator
+        or owner role.
+
         Endpoint for editing a TenantUser.
 
         If the default entity status is changed to false, the default value is assigned
