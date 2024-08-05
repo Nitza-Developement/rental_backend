@@ -57,10 +57,18 @@ def clone_contract_form_template(form: ContractFormTemplate):
     form.is_active = False
     form.save()
 
+    fields = ContractFormField.objects.filter(template=form).all()
+
     form.pk = None
     form._state.adding = True
     form.is_active = True
     form.save()
+
+    for field in fields:
+        field.pk = None
+        field._state.adding = True
+        field.template = form
+        field.save()
 
     return form
 
