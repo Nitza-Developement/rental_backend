@@ -117,7 +117,23 @@ class ListAndCreateTenantsView(APIViewWithPagination):
 class GetUpdateAndDeleteATenantView(APIViewWithPagination):
     permission_classes = [IsAuthenticated, IsAdminTenant]
 
+    @extend_schema(
+        responses={
+            200: TenantSerializer,
+            401: Unauthorized401APIException.schema_response(),
+            404: NotFound404APIException.schema_response(),
+        }
+    )
     def get(self, request, tenant_id=None):
+        """
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        This endpoint requires the authenticated user to have the administrator role.
+
+        Endpoint to get an instance of Tenant
+        """
         tenant = get_tenant(tenant_id)
 
         serialized_tenant = TenantSerializer(tenant)
