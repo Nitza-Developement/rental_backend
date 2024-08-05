@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, PolymorphicProxySerializer, OpenApiResponse
 from rest_framework import status
+from rest_framework.exceptions import APIException
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -190,9 +191,7 @@ class GetUpdateAndDeleteTenantUserView(APIView):
             return Response(serialized_tenant_user.data, status=status.HTTP_200_OK)
         except ValidationError as ex:
             raise BadRequest400APIException(str(ex.message))
-        except BadRequest400APIException as ex:
-            raise ex
-        except NotFound404APIException as ex:
+        except APIException as ex:
             raise ex
         except Exception as ex:
             raise InternalServerError500APIException()
