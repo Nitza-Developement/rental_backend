@@ -48,8 +48,7 @@ class FormListAndCreateView(APIViewWithPagination):
 
             return Response(serialized_form.data, status=status.HTTP_201_CREATED)
 
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class FormGetUpdateAndDeleteView(APIView):
@@ -97,7 +96,6 @@ class FormImportView(APIView):
             serialized_forms = FormSerializer(created_forms, many=True)
 
             return Response(serialized_forms.data, status=status.HTTP_201_CREATED)
-
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

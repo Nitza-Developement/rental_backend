@@ -10,10 +10,10 @@ def validate_inspection_response(data: dict, tenant):
     inspection = validate_inspection(data.pop("inspection"), tenant)
     cards = Card.objects.filter(form__id=inspection.form.id).all()
 
-    fields = sum([[field for field in card.fields.all()] for card in cards], [])
+    fields = sum([list(card.fields.all()) for card in cards], [])
 
     required_fields = [field.id for field in fields if field.required]
-    valid_field_ids = [field.id for field in fields]
+    valid_fields = [field.id for field in fields]
 
     missing_fields = [
         str(field_id)
@@ -36,7 +36,7 @@ def validate_inspection_response(data: dict, tenant):
         if not field_id.isnumeric():
             raise ValueError(f"Field {field_id} does not exist.")
 
-        elif int(field_id) not in valid_field_ids:
+        if int(field_id) not in valid_fields:
             raise ValueError(
                 f"Field {field_id} does not exist in this inspection or not exist."
             )
@@ -66,17 +66,16 @@ def validate_field_value(field: Field, value):
     elif field.type == Field.SINGLE_CHECK:
         valid_options = [option.id for option in field.check_options.all()]
 
-
         if not value.isnumeric():
             raise ValueError(f"Field {field.id} must be a number")
-        elif int(value) not in valid_options:
+        if int(value) not in valid_options:
             raise ValueError(f"Check option {value} does not exist")
 
     elif field.type == Field.EMAIL:
         try:
             validate_email(value)
-        except:
-            raise ValueError(f"Field {field.id} must be a valid email")
+        except Exception as error:
+            raise ValueError(f"Field {field.id} must be a valid email") from error
 
     elif field.type in (Field.IMAGE, Field.SIGNATURE):
 

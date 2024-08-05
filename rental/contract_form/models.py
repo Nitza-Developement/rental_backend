@@ -17,6 +17,33 @@ class ContractFormTemplate(models.Model):
         return f"{self.name}"
 
 
+class ContractFormField(models.Model):
+
+    TEXT = "TEXT"
+    NUMBER = "NUMBER"
+    SIGNATURE = "SIGNATURE"
+    EMAIL = "EMAIL"
+    PHONE = "PHONE"
+
+    FORM_FIELD_TYPES = (
+        (TEXT, "Text"),
+        (NUMBER, "Number"),
+        (SIGNATURE, "Signature"),
+        (EMAIL, "Email"),
+        (PHONE, "Phone"),
+    )
+
+    template = models.ForeignKey(
+        ContractFormTemplate, on_delete=models.CASCADE, related_name="fields"
+    )
+    placeholder = models.CharField(max_length=255)
+    type = models.CharField(max_length=20, choices=FORM_FIELD_TYPES)
+    required = models.BooleanField(default=True)
+
+    def __str__(self) -> str:
+        return f"{self.type} - {self.template}"
+
+
 class ContractForm(models.Model):
     tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
     user = models.ForeignKey(TenantUser, on_delete=models.CASCADE)
@@ -28,3 +55,14 @@ class ContractForm(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
+    def __str__(self) -> str:
+        return str(self.name)
+
+
+class ContractFormFieldResponse(models.Model):
+    form = models.ForeignKey(
+        ContractForm, on_delete=models.CASCADE, related_name="responses"
+    )
+    field = models.ForeignKey(ContractFormField, on_delete=models.CASCADE)
+    content = models.CharField(max_length=300)
