@@ -2,8 +2,7 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 
 from rental.tenant.models import Tenant
-
-from ..auth.parent_case.auth_api_test_case import AuthAPITestCase
+from tests.rental.auth.parent_case.auth_api_test_case import AuthAPITestCase
 
 User = get_user_model()
 

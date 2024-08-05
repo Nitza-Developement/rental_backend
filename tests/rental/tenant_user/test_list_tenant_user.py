@@ -5,9 +5,11 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
 
-from ..auth.parent_case.auth_api_test_case import AuthAPITestCase
-from .mixins.tenant_user_mixin import TenantUserMixin
-from .utils.custom_tenant_test_user import CustomTenantTestUser
+from tests.rental.auth.parent_case.auth_api_test_case import AuthAPITestCase
+from tests.rental.tenant_user.mixins.tenant_user_mixin import TenantUserMixin
+from tests.rental.tenant_user.utils.custom_tenant_test_user import (
+    CustomTenantTestUser,
+)
 
 User = get_user_model()
 

@@ -14,14 +14,6 @@ User = get_user_model()
 
 
 class TenantUserMixin:
-    def create_tenant(self, user: User, email: Optional[str] = None) -> Tenant:
-        if not email:
-            email = user.email
-        tenant = Tenant.objects.create(
-            email=email, name=f"tenant_{email}", isAdmin=True
-        )
-        return tenant
-
     def create_tenant_user(
         self,
         user: Optional[User] = None,
