@@ -68,3 +68,36 @@ class ApiCrudMixin:
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response_dict = json.loads(str(response.content, encoding="utf8"))
         return response_dict
+
+    def call_retrieve(
+        self,
+        url: str,
+        unauthorized: bool = False,
+        forbidden: bool = False,
+        bad_request: bool = False,
+        not_found: bool = False,
+        print_json_response: bool = False,
+    ) -> Dict:
+        response = self.client.get(url)
+        if print_json_response:
+            response_dict = json.loads(str(response.content, encoding="utf8"))
+            pretty = json.dumps(response_dict, indent=4)
+            print(pretty)
+        if unauthorized:
+            self.assertEqual(
+                response.status_code,
+                status.HTTP_401_UNAUTHORIZED,
+            )
+            return
+        elif bad_request:
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            return
+        elif not_found:
+            self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+            return
+        elif forbidden:
+            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+            return
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_dict = json.loads(str(response.content, encoding="utf8"))
+        return response_dict
