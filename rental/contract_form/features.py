@@ -52,8 +52,6 @@ def clone_contract_form_template(form: ContractFormTemplate):
     Clone a contract form template
     """
 
-    # TODO: hacer que la fecha se la misma que la del original
-
     form.is_active = False
     form.save()
 
