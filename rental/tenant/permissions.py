@@ -5,10 +5,11 @@ from rental.tenant.models import Tenant
 class IsAdminTenant(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        if (
-            request.user.defaultTenantUser().tenant
-            == Tenant.objects.filter(isAdmin=True).first()
-        ):
-            return True
-        else:
-            return False
+        return (
+                request.user
+                and request.user.defaultTenantUser()
+                and (
+                        request.user.defaultTenantUser().tenant
+                        == Tenant.objects.filter(isAdmin=True).first()
+                    )
+        )
