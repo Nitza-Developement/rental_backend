@@ -24,7 +24,7 @@ class TenantMixin:
     def validate_tenant_in_list(
         self,
         data: Dict,
-        tenant_id: int,
+        tenant_id: Optional[int] = None,
         tenant_user_owner: Optional[TenantUser] = None,
         tenant_users: Optional[List] = None,
     ):
