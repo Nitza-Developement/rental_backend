@@ -7,6 +7,7 @@ class ContractFormTemplate(models.Model):
     user = models.ForeignKey(TenantUser, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     template = models.JSONField(null=True, blank=True, default=dict)
+    html_template = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     name = models.CharField(max_length=255)
 

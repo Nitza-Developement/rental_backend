@@ -1,11 +1,11 @@
 from weasyprint import HTML
 from django.http import HttpResponse
+from django.template import loader
 from rental.inspections.models import Inspection
 from rental.forms.models import FieldResponse, Field, CheckOption
 from settings.utils.exceptions import NotFound404APIException
 from settings.settings import MINIO_STORAGE_MEDIA_BUCKET_NAME
 from settings.utils.minio_client import minio_client
-from django.template import loader
 
 
 def get_inspection(inspection_id, tenant):
