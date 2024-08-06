@@ -72,11 +72,21 @@ class InspectionGetUpdateAndDeleteView(APIView):
             inspection, context={"inspection_id": inspection_id}
         )
 
-        create_pdf = request.query_params.get("create_pdf")
+        create_pdf = request.query_params.get("pdf")
 
         if create_pdf:
 
-            return create_inspection_pdf(serialized_inspection.data)
+            pdf = create_inspection_pdf(serialized_inspection.data)
+
+            response = HttpResponse(
+                content_type="application/pdf",
+                headers={
+                    "Content-Disposition": 'attachment; filename="inspection.pdf"'
+                },
+            )
+            response.write(pdf)
+
+            return response
 
         return Response(serialized_inspection.data, status=status.HTTP_200_OK)
 

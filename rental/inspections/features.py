@@ -108,12 +108,4 @@ def create_inspection_pdf(data):
     template = loader.get_template("inspection.html")
     html_content = template.render(context={"data": data})
 
-    pdf_file = HTML(string=html_content).write_pdf()
-
-    response = HttpResponse(
-        content_type="application/pdf",
-        headers={"Content-Disposition": f'attachment; filename="inspection.pdf"'},
-    )
-    response.write(pdf_file)
-
-    return response
+    return HTML(string=html_content).write_pdf()
