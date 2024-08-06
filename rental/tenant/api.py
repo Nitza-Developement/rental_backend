@@ -52,10 +52,9 @@ class ListAndCreateTenantsView(APIViewWithPagination):
             OpenApiParameter(name='asc', type=str, description='descripción del parámetro aquí .. ', required=False),
         ],
         responses={
-            200 : TenantSerializer(many=True),
+            200: TenantSerializer(many=True),
             400: BadRequest400APIException.schema_response(),
             401: Unauthorized401APIException.schema_response()
-
         }
     )
     def get(self, request):
@@ -145,7 +144,7 @@ class GetUpdateAndDeleteATenantView(APIViewWithPagination):
         responses={
             200: TenantSerializer,
             400: PolymorphicProxySerializer(
-                component_name="BadRequestTenantUser",
+                component_name="BadRequestTenant",
                 serializers=[
                     ErrorTenantWithEmailAlreadyExists.schema_serializers(),
                     ErrorTenantInvalidEmail.schema_serializers(),
