@@ -12,13 +12,17 @@ User = get_user_model()
 
 class TenantMixin:
     def create_tenant(
-        self, user: Optional[User] = None, email: Optional[str] = None
+        self,
+        user: Optional[User] = None,
+        email: Optional[str] = None,
+        name: Optional[str] = None,
+        isAdmin: bool = False,
     ) -> Tenant:
         if not email:
             email = user.email if user else faker.email()
-        tenant = Tenant.objects.create(
-            email=email, name=f"tenant_{email}", isAdmin=False
-        )
+        if not name:
+            name = f"tenant_{email}"
+        tenant = Tenant.objects.create(email=email, name=name, isAdmin=isAdmin)
         return tenant
 
     def validate_tenant_in_list(
