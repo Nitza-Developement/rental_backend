@@ -1,3 +1,5 @@
+from django.http import HttpResponse
+
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -27,6 +29,7 @@ from rental.contract_form.features import (
     clone_contract_form_template,
     get_contract_form,
     create_contract_form_response,
+    create_contract_form_pdf,
 )
 from rental.contract_form.validators import validate_contract_form_response
 
@@ -177,11 +180,25 @@ class ContractFormGetView(APIView):
 
     def get(self, request, pk):
 
+        create_pdf = request.query_params.get("pdf")
         tenant = request.user.defaultTenantUser().tenant
         contract_form = get_contract_form(tenant, pk)
         serializer = ContractFormSerializer(
             contract_form, context={"contract_form_id": pk}
         )
+
+        if create_pdf:
+            pdf = create_contract_form_pdf(serializer.data)
+
+            response = HttpResponse(
+                content_type="application/pdf",
+                headers={
+                    "Content-Disposition": 'attachment; filename="contract-form.pdf"'
+                },
+            )
+            response.write(pdf)
+
+            return response
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 

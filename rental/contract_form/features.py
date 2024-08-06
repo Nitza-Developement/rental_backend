@@ -1,4 +1,6 @@
 # pylint: disable=no-member
+from weasyprint import HTML, CSS
+from rental.contract_form.custom_html_parser import CustomHTMLParser
 from rental.contract_form.models import (
     ContractFormTemplate,
     ContractFormField,
@@ -161,3 +163,30 @@ def create_contract_form_response(tenant, data):
             )
 
     return contract_form
+
+
+def create_contract_form_pdf(contract_form):
+    """Create pdf for contract form"""
+
+    fields = contract_form.get("template").get("fields")
+    html = contract_form.get("template").get("html_template")
+
+    parser = CustomHTMLParser()
+    parser.feed(html, fields)
+    stylesheets = [
+        CSS(
+            string="body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important }"
+        ),
+        CSS(string="a { color: #000 !important; text-decoration: none !important }"),
+        CSS(
+            string=""".content {
+                background-color: 
+                rgb(250, 202 ,21) !important ; 
+                padding: 5px !important ;
+                border-bottom: 1px solid #000 !important ;
+                }
+            """
+        ),
+        CSS(string=".image { border: 1px solid #000 !important }"),
+    ]
+    return HTML(string=parser.template).write_pdf(stylesheets=stylesheets)
