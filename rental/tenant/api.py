@@ -47,9 +47,9 @@ class ListAndCreateTenantsView(APIViewWithPagination):
     @extend_schema(
         tags=['tenant'],
         parameters=[
-            OpenApiParameter(name='searchText', type=str, description='descripción del parámetro aquí .. ', required=False),
-            OpenApiParameter(name='orderBy', type=str, description='descripción del parámetro aquí .. ', required=False),
-            OpenApiParameter(name='asc', type=str, description='descripción del parámetro aquí .. ', required=False),
+            OpenApiParameter(name='searchText', type=str, description='Matches content in `name` and `email` fields, ignoring case ', required=False),
+            OpenApiParameter(name='orderBy', type=str, description='You can select between `name`, `email` and `pk`', required=False),
+            OpenApiParameter(name='asc', type=str, description='Ascending (`True`) or descending (`False`) order', required=False),
         ],
         responses={
             200: TenantSerializer(many=True),
@@ -59,7 +59,11 @@ class ListAndCreateTenantsView(APIViewWithPagination):
     )
     def get(self, request):
         """
-        Descripción del endpoint aquí ...
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        Endpoint for listing TenantUser
         """
         search_text = request.query_params.get("searchText", None)
         order_by = request.query_params.get("orderBy", "name")
