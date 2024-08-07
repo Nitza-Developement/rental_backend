@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiResponse
 from rest_framework import status
 from rest_framework.views import APIView
 
@@ -151,7 +151,26 @@ class GetUpdateAndDeleteVehicleView(APIView):
         else:
             raise BadRequest400APIException(serializer.errors)
 
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                description="Successful response"
+            ),
+            401: Unauthorized401APIException.schema_response(),
+            404: NotFound404APIException.schema_response()
+        }
+    )
     def delete(self, request, vehicle_id):
+        """
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        This endpoint requires the authenticated user to have the administrator, staff
+        or owner role.
+
+        Endpoint to delete a Vehicle.
+        """
         delete_vehicle(vehicle_id)
         return Response(status=status.HTTP_200_OK)
 
