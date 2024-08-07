@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from drf_spectacular.utils import extend_schema, OpenApiResponse
 from rest_framework import status
+from rest_framework.exceptions import APIException
 from rest_framework.views import APIView
 
 from rental.vehicle.models import Vehicle
@@ -96,6 +97,8 @@ class GetUpdateAndDeleteVehicleView(APIView):
             vehicle = get_vehicle(vehicle_id)
             serialized_vehicle = VehicleListSerializer(vehicle)
             return Response(serialized_vehicle.data, status=status.HTTP_200_OK)
+        except APIException as e:
+            raise e
         except Exception as e:
             raise BadRequest400APIException(str(e))
 
