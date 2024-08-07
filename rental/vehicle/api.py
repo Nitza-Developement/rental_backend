@@ -92,6 +92,14 @@ class ListAndCreateVehicleView(APIViewWithPagination):
 class GetUpdateAndDeleteVehicleView(APIView):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
+    @extend_schema(
+        responses={
+            200: VehicleListSerializer,
+            400: BadRequest400APIException.schema_response(),
+            401: Unauthorized401APIException.schema_response(),
+            404: NotFound404APIException.schema_response(),
+        }
+    )
     def get(self, request, vehicle_id):
         try:
             vehicle = get_vehicle(vehicle_id)
