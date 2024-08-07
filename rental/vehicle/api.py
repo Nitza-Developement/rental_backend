@@ -1,6 +1,9 @@
+from django.core.exceptions import ValidationError
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.views import APIView
+
+from rental.vehicle.models import Vehicle
 from settings.utils.api import APIViewWithPagination
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -19,7 +22,7 @@ from rental.vehicle.features import (
     delete_vehicle,
     get_vehicle_history,
 )
-from settings.utils.exceptions import BadRequest400APIException, Unauthorized401APIException
+from settings.utils.exceptions import BadRequest400APIException, Unauthorized401APIException, NotFound404APIException
 
 
 class ListAndCreateVehicleView(APIViewWithPagination):
@@ -79,10 +82,34 @@ class GetUpdateAndDeleteVehicleView(APIView):
         except Exception as e:
             raise BadRequest400APIException(str(e))
 
+    @extend_schema(
+        request=VehicleUpdateSerializer,
+        responses={
+            200: VehicleListSerializer,
+            400: BadRequest400APIException.schema_response(),
+            401: Unauthorized401APIException.schema_response(),
+            404: NotFound404APIException.schema_response()
+        }
+    )
     def put(self, request, vehicle_id):
+        """
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        This endpoint requires the authenticated user to have the administrator, staff
+        or owner role.
+
+        Endpoint for editing a Vehicle.
+        """
+
+        try:
+            vehicle= Vehicle.objects.get(id=vehicle_id)
+        except (TypeError, ValueError, Vehicle.DoesNotExist):
+            raise NotFound404APIException(f"Vehicle with id {vehicle_id} doesnt exist")
+
         serializer = VehicleUpdateSerializer(
             data={
-                "id": vehicle_id,
                 "type": request.data.get("type"),
                 "year": request.data.get("year"),
                 "make": request.data.get("make"),
@@ -95,11 +122,12 @@ class GetUpdateAndDeleteVehicleView(APIView):
                 "extra_fields": request.data.get("extra_fields"),
                 "status": request.data.get("status"),
                 "plate": request.data.get("plate"),
-            }
+            },
+            instance=vehicle
         )
         if serializer.is_valid():
             updated_vehicle = update_vehicle(
-                user=request.user, **serializer.validated_data
+                user=request.user, vehicle=vehicle,**serializer.validated_data
             )
             serialized_vehicle = VehicleListSerializer(updated_vehicle)
             return Response(serialized_vehicle.data, status=status.HTTP_200_OK)

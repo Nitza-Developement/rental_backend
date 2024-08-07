@@ -64,7 +64,7 @@ def delete_vehicle(vehicle_id: int):
 
 
 def update_vehicle(
-    id: int,
+    vehicle: Vehicle,
     type: str,
     year: int,
     make: str,
@@ -79,10 +79,7 @@ def update_vehicle(
     plate: str,
     user: User,
 ):
-    try:
-        vehicle = Vehicle.objects.get(id=id)
-    except Vehicle.DoesNotExist:
-        raise NotFound404APIException(f"Vehicle with id {id} doesnt exist")
+
 
     with set_actor(user):
         if type:
@@ -130,6 +127,7 @@ def update_vehicle(
 
         vehicle.full_clean()
         vehicle.save()
+        return vehicle
 
 
 def get_vehicle_history(vehicle_id: int):
