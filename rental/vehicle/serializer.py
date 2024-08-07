@@ -105,7 +105,7 @@ class VehicleUpdateSerializer(serializers.Serializer):
     def validate_plate(self, value):
         try:
             plate_instance = VehiclePlate.objects.get(plate=value)
-            if plate_instance and plate_instance.vehicle.id != self.initial_data.get("id"):
+            if self.instance and plate_instance and plate_instance.vehicle.id != self.instance.id:
                 raise serializers.ValidationError("This plate number is already assigned to another vehicle.")
             else:
                 return value

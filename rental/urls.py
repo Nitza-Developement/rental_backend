@@ -83,7 +83,7 @@ urlpatterns = [
     path(
         "vehicle/<int:vehicle_id>/history",
         get_vehicle_timeline,
-        name="vehicle-actions",
+        name="vehicle-actions-history",
     ),
     path("rental-plan", ListAndCreateRentalPlansView.as_view(), name="rental-plan"),
     path(
