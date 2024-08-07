@@ -28,7 +28,24 @@ from settings.utils.exceptions import BadRequest400APIException, Unauthorized401
 class ListAndCreateVehicleView(APIViewWithPagination):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
+    @extend_schema(
+        responses={
+            200: VehicleListSerializer(many=True),
+            400: BadRequest400APIException.schema_response(),
+            401: Unauthorized401APIException.schema_response()
+        }
+    )
     def get(self, request):
+        """
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        This endpoint requires the authenticated user to have the administrator, staff
+        or owner role.
+
+        Endpoint for listing TenantUser
+        """
         try:
             vehicles_list = get_vehicles(
                 tenant=request.user.defaultTenantUser().tenant.id
@@ -43,7 +60,7 @@ class ListAndCreateVehicleView(APIViewWithPagination):
     @extend_schema(
         request=VehicleCreateSerializer(),
         responses={
-            201: VehicleListSerializer(),
+            201: VehicleListSerializer,
             400: BadRequest400APIException.schema_response(),
             401: Unauthorized401APIException.schema_response(),
         }
