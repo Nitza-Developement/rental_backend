@@ -87,7 +87,7 @@ class ListAndCreateTenantsView(APIViewWithPagination):
         tags=['tenant'],
         request = CreateTenantSerializer,
         responses={
-            200: TenantSerializer,
+            201: TenantSerializer,
             400: BadRequest400APIException.schema_response(),
             401: Unauthorized401APIException.schema_response()
 

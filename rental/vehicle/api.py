@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.views import APIView
 from settings.utils.api import APIViewWithPagination
@@ -18,7 +19,7 @@ from rental.vehicle.features import (
     delete_vehicle,
     get_vehicle_history,
 )
-from settings.utils.exceptions import BadRequest400APIException
+from settings.utils.exceptions import BadRequest400APIException, Unauthorized401APIException
 
 
 class ListAndCreateVehicleView(APIViewWithPagination):
@@ -36,7 +37,25 @@ class ListAndCreateVehicleView(APIViewWithPagination):
         except Exception as e:
             raise BadRequest400APIException(str(e))
 
+    @extend_schema(
+        request=VehicleCreateSerializer(),
+        responses={
+            201: VehicleListSerializer(),
+            400: BadRequest400APIException.schema_response(),
+            401: Unauthorized401APIException.schema_response(),
+        }
+    )
     def post(self, request):
+        """
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        This endpoint requires the authenticated user to have the administrator, staff
+        or owner role.
+
+        Endpoint for creating a TenantUser.
+        """
         serializer = VehicleCreateSerializer(data=request.data)
         if serializer.is_valid():
             created_vehicle = create_vehicle(
