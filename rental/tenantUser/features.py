@@ -1,7 +1,10 @@
 from rental.user.models import User
 from rental.user.features import create_user, delete_user
 from rental.tenantUser.models import TenantUser
-from settings.utils.exceptions import NotFound404APIException
+from settings.utils.exceptions import (
+    NotFound404APIException,
+    BadRequest400APIException,
+)
 
 
 def create_tenantUser(tenant: str, email: str, role: str, is_default=False):
@@ -38,35 +41,56 @@ def get_tenantUsers(user_requesting: User):
 
 
 def update_tenantUser(
-    tenant_user_id, role=None, is_default=None, tenant=None, email=None, old_email=None
+    tenant_user_id, is_default=None,
 ):
     tenant_user = get_tenantUser(tenant_user_id)
-    if tenant_user:
-        if role:
-            tenant_user.role = role
-        if tenant:
-            tenant_user.tenant = tenant
-        if email:
-            user = User.objects.get(email=old_email)
-            user.email = email
-            user.full_clean()
-            user.save()
-
-        if is_default is not None:
-            current_default = TenantUser.objects.filter(
-                user=tenant_user.user, is_default=True
-            ).first()
-            current_default.is_default = False
-            current_default.save()
+    if is_default is not None:
+        if (
+                (not is_default)
+                and tenant_user.is_default
+                and not TenantUser.objects.filter(
+                            user=tenant_user.user,
+                        ).exclude(
+                            pk=tenant_user.pk
+                        ).exists()
+        ):
+            raise BadRequest400APIException(
+                "It cannot stop being default because it does not exist for this user, only this tenant owns it."
+            )
+        if is_default and not tenant_user.is_default:
+            TenantUser.objects.filter(
+                user=tenant_user.user,
+                is_default=True
+            ).exclude(
+                pk=tenant_user.pk
+            ).update(
+                is_default=False
+            )
 
             tenant_user.is_default = is_default
+            tenant_user.full_clean()
+            tenant_user.save()
 
-        tenant_user.full_clean()
-        tenant_user.save()
-    else:
-        raise NotFound404APIException(
-            f"TenantUser with ID {tenant_user_id} doesnt exists"
-        )
+        elif tenant_user.is_default and not is_default:
+            tenant_user_default_now=TenantUser.objects.filter(
+                user=tenant_user.user,
+                is_default=False
+            ).exclude(
+                pk=tenant_user.pk
+            ).first()
+
+
+
+            if tenant_user_default_now:
+                tenant_user.is_default = is_default
+                tenant_user.full_clean()
+                tenant_user.save()
+
+                tenant_user_default_now.is_default=True
+                tenant_user_default_now.full_clean()
+                tenant_user_default_now.save()
+
+
     return tenant_user
 
 
@@ -86,8 +110,11 @@ def delete_tenantUser(tenant_user_id):
             new_default_tenantUser.full_clean()
             new_default_tenantUser.save()
         else:
-            delete_user(tenant_user.user.id)
-    if tenant_user:
-        tenant_user.delete()
-        return True
-    raise NotFound404APIException(f"TenantUser with ID {tenant_user_id} doesnt exists")
+            user_id=tenant_user.user.id
+            tenant_user.delete()
+            delete_user(user_id)
+            return True
+
+    tenant_user.delete()
+    return True
+

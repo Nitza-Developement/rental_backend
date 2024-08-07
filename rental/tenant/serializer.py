@@ -63,6 +63,9 @@ class CreateTenantSerializer(serializers.ModelSerializer):
 
 
 class UpdateTenantSerializer(serializers.Serializer):
+    id = serializers.PrimaryKeyRelatedField(
+        queryset=Tenant.objects.all(),
+    )
     email = serializers.EmailField(required=False, allow_blank=False, allow_null=True)
     name = serializers.CharField(
         required=False,

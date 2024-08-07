@@ -17,15 +17,18 @@ T = TypeVar("T")
 
 
 class UserMixin:
-    def create_tenant_user_admin(self) -> TenantUser:
+    def create_tenant_user_admin(
+        self, tenant: Optional[Tenant] = None
+    ) -> TenantUser:
         self.admin_email = "admin@gmail.com"
         self.admin_password = "123"
         self.admin_user = User.objects.create_user(
             email=self.admin_email, password=self.admin_password
         )
-        tenant = Tenant.objects.create(
-            email=self.admin_email, name="tenant_admin", isAdmin=True
-        )
+        if not tenant:
+            tenant = Tenant.objects.create(
+                email=self.admin_email, name="tenant_admin", isAdmin=True
+            )
         tenant_user = TenantUser.objects.create(
             role=TenantUser.ADMIN,
             tenant=tenant,

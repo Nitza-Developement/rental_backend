@@ -14,26 +14,43 @@ User = get_user_model()
 
 
 class TenantUserMixin:
-    def create_tenant(self, user: User, email: Optional[str] = None) -> Tenant:
-        if not email:
+    def create_tenant_user(
+        self,
+        user: Optional[User] = None,
+        password: Optional[str] = None,
+        tenant_quantity: int = 1,
+        role: Optional[str] = None,
+    ) -> CustomTenantTestUser:
+        if tenant_quantity < 0:
+            raise ValueError("tenant_quantity must be greater than 0")
+        if not password:
+            password = faker.password(length=8)
+        if not user:
+            email = faker.email()
+            user: User = User.objects.create_user(
+                email=email, password=password
+            )
+        else:
             email = user.email
-        tenant = Tenant.objects.create(
-            email=email, name=f"tenant_{email}", isAdmin=True
+        list_tentant_user = []
+        for i in range(tenant_quantity):
+            tenant = Tenant.objects.create(
+                email=f"{i}{email}", name=f"{i}{email}", isAdmin=True
+            )
+            if not role:
+                role = TenantUser.OWNER
+            tenant_user = TenantUser.objects.create(
+                role=role,
+                tenant=tenant,
+                user=user,
+                is_default=i == 0,
+            )
+            list_tentant_user.append(tenant_user)
+        return CustomTenantTestUser(
+            default_tenant_user=list_tentant_user[0],
+            password=password,
+            list_tenant_user=list_tentant_user,
         )
-        return tenant
-
-    def create_tenant_user(self) -> CustomTenantTestUser:
-        email = faker.email()
-        password = faker.password(length=8)
-        user = User.objects.create_user(email=email, password=password)
-        tenant = Tenant.objects.create(email=email, name=email, isAdmin=True)
-        tenant_user = TenantUser.objects.create(
-            role=TenantUser.OWNER,
-            tenant=tenant,
-            user=user,
-            is_default=True,
-        )
-        return CustomTenantTestUser(tenant_user=tenant_user, password=password)
 
     def validate_tenant_user_in_list(
         self, data: Dict, tenant_user_id: Optional[int] = None

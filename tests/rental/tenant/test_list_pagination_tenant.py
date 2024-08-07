@@ -1,27 +1,28 @@
 import json
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
 
-from tests.rental.auth.parent_case.auth_api_test_case import AuthAPITestCase
-from tests.rental.tenant_user.mixins.tenant_user_mixin import TenantUserMixin
-from tests.rental.tenant_user.utils.custom_tenant_test_user import (
-    CustomTenantTestUser,
+from rental.tenant.models import Tenant
+from tests.rental.tenant.parent_case.tenant_api_test_case import (
+    TenantApiTestCase,
 )
 
 User = get_user_model()
 
 
-class TestListTenantUser(AuthAPITestCase, TenantUserMixin):
+class TestListPaginationTenant(TenantApiTestCase):
     def setUp(self):
         super().setUp()
-        self.list_tenant_user = [self.create_tenant_user() for _ in range(20)]
-        self.total_count = len(self.list_tenant_user) + 1
+        self.list_tenant: List[Tenant] = [
+            self.create_tenant() for _ in range(20)
+        ]
+        self.total_count = len(self.list_tenant) + 1
         self.maxDiff = None
 
-    def call_tenant_user_list(
+    def call_tenant_list(
         self,
         len_list: int,
         expected_next: bool,
@@ -30,7 +31,7 @@ class TestListTenantUser(AuthAPITestCase, TenantUserMixin):
         page_size: Optional[int] = None,
         page: int = 0,
     ) -> Dict:
-        URL = reverse("tenantUser")
+        URL = reverse("tenant")
         if page_size:
             URL = f"{URL}?pageSize={page_size}"
         if page > 0:
@@ -48,20 +49,20 @@ class TestListTenantUser(AuthAPITestCase, TenantUserMixin):
             len_list=len_list,
             expected_next=expected_next,
             expected_previous=expected_previous,
-            schema_validator=self.validate_tenant_user_in_list,
+            schema_validator=self.validate_tenant_in_list,
         )
         return response_dict
 
     def call_multiples_list(self):
-        self.call_tenant_user_list(
+        self.call_tenant_list(
             len_list=15,
             expected_next=True,
             expected_previous=False,
         )
-        self.call_tenant_user_list(
+        self.call_tenant_list(
             len_list=15, expected_next=True, expected_previous=False, page=1
         )
-        self.call_tenant_user_list(
+        self.call_tenant_list(
             len_list=5,
             expected_next=True,
             expected_previous=True,
@@ -69,15 +70,7 @@ class TestListTenantUser(AuthAPITestCase, TenantUserMixin):
             page_size=5,
         )
 
-    def test_tenant_user_list(self):
+    def test_list_pagination_tenant(self):
         self.login(email=self.admin_email, password=self.admin_password)
-        self.put_authentication_in_the_header()
-        self.call_multiples_list()
-
-        custom_tenant_test_user: CustomTenantTestUser = self.list_tenant_user[0]
-        self.login(
-            email=custom_tenant_test_user.default_tenant_user.user.email,
-            password=custom_tenant_test_user.password,
-        )
         self.put_authentication_in_the_header()
         self.call_multiples_list()

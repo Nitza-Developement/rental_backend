@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, PolymorphicProxySerializer, OpenApiResponse
 from rest_framework import status
+from rest_framework.exceptions import APIException
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -66,7 +67,7 @@ class ListAndCreateTenantUserView(APIViewWithPagination):
     @extend_schema(
         request=TenantUserCreateSwaggerRepresentationSerializer(),
         responses={
-            200: TenantUserListSerializer(),
+            201: TenantUserListSerializer(),
             400: PolymorphicProxySerializer(
                                 component_name="BadRequestTenantUser",
                                 serializers=[
@@ -120,12 +121,6 @@ class ListAndCreateTenantUserView(APIViewWithPagination):
 class GetUpdateAndDeleteTenantUserView(APIView):
     permission_classes = [IsAuthenticated, IsAdminTenantUser]
 
-    def get_permissions(self):
-        if self.request.method in ["PUT"]:
-
-            return [IsAuthenticated()]
-
-        return super().get_permissions()
 
     @extend_schema(
         responses={
@@ -177,23 +172,32 @@ class GetUpdateAndDeleteTenantUserView(APIView):
         Authentication is performed by using a JWT (JSON Web Token) that is included
         in the HTTP request header.
 
+        This endpoint requires the authenticated user to have the administrator
+        or owner role.
+
         Endpoint for editing a TenantUser.
+
+        If the default entity status is changed to false, the default value is assigned
+        to the next available entity.
+
+        Therefore, this action can only be performed if there are more than one entity
+        of this type.
         """
         serializer = TenantUserUpdateSerializer(data=request.data)
         validate_tenantUser_and_handle_errors(serializer)
-
-        updated_tenant_user = update_tenantUser(
-            tenant_user_id=tenantUser_id,
-            is_default=serializer.validated_data.get("is_default"),
-            tenant=serializer.validated_data.get("tenant"),
-            role=serializer.validated_data.get("role"),
-            email=request.data.get("email"),
-            old_email=request.data.get("oldEmail"),
-        )
-
-        serialized_tenant_user = TenantUserListSerializer(updated_tenant_user)
-        return Response(serialized_tenant_user.data, status=status.HTTP_200_OK)
-
+        try:
+            updated_tenant_user = update_tenantUser(
+                tenant_user_id=tenantUser_id,
+                is_default=serializer.validated_data.get("is_default"),
+            )
+            serialized_tenant_user = TenantUserListSerializer(updated_tenant_user)
+            return Response(serialized_tenant_user.data, status=status.HTTP_200_OK)
+        except ValidationError as ex:
+            raise BadRequest400APIException(str(ex.message))
+        except APIException as ex:
+            raise ex
+        except Exception as ex:
+            raise InternalServerError500APIException()
     @extend_schema(
         responses={
             200: OpenApiResponse(
@@ -213,6 +217,12 @@ class GetUpdateAndDeleteTenantUserView(APIView):
         or owner role.
 
         Endpoint to delete a TenantUser.
+
+        If the default entity status is deleted, the default value is assigned
+        to the next available entity.
+
+        If the default entity is deleted and there is no other available, then
+        the user is also deleted.
         """
         delete_tenantUser(tenantUser_id)
         return Response(status=status.HTTP_200_OK)
