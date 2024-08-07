@@ -45,10 +45,6 @@ def update_tenantUser(
 ):
     tenant_user = get_tenantUser(tenant_user_id)
     if is_default is not None:
-        if not tenant_user:
-            raise NotFound404APIException(
-                f"TenantUser with ID {tenant_user_id} doesnt exists"
-            )
         if (
                 (not is_default)
                 and tenant_user.is_default
@@ -118,7 +114,7 @@ def delete_tenantUser(tenant_user_id):
             tenant_user.delete()
             delete_user(user_id)
             return True
-    if tenant_user:
-        tenant_user.delete()
-        return True
-    raise NotFound404APIException(f"TenantUser with ID {tenant_user_id} doesnt exists")
+
+    tenant_user.delete()
+    return True
+
