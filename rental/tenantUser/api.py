@@ -67,7 +67,7 @@ class ListAndCreateTenantUserView(APIViewWithPagination):
     @extend_schema(
         request=TenantUserCreateSwaggerRepresentationSerializer(),
         responses={
-            200: TenantUserListSerializer(),
+            201: TenantUserListSerializer(),
             400: PolymorphicProxySerializer(
                                 component_name="BadRequestTenantUser",
                                 serializers=[

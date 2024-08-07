@@ -19,6 +19,7 @@ class TenantUserMixin:
         user: Optional[User] = None,
         password: Optional[str] = None,
         tenant_quantity: int = 1,
+        role: Optional[str] = None,
     ) -> CustomTenantTestUser:
         if tenant_quantity < 0:
             raise ValueError("tenant_quantity must be greater than 0")
@@ -36,8 +37,10 @@ class TenantUserMixin:
             tenant = Tenant.objects.create(
                 email=f"{i}{email}", name=f"{i}{email}", isAdmin=True
             )
+            if not role:
+                role = TenantUser.OWNER
             tenant_user = TenantUser.objects.create(
-                role=TenantUser.OWNER,
+                role=role,
                 tenant=tenant,
                 user=user,
                 is_default=i == 0,
