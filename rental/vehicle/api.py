@@ -5,7 +5,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.views import APIView
 
 from rental.vehicle.models import Vehicle
-from rental.vehicle.swagger_seralizer import AuditlogVehicleSerializer
+from rental.vehicle.swagger_seralizer import AuditlogVehicleSwaggerRepresentationSerializer
 from settings.utils.api import APIViewWithPagination
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -189,7 +189,7 @@ class GetUpdateAndDeleteVehicleView(APIView):
 
 
 @extend_schema_view(
-    get=extend_schema(responses=AuditlogVehicleSerializer(many=True)),
+    get=extend_schema(responses=AuditlogVehicleSwaggerRepresentationSerializer(many=True)),
 )
 @api_view(["GET"])
 @permission_classes([IsAuthenticated, IsAdminOrStaffTenantUser])

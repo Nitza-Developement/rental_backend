@@ -5,7 +5,7 @@ from auditlog.models import LogEntry
 from rental.shared_serializers.serializers import UserProfileSerializer
 
 
-class VehicleChangesHistorySerializer(serializers.Serializer):
+class VehicleChangesHistorySwaggerRepresentationSerializer(serializers.Serializer):
     ID = serializers.ListField(child=serializers.CharField(), min_length=2, max_length=2, required=False)
     type = serializers.ListField(child=serializers.CharField(),min_length=2,max_length=2,required=False)
     year = serializers.ListField(child=serializers.CharField(),min_length=2,max_length=2,required=False)
@@ -19,7 +19,7 @@ class VehicleChangesHistorySerializer(serializers.Serializer):
     spare_tires = serializers.ListField(child=serializers.CharField(),min_length=2,max_length=2,required=False)
     status = serializers.ListField(child=serializers.CharField(),min_length=2,max_length=2,required=False)
 
-class VehiclePlateChangesHistorySerializer(serializers.Serializer):
+class VehiclePlateChangesHistorySwaggerRepresentationSerializer(serializers.Serializer):
     ID = serializers.ListField(child=serializers.CharField(),min_length=2,max_length=2,required=False)
     plate = serializers.ListField(child=serializers.CharField(),min_length=2,max_length=2,required=False)
     vehicle = serializers.ListField(child=serializers.CharField(),min_length=2,max_length=2,required=False)
@@ -27,20 +27,20 @@ class VehiclePlateChangesHistorySerializer(serializers.Serializer):
     toll_dues = serializers.ListField(child=serializers.CharField(),min_length=2,max_length=2,required=False)
     assign_date = serializers.ListField(child=serializers.CharField(),min_length=2,max_length=2,required=False)
 
-class VehiclePictureChangesHistorySerializer(serializers.Serializer):
+class VehiclePictureChangesHistorySwaggerRepresentationSerializer(serializers.Serializer):
     ID = serializers.ListField(child=serializers.CharField(),min_length=2,max_length=2,required=False)
     image = serializers.ListField(child=serializers.CharField(),min_length=2,max_length=2,required=False)
     vehicle = serializers.ListField(child=serializers.CharField(),min_length=2,max_length=2,required=False)
     pinned = serializers.ListField(child=serializers.CharField(),min_length=2,max_length=2,required=False)
 
-class AuditlogVehicleSerializer(serializers.ModelSerializer):
+class AuditlogVehicleSwaggerRepresentationSerializer(serializers.ModelSerializer):
     actor=UserProfileSerializer()
     changes=PolymorphicProxySerializer(
                                 component_name="ChangesAuditlogVehicleSerializer",
                                 serializers=[
-                                    VehicleChangesHistorySerializer,
-                                    VehiclePlateChangesHistorySerializer,
-                                    VehiclePictureChangesHistorySerializer,
+                                    VehicleChangesHistorySwaggerRepresentationSerializer,
+                                    VehiclePlateChangesHistorySwaggerRepresentationSerializer,
+                                    VehiclePictureChangesHistorySwaggerRepresentationSerializer,
                                 ],
                                 resource_type_field_name="model"
                             )
