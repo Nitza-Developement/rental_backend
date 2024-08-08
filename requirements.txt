@@ -16,9 +16,9 @@ drf-spectacular-sidecar==2024.1.1
 minio==7.2.7
 numpy==1.26.4
 pandas==2.2.2
-pillow==10.2.0
+Pillow==10.1.0
 psycopg==3.1.18
-psycopg-binary==3.1.18
+psycopg-binary==3.1.18; sys_platform == 'win32'
 pycparser==2.22
 pycryptodome==3.20.0
 PyJWT==2.8.0
