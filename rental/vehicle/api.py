@@ -1,10 +1,11 @@
 from django.core.exceptions import ValidationError
-from drf_spectacular.utils import extend_schema, OpenApiResponse
+from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.views import APIView
 
 from rental.vehicle.models import Vehicle
+from rental.vehicle.swagger_seralizer import AuditlogVehicleSerializer
 from settings.utils.api import APIViewWithPagination
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -186,9 +187,23 @@ class GetUpdateAndDeleteVehicleView(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
+
+@extend_schema_view(
+    get=extend_schema(responses=AuditlogVehicleSerializer(many=True)),
+)
 @api_view(["GET"])
 @permission_classes([IsAuthenticated, IsAdminOrStaffTenantUser])
 def get_vehicle_timeline(request, vehicle_id):
+    """
+    This method requires the user to be authenticated in order to be used.
+    Authentication is performed by using a JWT (JSON Web Token) that is included
+    in the HTTP request header.
+
+    This endpoint requires the authenticated user to have the administrator, staff
+    or owner role.
+
+    Returns a history of actions performed on a vehicle
+    """
     history_data = get_vehicle_history(vehicle_id)
 
     return Response(history_data, status=status.HTTP_200_OK)

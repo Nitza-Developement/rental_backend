@@ -66,8 +66,8 @@ class TestRetrieveVehicle(VehicleApiTestCase):
             entity_id=99999, not_found=True, print_json_response=False
         )
 
-        for tenant in self.list_vehicle:
+        for entity in self.list_vehicle:
             # case correct, response 200
             self.call_retrieve_vehicle(
-                entity_id=tenant.id,
+                entity_id=entity.id,
             )
