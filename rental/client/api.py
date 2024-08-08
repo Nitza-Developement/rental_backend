@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema, PolymorphicProxySerializer
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -15,9 +16,10 @@ from rental.client.features import (
     create_client,
     update_client,
 )
-from rental.client.exceptions import validate_client_and_handle_errors
+from rental.client.exceptions import validate_client_and_handle_errors, ErrorClientWithEmailAlreadyExists, \
+    ErrorClientWithPhoneNumberAlreadyExists, ErrorClientInvalidEmail, ErrorClientInvalidPhoneNumber
 from settings.utils.api import APIViewWithPagination
-from settings.utils.exceptions import BadRequest400APIException, NotFound404APIException
+from settings.utils.exceptions import BadRequest400APIException, NotFound404APIException, Unauthorized401APIException
 
 
 class ClientListAndCreateView(APIViewWithPagination):
@@ -33,6 +35,24 @@ class ClientListAndCreateView(APIViewWithPagination):
         except Exception as e:
             raise BadRequest400APIException(str(e))
 
+    @extend_schema(
+        request=ClientCreateSerializer(),
+        responses={
+            201: ClientListSerializer,
+            400: PolymorphicProxySerializer(
+                component_name="BadRequestClient",
+                serializers=[
+                    ErrorClientWithEmailAlreadyExists.schema_serializers(),
+                    ErrorClientWithPhoneNumberAlreadyExists.schema_serializers(),
+                    ErrorClientInvalidEmail.schema_serializers(),
+                    ErrorClientInvalidPhoneNumber.schema_serializers(),
+                    BadRequest400APIException.schema_serializers(),
+                ],
+                resource_type_field_name="error_client"
+            ),
+            401: Unauthorized401APIException.schema_response(),
+        }
+    )
     def post(self, request):
         serializer = ClientCreateSerializer(data=request.data)
         validate_client_and_handle_errors(serializer)
