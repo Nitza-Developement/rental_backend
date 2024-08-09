@@ -1,4 +1,4 @@
-from drf_spectacular.utils import extend_schema, PolymorphicProxySerializer
+from drf_spectacular.utils import extend_schema, PolymorphicProxySerializer, OpenApiParameter
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -26,7 +26,30 @@ from rental.rentalPlan.exceptions import validate_plan_and_handle_errors, ErrorP
 class ListAndCreateRentalPlansView(APIViewWithPagination):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(name='searchText', type=str,
+                             description='Matches content in `name`, `periodicity` or `amount` fields, ignoring case ',
+                             required=False),
+            OpenApiParameter(name='orderBy', type=str, description='You can select between `name`, `periodicity`, `amount` or `pk`',
+                             required=False),
+            OpenApiParameter(name='asc', type=str, description='Ascending (`True`) or descending (`False`) order',
+                             required=False),
+        ],
+        responses={
+            200: RentalPlanSerializer(many=True),
+            400: BadRequest400APIException.schema_response(),
+            401: Unauthorized401APIException.schema_response()
+        }
+    )
     def get(self, request):
+        """
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        Endpoint for listing Rental Plan
+        """
         search_text = request.query_params.get("searchText", None)
         order_by = request.query_params.get("orderBy", "name")
         asc = request.query_params.get("asc", None)
