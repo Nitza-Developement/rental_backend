@@ -1,5 +1,6 @@
 from drf_spectacular.utils import extend_schema, PolymorphicProxySerializer
 from rest_framework import status
+from rest_framework.exceptions import APIException
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -106,6 +107,8 @@ class ClientGetUpdateAndDeleteView(APIView):
             client = get_client(client_id)
             serialized_client = ClientListSerializer(client)
             return Response(serialized_client.data, status=status.HTTP_200_OK)
+        except APIException as e:
+            raise e
         except Exception as e:
             raise BadRequest400APIException(str(e))
 
