@@ -102,6 +102,16 @@ class GetUpdateAndDeleteVehicleView(APIView):
         }
     )
     def get(self, request, vehicle_id):
+        """
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        This endpoint requires the authenticated user to have the administrator, staff
+        or owner role.
+
+        Endpoint to get an instance of Vehicle
+        """
         try:
             vehicle = get_vehicle(vehicle_id)
             serialized_vehicle = VehicleListSerializer(vehicle)
