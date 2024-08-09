@@ -46,7 +46,7 @@ class ListAndCreateVehicleView(APIViewWithPagination):
         This endpoint requires the authenticated user to have the administrator, staff
         or owner role.
 
-        Endpoint for listing TenantUser
+        Endpoint for listing Vehicle
         """
         try:
             vehicles_list = get_vehicles(
@@ -76,7 +76,7 @@ class ListAndCreateVehicleView(APIViewWithPagination):
         This endpoint requires the authenticated user to have the administrator, staff
         or owner role.
 
-        Endpoint for creating a TenantUser.
+        Endpoint for creating a Vehicle.
         """
         serializer = VehicleCreateSerializer(data=request.data)
         if serializer.is_valid():

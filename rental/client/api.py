@@ -28,7 +28,24 @@ from settings.utils.utils_request_data import qdict_to_dict
 class ClientListAndCreateView(APIViewWithPagination):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
+    @extend_schema(
+        responses={
+            200: ClientListSerializer(many=True),
+            400: BadRequest400APIException.schema_response(),
+            401: Unauthorized401APIException.schema_response()
+        }
+    )
     def get(self, request):
+        """
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        This endpoint requires the authenticated user to have the administrator, staff
+        or owner role.
+
+        Endpoint for listing Client
+        """
         try:
             clients_list = get_clients(request.user.defaultTenantUser().tenant)
             paginator = self.pagination_class()
