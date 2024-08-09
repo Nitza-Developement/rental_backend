@@ -34,7 +34,7 @@ class TestDeleteClient(ClientApiTestCase):
             print_json_response=print_json_response,
         )
 
-    def test_delete_tenant(self):
+    def test_delete_client(self):
         initial_amount = Client.objects.filter().count()
 
         # case not loguin, response 401
