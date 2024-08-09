@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema, PolymorphicProxySerializer
 from rest_framework import status
 from rest_framework.response import Response
 from settings.utils.api import APIViewWithPagination
@@ -14,9 +15,10 @@ from rental.rentalPlan.serializer import (
     RentalPlanSerializer,
     UpdateRentalPlanSerializer,
 )
-from settings.utils.exceptions import BadRequest400APIException
+from settings.utils.exceptions import BadRequest400APIException, Unauthorized401APIException
 from rental.tenantUser.permissions import IsAdminTenantUser, IsAdminOrStaffTenantUser
-from rental.rentalPlan.exceptions import validate_plan_and_handle_errors
+from rental.rentalPlan.exceptions import validate_plan_and_handle_errors, ErrorPlanWithNameAlreadyExists, \
+    ErrorPlanInvalidName, ErrorPlanInvalidAmount, ErrorPlanInvalidPeriodicity
 
 
 class ListAndCreateRentalPlansView(APIViewWithPagination):
@@ -43,7 +45,35 @@ class ListAndCreateRentalPlansView(APIViewWithPagination):
         except Exception as e:
             raise BadRequest400APIException(str(e))
 
+    @extend_schema(
+        request=CreateRentalPlanSerializer(),
+        responses={
+            201: RentalPlanSerializer,
+            400: PolymorphicProxySerializer(
+                component_name="BadRequestRentalPlan",
+                serializers=[
+                    ErrorPlanWithNameAlreadyExists.schema_serializers(),
+                    ErrorPlanInvalidName.schema_serializers(),
+                    ErrorPlanInvalidAmount.schema_serializers(),
+                    ErrorPlanInvalidPeriodicity.schema_serializers(),
+                    BadRequest400APIException.schema_serializers(),
+                ],
+                resource_type_field_name="error_rental_plan"
+            ),
+            401: Unauthorized401APIException.schema_response(),
+        }
+    )
     def post(self, request):
+        """
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        This endpoint requires the authenticated user to have the administrator, staff
+        or owner role.
+
+        Endpoint for creating a Rental Plan.
+        """
         serializer = CreateRentalPlanSerializer(data=request.data)
         validate_plan_and_handle_errors(serializer)
 

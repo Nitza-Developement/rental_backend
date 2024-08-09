@@ -36,6 +36,14 @@ class CreateRentalPlanSerializer(serializers.ModelSerializer):
             )
         return value
 
+    def validate(self, data):
+        periodicity = data["periodicity"]
+        amount = data["amount"]
+        name = data["name"]
+        if RentalPlan.objects.filter(name=name, periodicity=periodicity, amount=amount).exists():
+            raise serializers.ValidationError("There is already a Rental Plan with this data")
+        return data
+
 
 class UpdateRentalPlanSerializer(serializers.ModelSerializer):
     class Meta:
