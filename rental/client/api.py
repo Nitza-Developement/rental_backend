@@ -1,4 +1,4 @@
-from drf_spectacular.utils import extend_schema, PolymorphicProxySerializer
+from drf_spectacular.utils import extend_schema, PolymorphicProxySerializer, OpenApiResponse
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.views import APIView
@@ -178,6 +178,25 @@ class ClientGetUpdateAndDeleteView(APIView):
         serialized_client = ClientListSerializer(updated_client)
         return Response(serialized_client.data, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                description="Successful response"
+            ),
+            401: Unauthorized401APIException.schema_response(),
+            404: NotFound404APIException.schema_response()
+        }
+    )
     def delete(self, request, client_id):
+        """
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        This endpoint requires the authenticated user to have the administrator, staff
+        or owner role.
+
+        Endpoint to delete a Client.
+        """
         delete_client(client_id)
         return Response(status=status.HTTP_200_OK)
