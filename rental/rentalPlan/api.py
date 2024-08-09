@@ -122,7 +122,25 @@ class GetUpdateAndDeleteARentalPlanView(APIViewWithPagination):
             return [IsAuthenticated(), IsAdminTenantUser()]
         return super().get_permissions()
 
+    @extend_schema(
+        responses={
+            200: RentalPlanSerializer,
+            400: BadRequest400APIException.schema_response(),
+            401: Unauthorized401APIException.schema_response(),
+            404: NotFound404APIException.schema_response(),
+        }
+    )
     def get(self, request, rental_plan_id):
+        """
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        This endpoint requires the authenticated user to have the administrator, staff
+        or owner role.
+
+        Endpoint to get an instance of Rental Plan
+        """
         rental_plan = get_rental_plan(rental_plan_id)
 
         serialized_rental_plan = RentalPlanSerializer(rental_plan)
