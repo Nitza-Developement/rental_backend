@@ -102,7 +102,25 @@ class ClientListAndCreateView(APIViewWithPagination):
 class ClientGetUpdateAndDeleteView(APIView):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
+    @extend_schema(
+        responses={
+            200: ClientListSerializer,
+            400: BadRequest400APIException.schema_response(),
+            401: Unauthorized401APIException.schema_response(),
+            404: NotFound404APIException.schema_response(),
+        }
+    )
     def get(self, request, client_id):
+        """
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        This endpoint requires the authenticated user to have the administrator, staff
+        or owner role.
+
+        Endpoint to get an instance of Client
+        """
         try:
             client = get_client(client_id)
             serialized_client = ClientListSerializer(client)
