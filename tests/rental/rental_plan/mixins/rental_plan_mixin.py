@@ -13,16 +13,28 @@ User = get_user_model()
 
 
 class RentalPlanMixin:
-    def create_rental_plan(self, user: Optional[User] = None) -> RentalPlan:
+    def create_rental_plan(
+        self,
+        name: Optional[str] = None,
+        amount: Optional[int] = None,
+        periodicity: Optional[str] = None,
+        user: Optional[User] = None,
+    ) -> RentalPlan:
         if not user:
             user = self.custom_staff.user
+        if not name:
+            name = fake.text(max_nb_chars=30)
+        if not amount:
+            amount = random.randint(1, 1000)
+        if not periodicity:
+            periodicity = random.choice(
+                [RentalPlan.WEEKLY, RentalPlan.BIWEEKLY, RentalPlan.MONTHLY]
+            )
         with set_actor(user):
             return RentalPlan.objects.create(
-                name=fake.text(max_nb_chars=30),
-                amount=random.randint(1, 1000),
-                periodicity=random.choice(
-                    [RentalPlan.WEEKLY, RentalPlan.BIWEEKLY, RentalPlan.MONTHLY]
-                ),
+                name=name,
+                amount=amount,
+                periodicity=periodicity,
                 tenant=user.defaultTenantUser().tenant,
             )
 
