@@ -1,4 +1,4 @@
-from drf_spectacular.utils import extend_schema, PolymorphicProxySerializer, OpenApiParameter
+from drf_spectacular.utils import extend_schema, PolymorphicProxySerializer, OpenApiParameter, OpenApiResponse
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -172,7 +172,7 @@ class GetUpdateAndDeleteARentalPlanView(APIViewWithPagination):
         Authentication is performed by using a JWT (JSON Web Token) that is included
         in the HTTP request header.
 
-        This endpoint requires the authenticated user to have the administrator, staff
+        This endpoint requires the authenticated user to have the administrator
         or owner role.
 
         Endpoint for editing a Rental Plan.
@@ -195,6 +195,25 @@ class GetUpdateAndDeleteARentalPlanView(APIViewWithPagination):
 
         return Response(serialized_rental_plan.data, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                description="Successful response"
+            ),
+            401: Unauthorized401APIException.schema_response(),
+            404: NotFound404APIException.schema_response()
+        }
+    )
     def delete(self, request, rental_plan_id):
+        """
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        This endpoint requires the authenticated user to have the administrator
+        or owner role.
+
+        Endpoint to delete a Rental Plan.
+        """
         delete_rental_plan(rental_plan_id)
         return Response(status=status.HTTP_200_OK)
