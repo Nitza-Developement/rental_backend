@@ -27,7 +27,7 @@ class TestCreateRentalPlan(RentalPlanApiTestCase):
     ):
         URL = reverse("rental-plan")
         if not name:
-            name = fake.first_name()
+            name = fake.text(max_nb_chars=30)
         if not amount:
             amount = random.randint(1, 1000)
         if not periodicity:

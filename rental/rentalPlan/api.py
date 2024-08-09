@@ -1,6 +1,8 @@
 from drf_spectacular.utils import extend_schema, PolymorphicProxySerializer
 from rest_framework import status
 from rest_framework.response import Response
+
+from rental.rentalPlan.models import RentalPlan
 from settings.utils.api import APIViewWithPagination
 from rest_framework.permissions import IsAuthenticated
 from rental.rentalPlan.features import (
@@ -15,7 +17,7 @@ from rental.rentalPlan.serializer import (
     RentalPlanSerializer,
     UpdateRentalPlanSerializer,
 )
-from settings.utils.exceptions import BadRequest400APIException, Unauthorized401APIException
+from settings.utils.exceptions import BadRequest400APIException, Unauthorized401APIException, NotFound404APIException
 from rental.tenantUser.permissions import IsAdminTenantUser, IsAdminOrStaffTenantUser
 from rental.rentalPlan.exceptions import validate_plan_and_handle_errors, ErrorPlanWithNameAlreadyExists, \
     ErrorPlanInvalidName, ErrorPlanInvalidAmount, ErrorPlanInvalidPeriodicity
@@ -104,8 +106,42 @@ class GetUpdateAndDeleteARentalPlanView(APIViewWithPagination):
 
         return Response(serialized_rental_plan.data, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        request=UpdateRentalPlanSerializer,
+        responses={
+            200: RentalPlanSerializer,
+            400: PolymorphicProxySerializer(
+                component_name="BadRequestClient",
+                serializers=[
+                    ErrorPlanWithNameAlreadyExists.schema_serializers(),
+                    ErrorPlanInvalidName.schema_serializers(),
+                    ErrorPlanInvalidAmount.schema_serializers(),
+                    ErrorPlanInvalidPeriodicity.schema_serializers(),
+                    BadRequest400APIException.schema_serializers(),
+                ],
+                resource_type_field_name="error_client"
+            ),
+            401: Unauthorized401APIException.schema_response(),
+            404: NotFound404APIException.schema_response()
+        }
+    )
     def put(self, request, rental_plan_id):
-        serializer = UpdateRentalPlanSerializer(data=request.data)
+        """
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        This endpoint requires the authenticated user to have the administrator, staff
+        or owner role.
+
+        Endpoint for editing a Rental Plan.
+        """
+        try:
+            rental_plan=RentalPlan.objects.get(id=rental_plan_id)
+        except (TypeError, ValueError, RentalPlan.DoesNotExist):
+            raise NotFound404APIException(f"Rental Plan with id {rental_plan_id} doesnt exist")
+
+        serializer = UpdateRentalPlanSerializer(data=request.data,instance=rental_plan)
         validate_plan_and_handle_errors(serializer)
 
         updated_rental_plan = update_rental_plan(
