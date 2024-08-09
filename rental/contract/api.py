@@ -1,10 +1,13 @@
+from drf_spectacular.utils import extend_schema, PolymorphicProxySerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
+
+from rental.contract.swagger_serializer import ContractSwaggerRepresentationSerializer
 from settings.utils.api import APIViewWithPagination
 from rest_framework.permissions import IsAuthenticated
-from rental.contract.exceptions import validate_and_handle_errors
+from rental.contract.exceptions import validate_and_handle_errors, ErrorInvalidStage, ErrorInvalidDate
 from rental.contract.serializer import (
     ContractCreateSerializer,
     ContractUpdateSerializer,
@@ -19,7 +22,7 @@ from rental.contract.features import (
     create_stage_update,
     get_contract_history
 )
-from settings.utils.exceptions import BadRequest400APIException
+from settings.utils.exceptions import BadRequest400APIException, Unauthorized401APIException
 from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
 
 
@@ -37,7 +40,33 @@ class ListAndCreateContractView(APIViewWithPagination):
         except Exception as e:
             raise BadRequest400APIException(str(e))
 
+    @extend_schema(
+        request=ContractCreateSerializer(),
+        responses={
+            201: ContractSwaggerRepresentationSerializer,
+            400: PolymorphicProxySerializer(
+                component_name="BadRequestContract",
+                serializers=[
+                    ErrorInvalidStage.schema_serializers(),
+                    ErrorInvalidDate.schema_serializers(),
+                    BadRequest400APIException.schema_serializers(),
+                ],
+                resource_type_field_name="error_contract"
+            ),
+            401: Unauthorized401APIException.schema_response(),
+        }
+    )
     def post(self, request):
+        """
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        This endpoint requires the authenticated user to have the administrator, staff
+        or owner role.
+
+        Endpoint for creating a Contract.
+        """
         serializer = ContractCreateSerializer(data=request.data)
         validate_and_handle_errors(serializer)
 

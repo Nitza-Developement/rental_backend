@@ -1,0 +1,2 @@
+class ContractMixin:
+    pass
