@@ -29,7 +29,24 @@ from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
 class ListAndCreateContractView(APIViewWithPagination):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
+    @extend_schema(
+        responses={
+            200: ContractSwaggerRepresentationSerializer,
+            400: BadRequest400APIException.schema_response(),
+            401: Unauthorized401APIException.schema_response(),
+        }
+    )
     def get(self, request):
+        """
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        This endpoint requires the authenticated user to have the administrator, staff
+        or owner role.
+
+        Endpoint to get an instance of Contract
+        """
         try:
             contract_list = get_contracts(request.user.defaultTenantUser().tenant)
 
