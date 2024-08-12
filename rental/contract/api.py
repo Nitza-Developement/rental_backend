@@ -24,6 +24,7 @@ from rental.contract.features import (
 )
 from settings.utils.exceptions import BadRequest400APIException, Unauthorized401APIException, NotFound404APIException
 from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
+from settings.utils.pagination import DefaultPagination
 
 
 class ListAndCreateContractView(APIViewWithPagination):
@@ -31,7 +32,7 @@ class ListAndCreateContractView(APIViewWithPagination):
 
     @extend_schema(
         responses={
-            200: ContractSwaggerRepresentationSerializer,
+            200: DefaultPagination.paginated_response_schema(ContractSwaggerRepresentationSerializer(many=True)),
             400: BadRequest400APIException.schema_response(),
             401: Unauthorized401APIException.schema_response(),
         }
@@ -45,7 +46,7 @@ class ListAndCreateContractView(APIViewWithPagination):
         This endpoint requires the authenticated user to have the administrator, staff
         or owner role.
 
-        Endpoint to get an instance of Contract
+        Endpoint for listing Contract
         """
         try:
             contract_list = get_contracts(request.user.defaultTenantUser().tenant)
@@ -99,7 +100,25 @@ class ListAndCreateContractView(APIViewWithPagination):
 class GetUpdatePatchContractView(APIView):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
+    @extend_schema(
+        responses={
+            200: ContractSwaggerRepresentationSerializer,
+            400: BadRequest400APIException.schema_response(),
+            401: Unauthorized401APIException.schema_response(),
+            404: NotFound404APIException.schema_response(),
+        }
+    )
     def get(self, request, contract_id):
+        """
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        This endpoint requires the authenticated user to have the administrator, staff
+        or owner role.
+
+        Endpoint to get an instance of Contract
+        """
         contract = get_contract(contract_id)
 
         serialized_contract = ContractSerializer(contract)
