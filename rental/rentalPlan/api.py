@@ -21,6 +21,7 @@ from settings.utils.exceptions import BadRequest400APIException, Unauthorized401
 from rental.tenantUser.permissions import IsAdminTenantUser, IsAdminOrStaffTenantUser
 from rental.rentalPlan.exceptions import validate_plan_and_handle_errors, ErrorPlanWithNameAlreadyExists, \
     ErrorPlanInvalidName, ErrorPlanInvalidAmount, ErrorPlanInvalidPeriodicity
+from settings.utils.pagination import DefaultPagination
 
 
 class ListAndCreateRentalPlansView(APIViewWithPagination):
@@ -37,7 +38,7 @@ class ListAndCreateRentalPlansView(APIViewWithPagination):
                              required=False),
         ],
         responses={
-            200: RentalPlanSerializer(many=True),
+            200: DefaultPagination.paginated_response_schema(RentalPlanSerializer(many=True)),
             400: BadRequest400APIException.schema_response(),
             401: Unauthorized401APIException.schema_response()
         }

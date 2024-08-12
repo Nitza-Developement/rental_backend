@@ -25,6 +25,7 @@ from rental.vehicle.features import (
     get_vehicle_history,
 )
 from settings.utils.exceptions import BadRequest400APIException, Unauthorized401APIException, NotFound404APIException
+from settings.utils.pagination import DefaultPagination
 
 
 class ListAndCreateVehicleView(APIViewWithPagination):
@@ -32,7 +33,7 @@ class ListAndCreateVehicleView(APIViewWithPagination):
 
     @extend_schema(
         responses={
-            200: VehicleListSerializer(many=True),
+            200: DefaultPagination.paginated_response_schema(VehicleListSerializer(many=True)),
             400: BadRequest400APIException.schema_response(),
             401: Unauthorized401APIException.schema_response()
         }

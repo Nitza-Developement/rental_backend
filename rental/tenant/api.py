@@ -31,6 +31,7 @@ from settings.utils.exceptions import (
     Unauthorized401APIException,
     NotFound404APIException
 )
+from settings.utils.pagination import DefaultPagination
 
 
 class ListAndCreateTenantsView(APIViewWithPagination):
@@ -52,7 +53,7 @@ class ListAndCreateTenantsView(APIViewWithPagination):
             OpenApiParameter(name='asc', type=str, description='Ascending (`True`) or descending (`False`) order', required=False),
         ],
         responses={
-            200: TenantSerializer(many=True),
+            200: DefaultPagination.paginated_response_schema(TenantSerializer(many=True)),
             400: BadRequest400APIException.schema_response(),
             401: Unauthorized401APIException.schema_response()
         }

@@ -23,6 +23,7 @@ from rental.client.exceptions import validate_client_and_handle_errors, ErrorCli
     ErrorClientWithPhoneNumberAlreadyExists, ErrorClientInvalidEmail, ErrorClientInvalidPhoneNumber
 from settings.utils.api import APIViewWithPagination
 from settings.utils.exceptions import BadRequest400APIException, NotFound404APIException, Unauthorized401APIException
+from settings.utils.pagination import DefaultPagination
 from settings.utils.utils_request_data import qdict_to_dict
 
 
@@ -31,7 +32,7 @@ class ClientListAndCreateView(APIViewWithPagination):
 
     @extend_schema(
         responses={
-            200: ClientListSerializer(many=True),
+            200: DefaultPagination.paginated_response_schema(ClientListSerializer(many=True)),
             400: BadRequest400APIException.schema_response(),
             401: Unauthorized401APIException.schema_response()
         }
