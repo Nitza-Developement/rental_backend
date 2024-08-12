@@ -167,7 +167,34 @@ class GetUpdatePatchContractView(APIView):
         serialized_contract = ContractSerializer(updated_contract)
         return Response(serialized_contract.data, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        request=StageUpdateCreateSerializer,
+        responses={
+            200: ContractSwaggerRepresentationSerializer,
+            400: PolymorphicProxySerializer(
+                component_name="BadRequestClient",
+                serializers=[
+                    ErrorInvalidStage.schema_serializers(),
+                    ErrorInvalidDate.schema_serializers(),
+                    BadRequest400APIException.schema_serializers(),
+                ],
+                resource_type_field_name="error_client"
+            ),
+            401: Unauthorized401APIException.schema_response(),
+            404: NotFound404APIException.schema_response()
+        }
+    )
     def patch(self, request, contract_id):
+        """
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        This endpoint requires the authenticated user to have the administrator, staff
+        or owner role.
+
+        Endpoint for editing the Stage of Contract.
+        """
         serializer = StageUpdateCreateSerializer(
             data={
                 "reason": request.data.get("reason"),
