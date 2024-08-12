@@ -68,7 +68,7 @@ class TestCreateContract(ContractApiTestCase):
         self.login(custom_user=self.custom_staff)
         self.put_authentication_in_the_header()
         response_dict = self.call_create_contract(
-            print_json_response=True,
+            print_json_response=False,
         )
         self.assertEqual(initial_amount + 1, Contract.objects.count())
         self.assertEqual(True, "id" in response_dict)

@@ -1,10 +1,11 @@
-from drf_spectacular.utils import extend_schema, PolymorphicProxySerializer
+from drf_spectacular.utils import extend_schema, PolymorphicProxySerializer, extend_schema_view
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
 
-from rental.contract.swagger_serializer import ContractSwaggerRepresentationSerializer
+from rental.contract.swagger_serializer import ContractSwaggerRepresentationSerializer, \
+    AuditlogContractSwaggerRepresentationSerializer
 from settings.utils.api import APIViewWithPagination
 from rest_framework.permissions import IsAuthenticated
 from rental.contract.exceptions import validate_and_handle_errors, ErrorInvalidStage, ErrorInvalidDate
@@ -211,10 +212,22 @@ class GetUpdatePatchContractView(APIView):
         serialized_contract = ContractSerializer(contract)
         return Response(serialized_contract.data, status=status.HTTP_200_OK)
 
-
+@extend_schema_view(
+    get=extend_schema(responses=AuditlogContractSwaggerRepresentationSerializer(many=True)),
+)
 @api_view(["GET"])
 @permission_classes([IsAuthenticated, IsAdminOrStaffTenantUser])
 def get_contract_timeline(request, contract_id):
+    """
+    This method requires the user to be authenticated in order to be used.
+    Authentication is performed by using a JWT (JSON Web Token) that is included
+    in the HTTP request header.
+
+    This endpoint requires the authenticated user to have the administrator, staff
+    or owner role.
+
+    Returns a history of actions performed on a Contract
+    """
     history_data = get_contract_history(contract_id)
 
     return Response(history_data, status=status.HTTP_200_OK)
