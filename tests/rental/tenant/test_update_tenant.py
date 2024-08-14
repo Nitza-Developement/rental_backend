@@ -76,15 +76,16 @@ class TestUpdateTenant(TenantApiTestCase):
         )
         self.assertEqual(initial_amount, Tenant.objects.count())
 
-        # case bad authenticated user (not admin), response 401
+        # case bad authenticated user (not admin), response 403
         self.login(custom_user=self.custom_user)
+        self.put_authentication_in_the_header()
         self.call_update_tenant(
             entity_id=self.tenant.id,
             email="testtenant@gmail.com",
             name="testtenant",
             isAdmin=False,
             ownerId=self.tenant_user_owner.id,
-            unauthorized=True,
+            forbidden=True,
         )
         self.assertEqual(initial_amount, Tenant.objects.count())
 

@@ -75,12 +75,10 @@ class TestUpdateRentalPlan(RentalPlanApiTestCase):
         )
         self.assertEqual(initial_amount_rental_plan, RentalPlan.objects.count())
 
-        # case bad authenticated user (not admin), response 401
+        # case bad authenticated user (not admin), response 403
         self.login(custom_user=self.custom_user)
-        self.call_update_rental_plan(
-            entity_id=rental_plan.id,
-            unauthorized=True,
-        )
+        self.put_authentication_in_the_header()
+        self.call_update_rental_plan(entity_id=rental_plan.id, forbidden=True)
         self.assertEqual(initial_amount_rental_plan, RentalPlan.objects.count())
 
         self.login(email=self.admin_email, password=self.admin_password)
@@ -99,7 +97,7 @@ class TestUpdateRentalPlan(RentalPlanApiTestCase):
         )
         self.assertEqual(initial_amount_rental_plan, RentalPlan.objects.count())
 
-        # # case bad, not unique email, response 400
+        # case bad, not unique, response 400
         other_rental_plan = self.list_rental_plan[1]
         self.call_update_rental_plan(
             entity_id=rental_plan.id,

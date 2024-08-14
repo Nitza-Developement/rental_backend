@@ -100,14 +100,15 @@ class TestUpdateStageContract(ContractApiTestCase):
         self.assertEqual(initial_amount_contract, Contract.objects.count())
         self.assertEqual(initial_amount_stage, StageUpdate.objects.count())
 
-        # case bad authenticated user (not admin), response 401
+        # case bad authenticated user (not admin), response 403
         self.login(custom_user=self.custom_user)
+        self.put_authentication_in_the_header()
         self.call_update_contract(
             entity_id=contract.id,
             reason="fake reason",
             comments="fake comments",
             stage=StageUpdate.ENDED,
-            unauthorized=True,
+            forbidden=True,
         )
         self.assertEqual(initial_amount_contract, Contract.objects.count())
         self.assertEqual(initial_amount_stage, StageUpdate.objects.count())

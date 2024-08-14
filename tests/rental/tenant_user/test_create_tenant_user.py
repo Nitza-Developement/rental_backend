@@ -55,14 +55,24 @@ class TestTenantUserCreate(TenantApiTestCase):
     def test_tenant_user_create(self):
         tenant = self.create_tenant(user=self.custom_user.user)
 
-        # bad authenticated user (not admin), correct data tenant user, response 401
-        self.login(custom_user=self.custom_user)
+        # not authenticated, response 401
         self.call_tenant_user_create(
             user=self.custom_user.user,
             tenant=tenant,
             rol="Owner",
             is_default=True,
             unauthorized=True,
+        )
+
+        # bad authenticated user (not admin), correct data tenant user, response 403
+        self.login(custom_user=self.custom_user)
+        self.put_authentication_in_the_header()
+        self.call_tenant_user_create(
+            user=self.custom_user.user,
+            tenant=tenant,
+            rol="Owner",
+            is_default=True,
+            forbidden=True,
         )
 
         # correct authenticated user admin, correct data tenant user, response 201

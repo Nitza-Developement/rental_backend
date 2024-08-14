@@ -55,10 +55,11 @@ class TestCreateClient(ClientApiTestCase):
         )
         self.assertEqual(initial_amount, Client.objects.count())
 
-        # case bad authenticated user (not admin), response 401
+        # case bad authenticated user (not admin), response 403
         self.login(custom_user=self.custom_user)
+        self.put_authentication_in_the_header()
         self.call_create_client(
-            unauthorized=True,
+            forbidden=True,
         )
         self.assertEqual(initial_amount, Client.objects.count())
 

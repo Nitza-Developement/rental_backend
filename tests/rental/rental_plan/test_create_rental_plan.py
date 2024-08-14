@@ -58,11 +58,10 @@ class TestCreateRentalPlan(RentalPlanApiTestCase):
         )
         self.assertEqual(initial_amount, RentalPlan.objects.count())
 
-        # case bad authenticated user (not admin), response 401
+        # case bad authenticated user (not admin), response 403
         self.login(custom_user=self.custom_user)
-        self.call_create_rental_plan(
-            unauthorized=True,
-        )
+        self.put_authentication_in_the_header()
+        self.call_create_rental_plan(forbidden=True)
         self.assertEqual(initial_amount, RentalPlan.objects.count())
 
         # case correct, response 201

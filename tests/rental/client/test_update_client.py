@@ -72,12 +72,10 @@ class TestUpdateClient(ClientApiTestCase):
         )
         self.assertEqual(initial_amount_client, Client.objects.count())
 
-        # case bad authenticated user (not admin), response 401
+        # case bad authenticated user (not admin), response 403
         self.login(custom_user=self.custom_user)
-        self.call_update_client(
-            entity_id=client.id,
-            unauthorized=True,
-        )
+        self.put_authentication_in_the_header()
+        self.call_update_client(entity_id=client.id, forbidden=True)
         self.assertEqual(initial_amount_client, Client.objects.count())
 
         self.login(custom_user=self.custom_staff)
