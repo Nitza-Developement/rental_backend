@@ -51,11 +51,10 @@ class TestCreateVehicle(VehicleApiTestCase):
         )
         self.assertEqual(initial_amount, Vehicle.objects.count())
 
-        # case bad authenticated user (not admin), response 401
+        # case bad authenticated user (not admin), response 403
         self.login(custom_user=self.custom_user)
-        self.call_create_vehicle(
-            unauthorized=True,
-        )
+        self.put_authentication_in_the_header()
+        self.call_create_vehicle(forbidden=True)
         self.assertEqual(initial_amount, Vehicle.objects.count())
 
         # case correct, response 201

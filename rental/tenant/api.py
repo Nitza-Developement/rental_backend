@@ -31,6 +31,7 @@ from settings.utils.exceptions import (
     Unauthorized401APIException,
     NotFound404APIException
 )
+from settings.utils.pagination import DefaultPagination
 
 
 class ListAndCreateTenantsView(APIViewWithPagination):
@@ -47,12 +48,12 @@ class ListAndCreateTenantsView(APIViewWithPagination):
     @extend_schema(
         tags=['tenant'],
         parameters=[
-            OpenApiParameter(name='searchText', type=str, description='Matches content in `name` and `email` fields, ignoring case ', required=False),
-            OpenApiParameter(name='orderBy', type=str, description='You can select between `name`, `email` and `pk`', required=False),
+            OpenApiParameter(name='searchText', type=str, description='Matches content in `name` or `email` fields, ignoring case ', required=False),
+            OpenApiParameter(name='orderBy', type=str, description='You can select between `name`, `email` or `pk`', required=False),
             OpenApiParameter(name='asc', type=str, description='Ascending (`True`) or descending (`False`) order', required=False),
         ],
         responses={
-            200: TenantSerializer(many=True),
+            200: DefaultPagination.paginated_response_schema(TenantSerializer(many=True)),
             400: BadRequest400APIException.schema_response(),
             401: Unauthorized401APIException.schema_response()
         }

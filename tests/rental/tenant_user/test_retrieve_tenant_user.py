@@ -64,21 +64,32 @@ class TestRetrieveTenantUser(AuthAPITestCase, TenantUserMixin):
         return response_dict
 
     def test_retrieve_tenant_user(self):
+        # case not loguin, response 401
         self.call_tenant_user_retrieve(
             entity_id=self.list_tenant_user[0].default_tenant_user.id,
             unauthorized=True,
         )
+
+        self.login(custom_user=self.custom_user)
+        self.put_authentication_in_the_header()
+
+        # case not admin or owner, response 403
+        self.call_tenant_user_retrieve(
+            entity_id=self.list_tenant_user[0].default_tenant_user.id,
+            forbidden=True,
+        )
+
         self.login(custom_user=self.owner)
         self.put_authentication_in_the_header()
-        not_found_id = (
-            self.list_tenant_user[0].default_tenant_user.id
-            + self.list_tenant_user[1].default_tenant_user.id
-        )
+
+        # case not found, response 404
         self.call_tenant_user_retrieve(
-            entity_id=not_found_id,
+            entity_id=9999,
             not_found=True,
         )
+
         for custom_tenant_test_user in self.list_tenant_user:
+            # case correct, response 200
             self.call_tenant_user_retrieve(
                 entity_id=custom_tenant_test_user.default_tenant_user.id,
             )

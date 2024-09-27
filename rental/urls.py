@@ -112,7 +112,7 @@ urlpatterns = [
     path(
         "contract/<int:contract_id>/history",
         get_contract_timeline,
-        name="contract-actions",
+        name="contract-actions-history",
     ),
     path("notes", ListAndCreateNotesView.as_view(), name="notes"),
     path(

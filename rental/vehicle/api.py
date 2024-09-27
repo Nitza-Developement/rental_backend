@@ -1,9 +1,11 @@
 from django.core.exceptions import ValidationError
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view
 from rest_framework import status
+from rest_framework.exceptions import APIException
 from rest_framework.views import APIView
 
 from rental.vehicle.models import Vehicle
+from rental.vehicle.swagger_seralizer import AuditlogVehicleSwaggerRepresentationSerializer
 from settings.utils.api import APIViewWithPagination
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -23,6 +25,7 @@ from rental.vehicle.features import (
     get_vehicle_history,
 )
 from settings.utils.exceptions import BadRequest400APIException, Unauthorized401APIException, NotFound404APIException
+from settings.utils.pagination import DefaultPagination
 
 
 class ListAndCreateVehicleView(APIViewWithPagination):
@@ -30,7 +33,7 @@ class ListAndCreateVehicleView(APIViewWithPagination):
 
     @extend_schema(
         responses={
-            200: VehicleListSerializer(many=True),
+            200: DefaultPagination.paginated_response_schema(VehicleListSerializer(many=True)),
             400: BadRequest400APIException.schema_response(),
             401: Unauthorized401APIException.schema_response()
         }
@@ -44,7 +47,7 @@ class ListAndCreateVehicleView(APIViewWithPagination):
         This endpoint requires the authenticated user to have the administrator, staff
         or owner role.
 
-        Endpoint for listing TenantUser
+        Endpoint for listing Vehicle
         """
         try:
             vehicles_list = get_vehicles(
@@ -74,7 +77,7 @@ class ListAndCreateVehicleView(APIViewWithPagination):
         This endpoint requires the authenticated user to have the administrator, staff
         or owner role.
 
-        Endpoint for creating a TenantUser.
+        Endpoint for creating a Vehicle.
         """
         serializer = VehicleCreateSerializer(data=request.data)
         if serializer.is_valid():
@@ -91,11 +94,31 @@ class ListAndCreateVehicleView(APIViewWithPagination):
 class GetUpdateAndDeleteVehicleView(APIView):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
+    @extend_schema(
+        responses={
+            200: VehicleListSerializer,
+            400: BadRequest400APIException.schema_response(),
+            401: Unauthorized401APIException.schema_response(),
+            404: NotFound404APIException.schema_response(),
+        }
+    )
     def get(self, request, vehicle_id):
+        """
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        This endpoint requires the authenticated user to have the administrator, staff
+        or owner role.
+
+        Endpoint to get an instance of Vehicle
+        """
         try:
             vehicle = get_vehicle(vehicle_id)
             serialized_vehicle = VehicleListSerializer(vehicle)
             return Response(serialized_vehicle.data, status=status.HTTP_200_OK)
+        except APIException as e:
+            raise e
         except Exception as e:
             raise BadRequest400APIException(str(e))
 
@@ -151,14 +174,47 @@ class GetUpdateAndDeleteVehicleView(APIView):
         else:
             raise BadRequest400APIException(serializer.errors)
 
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                description="Successful response"
+            ),
+            401: Unauthorized401APIException.schema_response(),
+            404: NotFound404APIException.schema_response()
+        }
+    )
     def delete(self, request, vehicle_id):
+        """
+        This method requires the user to be authenticated in order to be used.
+        Authentication is performed by using a JWT (JSON Web Token) that is included
+        in the HTTP request header.
+
+        This endpoint requires the authenticated user to have the administrator, staff
+        or owner role.
+
+        Endpoint to delete a Vehicle.
+        """
         delete_vehicle(vehicle_id)
         return Response(status=status.HTTP_200_OK)
 
 
+
+@extend_schema_view(
+    get=extend_schema(responses=AuditlogVehicleSwaggerRepresentationSerializer(many=True)),
+)
 @api_view(["GET"])
 @permission_classes([IsAuthenticated, IsAdminOrStaffTenantUser])
 def get_vehicle_timeline(request, vehicle_id):
+    """
+    This method requires the user to be authenticated in order to be used.
+    Authentication is performed by using a JWT (JSON Web Token) that is included
+    in the HTTP request header.
+
+    This endpoint requires the authenticated user to have the administrator, staff
+    or owner role.
+
+    Returns a history of actions performed on a vehicle
+    """
     history_data = get_vehicle_history(vehicle_id)
 
     return Response(history_data, status=status.HTTP_200_OK)

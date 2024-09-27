@@ -1,5 +1,5 @@
 import json
-from typing import Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Dict, List, Optional, Type, TypeVar
 
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -109,15 +109,38 @@ class UserMixin:
 
     def assertKey(
         self,
-        response_dict: Dict,
+        response_dict: Dict[str, Any],
         key: str,
         expected: Optional[T] = None,
+        expected_any: Optional[List[T]] = None,
+        expected_type: Optional[T] = None,
         expected_none: bool = False,
+        expected_in_list_of_type: Optional[List[Type]] = None,
+        expected_dict: Optional[Dict[str, Any]] = None,
     ) -> T:
+        if key not in response_dict:
+            pretty = json.dumps(response_dict, indent=4)
+            print(pretty)
+            print(f"key {key}")
+
         self.assertEqual(True, key in response_dict)
         value: T = response_dict[key]
         if expected is not None:
             self.assertEqual(value, expected)
+        elif expected_any is not None:
+            self.assertEqual(True, value in expected_any)
+        elif expected_in_list_of_type is not None:
+            self.assertEqual(True, isinstance(value, list))
+            self.assertEqual(len(expected_in_list_of_type), len(value))
+            for i, element in enumerate(value):
+                self.assertEqual(
+                    True, isinstance(element, expected_in_list_of_type[i])
+                )
+        elif expected_type:
+            self.assertEqual(True, isinstance(value, expected_type))
+        elif expected_dict:
+            self.assertEqual(True, isinstance(value, dict))
+            self.assertDictEqual(value, expected_dict)
         else:
             self.assertEqual(expected_none, value is None)
         return value

@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase
 
+from rental.notes.models import Note
 from tests.rental.auth.mixins.user_mixin import UserMixin
 from tests.util.api_crud_mixin import ApiCrudMixin
 
@@ -14,4 +15,5 @@ class AuthAPITestCase(APITestCase, UserMixin, ApiCrudMixin):
 
     def tearDown(self):
         super().tearDown()
+        Note.objects.all().delete()
         User.objects.all().delete()

@@ -1,7 +1,8 @@
+from drf_spectacular.utils import OpenApiResponse
 from rest_framework.exceptions import APIException
 from rest_framework import status
 from rest_framework.exceptions import ErrorDetail
-from rest_framework.serializers import Serializer
+from rest_framework import serializers
 from settings.utils.exceptions import BadRequest400APIException
 
 
@@ -12,6 +13,21 @@ class ErrorClientWithEmailAlreadyExists(APIException):
         self.default_detail = f"Client with email {email} already exists"
         self.default_code = "client-001"
 
+    class ErrorClientWithEmailAlreadyExists400Schema(serializers.Serializer):
+        status_code = serializers.IntegerField()
+        default_detail = serializers.CharField(allow_null=True)
+        default_code = serializers.CharField(allow_null=True)
+
+    @staticmethod
+    def schema_response():
+        return OpenApiResponse(
+            response=ErrorClientWithEmailAlreadyExists.ErrorClientWithEmailAlreadyExists400Schema
+        )
+
+    @staticmethod
+    def schema_serializers():
+        return ErrorClientWithEmailAlreadyExists.ErrorClientWithEmailAlreadyExists400Schema()
+
 
 class ErrorClientWithPhoneNumberAlreadyExists(APIException):
 
@@ -20,13 +36,41 @@ class ErrorClientWithPhoneNumberAlreadyExists(APIException):
         self.default_detail = f"Client with phone number {phone_number} already exists"
         self.default_code = "client-002"
 
+    class ErrorClientWithPhoneNumberAlreadyExists400Schema(serializers.Serializer):
+        status_code = serializers.IntegerField()
+        default_detail = serializers.CharField(allow_null=True)
+        default_code = serializers.CharField(allow_null=True)
 
+    @staticmethod
+    def schema_response():
+        return OpenApiResponse(
+            response=ErrorClientWithPhoneNumberAlreadyExists.ErrorClientWithPhoneNumberAlreadyExists400Schema
+        )
+
+    @staticmethod
+    def schema_serializers():
+        return ErrorClientWithPhoneNumberAlreadyExists.ErrorClientWithPhoneNumberAlreadyExists400Schema()
 class ErrorClientInvalidEmail(APIException):
 
     def __init__(self, email: str):
         self.status_code = status.HTTP_400_BAD_REQUEST
         self.default_detail = f'Invalid email "{email}"'
         self.default_code = "client-003"
+
+    class ErrorClientInvalidEmail400Schema(serializers.Serializer):
+        status_code = serializers.IntegerField()
+        default_detail = serializers.CharField(allow_null=True)
+        default_code = serializers.CharField(allow_null=True)
+
+    @staticmethod
+    def schema_response():
+        return OpenApiResponse(
+            response=ErrorClientInvalidEmail.ErrorClientInvalidEmail400Schema
+        )
+
+    @staticmethod
+    def schema_serializers():
+        return ErrorClientInvalidEmail.ErrorClientInvalidEmail400Schema()
 
 
 class ErrorClientInvalidPhoneNumber(APIException):
@@ -36,8 +80,23 @@ class ErrorClientInvalidPhoneNumber(APIException):
         self.default_detail = f'Invalid phone number "{phone_number}"'
         self.default_code = "client-004"
 
+    class ErrorClientInvalidPhoneNumber400Schema(serializers.Serializer):
+        status_code = serializers.IntegerField()
+        default_detail = serializers.CharField(allow_null=True)
+        default_code = serializers.CharField(allow_null=True)
 
-def validate_client_and_handle_errors(serializer: Serializer):
+    @staticmethod
+    def schema_response():
+        return OpenApiResponse(
+            response=ErrorClientInvalidPhoneNumber.ErrorClientInvalidPhoneNumber400Schema
+        )
+
+    @staticmethod
+    def schema_serializers():
+        return ErrorClientInvalidPhoneNumber.ErrorClientInvalidPhoneNumber400Schema()
+
+
+def validate_client_and_handle_errors(serializer: serializers.Serializer):
 
     serializer.is_valid()
 

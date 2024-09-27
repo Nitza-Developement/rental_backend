@@ -1,5 +1,6 @@
+from drf_spectacular.utils import OpenApiResponse
 from rest_framework import status
-from rest_framework.serializers import Serializer
+from rest_framework import serializers
 from rest_framework.exceptions import ErrorDetail
 from rest_framework.exceptions import APIException
 from settings.utils.exceptions import BadRequest400APIException
@@ -12,6 +13,20 @@ class ErrorPlanWithNameAlreadyExists(APIException):
         self.default_detail = f"Plan with name {name} already exists"
         self.default_code = "rental-plan-001"
 
+    class ErrorPlanWithNameAlreadyExists400Schema(serializers.Serializer):
+        status_code = serializers.IntegerField()
+        default_detail = serializers.CharField(allow_null=True)
+        default_code = serializers.CharField(allow_null=True)
+
+    @staticmethod
+    def schema_response():
+        return OpenApiResponse(
+            response=ErrorPlanWithNameAlreadyExists.ErrorPlanWithNameAlreadyExists400Schema
+        )
+
+    @staticmethod
+    def schema_serializers():
+        return ErrorPlanWithNameAlreadyExists.ErrorPlanWithNameAlreadyExists400Schema()
 
 class ErrorPlanInvalidName(APIException):
 
@@ -20,6 +35,20 @@ class ErrorPlanInvalidName(APIException):
         self.default_detail = f"Error in name: {name_error_message}"
         self.default_code = "rental-plan-002"
 
+    class ErrorPlanInvalidName400Schema(serializers.Serializer):
+        status_code = serializers.IntegerField()
+        default_detail = serializers.CharField(allow_null=True)
+        default_code = serializers.CharField(allow_null=True)
+
+    @staticmethod
+    def schema_response():
+        return OpenApiResponse(
+            response=ErrorPlanInvalidName.ErrorPlanInvalidName400Schema
+        )
+
+    @staticmethod
+    def schema_serializers():
+        return ErrorPlanInvalidName.ErrorPlanInvalidName400Schema()
 
 class ErrorPlanInvalidAmount(APIException):
 
@@ -27,6 +56,21 @@ class ErrorPlanInvalidAmount(APIException):
         self.status_code = status.HTTP_400_BAD_REQUEST
         self.default_detail = f'Invalid amount "{amount}"'
         self.default_code = "rental-plan-003"
+
+    class ErrorPlanInvalidAmount400Schema(serializers.Serializer):
+        status_code = serializers.IntegerField()
+        default_detail = serializers.CharField(allow_null=True)
+        default_code = serializers.CharField(allow_null=True)
+
+    @staticmethod
+    def schema_response():
+        return OpenApiResponse(
+            response=ErrorPlanInvalidAmount.ErrorPlanInvalidAmount400Schema
+        )
+
+    @staticmethod
+    def schema_serializers():
+        return ErrorPlanInvalidAmount.ErrorPlanInvalidAmount400Schema()
 
 
 class ErrorPlanInvalidPeriodicity(APIException):
@@ -36,8 +80,23 @@ class ErrorPlanInvalidPeriodicity(APIException):
         self.default_detail = f'Invalid periodicity "{periodicity}"'
         self.default_code = "rental-plan-004"
 
+    class ErrorPlanInvalidPeriodicity400Schema(serializers.Serializer):
+        status_code = serializers.IntegerField()
+        default_detail = serializers.CharField(allow_null=True)
+        default_code = serializers.CharField(allow_null=True)
 
-def validate_plan_and_handle_errors(serializer: Serializer):
+    @staticmethod
+    def schema_response():
+        return OpenApiResponse(
+            response=ErrorPlanInvalidPeriodicity.ErrorPlanInvalidPeriodicity400Schema
+        )
+
+    @staticmethod
+    def schema_serializers():
+        return ErrorPlanInvalidPeriodicity.ErrorPlanInvalidPeriodicity400Schema()
+
+
+def validate_plan_and_handle_errors(serializer: serializers.Serializer):
 
     serializer.is_valid()
 

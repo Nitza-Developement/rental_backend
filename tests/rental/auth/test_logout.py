@@ -8,10 +8,11 @@ class TestLogout(AuthAPITestCase):
 
         # case: bad access_token, correct refresh_token, result 401
         self.logout(refresh_token=self.refresh_token, unauthorized=True)
-        # case: bad access_token, bad refresh_token, result 401
-        self.logout(refresh_token="fakerefreshtoken", unauthorized=True)
 
         self.put_authentication_in_the_header(access_token=self.access_token)
+        # case: bad access_token, bad refresh_token, result 400
+        self.logout(refresh_token="fakerefreshtoken", bad_request=True)
+
         # case: correct access_token, bad refresh_token, result 400
         self.logout(refresh_token="fakerefreshtoken", bad_request=True)
         # case: correct access_token, correct refresh_token, result 200
