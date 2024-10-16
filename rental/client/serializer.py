@@ -1,7 +1,8 @@
-from rest_framework import serializers
-from rental.client.models import Client
-from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+from rest_framework import serializers
+
+from rental.client.models import Client
 
 
 class ClientCreateSerializer(serializers.ModelSerializer):
@@ -37,20 +38,11 @@ class ClientUpdateSerializer(serializers.ModelSerializer):
         if not new_email:
             return new_email
 
-        data: dict = self.initial_data
+        clients_email = Client.objects.filter(email=new_email)
+        if self.instance is not None:
+            clients_email = clients_email.exclude(id=self.instance.id)
 
-        client = Client.objects.filter(pk=data["id"]).first()
-
-        if client and client.email == new_email:
-            return new_email
-
-        existing_client = (
-            Client.objects.filter(email=new_email)
-            .exclude(pk=client.id if client else None)
-            .first()
-        )
-
-        if existing_client:
+        if clients_email.exists():
             raise serializers.ValidationError(
                 detail=f'Client with email "{new_email}" already exists', code="unique"
             )
@@ -65,13 +57,11 @@ class ClientUpdateSerializer(serializers.ModelSerializer):
         return new_email
 
     def validate_phone_number(self, value):
-        data: dict = self.initial_data
-        client = Client.objects.filter(pk=data["id"]).first()
-        if (
-            Client.objects.filter(phone_number=value)
-            .exclude(pk=client.id if client else None)
-            .exists()
-        ):
+        clients_phone = Client.objects.filter(phone_number=value)
+        if self.instance is not None:
+            clients_phone = clients_phone.exclude(id=self.instance.id)
+
+        if clients_phone.exists():
             raise serializers.ValidationError(
                 "A client with this phone number already exists."
             )
