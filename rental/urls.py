@@ -1,66 +1,48 @@
 from django.urls import path
-from rental.user.api import (
-    CustomTokenObtainPairView,
-    CustomTokenRefreshView,
-    LogoutView,
-    update_profile,
-    get_user_data,
-)
 
-from rental.tenant.api import ListAndCreateTenantsView, GetUpdateAndDeleteATenantView
-from rental.tenantUser.api import (
-    ListAndCreateTenantUserView,
-    GetUpdateAndDeleteTenantUserView,
-)
-from rental.user.api import LogoutView, update_profile, get_user_data
-
-from rental.client.api import ClientListAndCreateView, ClientGetUpdateAndDeleteView
-from rental.vehicle.api import (
-    ListAndCreateVehicleView,
-    GetUpdateAndDeleteVehicleView,
-    get_vehicle_timeline,
-)
-from rental.rentalPlan.api import (
-    ListAndCreateRentalPlansView,
-    GetUpdateAndDeleteARentalPlanView,
-)
-from rental.notes.api import ListAndCreateNotesView, GetUpdateAndDeleteANoteView
-from rental.toll.api import ListAndCreateTollDuesView, GetUpdateAndDeleteATollDueView
-from rental.contract.api import (
-    ListAndCreateContractView,
-    GetUpdatePatchContractView,
-    get_contract_timeline,
-)
-from rental.tracker.api import (
-    ListAndCreateTrackersView,
-    ListAndCreateTrackerHeartBeatDataView,
-    GetUpdateAndDeleteATrackerView,
-    DeleteTrackerHeartBeatDataView,
-)
-from rental.forms.api import (
-    FormListAndCreateView,
-    FormImportView,
-    FormCloneView,
-    FormGetUpdateAndDeleteView,
-    CardCreateUpdateAndDeleteView,
-)
-
-from rental.inspections.api import (
-    InspectionListAndCreateView,
-    FormsAndVehiclesGet,
-    InspectionGetUpdateAndDeleteView,
-    InspectionCreateResponseView,
-)
-
-
-from rental.contract_form.api import (
-    ContractFormTemplateListAndCreateView,
-    ContractFormTemplateGetUpdateAndDeleteView,
-    ContractFormTemplateCloneView,
-    ContractFormListAndCreateView,
-    ContractFormGetView,
-    ContractFormFieldResponseCreateView,
-)
+from rental.client.api import ClientGetUpdateAndDeleteView
+from rental.client.api import ClientListAndCreateView
+from rental.contract.api import get_contract_timeline
+from rental.contract.api import GetUpdatePatchContractView
+from rental.contract.api import ListAndCreateContractView
+from rental.contract_form.api import ContractFormFieldResponseCreateView
+from rental.contract_form.api import ContractFormGetView
+from rental.contract_form.api import ContractFormListAndCreateView
+from rental.contract_form.api import ContractFormTemplateCloneView
+from rental.contract_form.api import ContractFormTemplateGetUpdateAndDeleteView
+from rental.contract_form.api import ContractFormTemplateListAndCreateView
+from rental.forms.api import CardCreateUpdateAndDeleteView
+from rental.forms.api import FormCloneView
+from rental.forms.api import FormGetUpdateAndDeleteView
+from rental.forms.api import FormImportView
+from rental.forms.api import FormListAndCreateView
+from rental.inspections.api import FormsAndVehiclesGet
+from rental.inspections.api import InspectionCreateResponseView
+from rental.inspections.api import InspectionGetUpdateAndDeleteView
+from rental.inspections.api import InspectionListAndCreateView
+from rental.notes.api import GetUpdateAndDeleteANoteView
+from rental.notes.api import ListAndCreateNotesView
+from rental.rentalPlan.api import GetUpdateAndDeleteARentalPlanView
+from rental.rentalPlan.api import ListAndCreateRentalPlansView
+from rental.tenant.api import GetUpdateAndDeleteATenantView
+from rental.tenant.api import ListAndCreateTenantsView
+from rental.tenantUser.api import GetUpdateAndDeleteTenantUserView
+from rental.tenantUser.api import ListAndCreateTenantUserView
+from rental.toll.api import GetUpdateAndDeleteATollDueView
+from rental.toll.api import ListAndCreateTollDuesView
+from rental.tracker.api import DeleteTrackerHeartBeatDataView
+from rental.tracker.api import GetUpdateAndDeleteATrackerView
+from rental.tracker.api import ListAndCreateTrackerHeartBeatDataView
+from rental.tracker.api import ListAndCreateTrackersView
+from rental.user.api import CustomTokenObtainPairView
+from rental.user.api import CustomTokenRefreshView
+from rental.user.api import get_user_data
+from rental.user.api import LogoutView
+from rental.user.api import update_profile
+from rental.vehicle.api import get_vehicle_timeline
+from rental.vehicle.api import GetUpdateAndDeleteVehicleView
+from rental.vehicle.api import ListAndCreateVehicleView
+from rental.vehicle.api import VehiclePlateView
 
 urlpatterns = [
     path("login", CustomTokenObtainPairView.as_view(), name="login"),
@@ -96,6 +78,11 @@ urlpatterns = [
         "vehicle/<int:vehicle_id>/history",
         get_vehicle_timeline,
         name="vehicle-actions-history",
+    ),
+    path(
+        "plates",
+        VehiclePlateView.as_view(),
+        name="vehicle-plates",
     ),
     path("rental-plan", ListAndCreateRentalPlansView.as_view(), name="rental-plan"),
     path(

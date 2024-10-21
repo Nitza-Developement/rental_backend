@@ -1,7 +1,11 @@
+from datetime import datetime
+
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -25,9 +29,29 @@ from settings.utils.exceptions import BadRequest400APIException
 class ListAndCreateContractView(APIViewWithPagination):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
-    def get(self, request):
+    def get(self, request: Request):
         try:
-            contract_list = get_contracts(request.user.defaultTenantUser().tenant)
+            tenant = request.user.defaultTenantUser().tenant
+            contract_list = get_contracts(tenant)
+
+            if "plate" in request.query_params and request.query_params["plate"]:
+                contract_list = contract_list.filter(
+                    vehicle__plates__id=int(request.query_params["plate"]),
+                )
+
+            if "date" in request.query_params and request.query_params["date"]:
+                date = datetime.strptime(
+                    str(request.query_params["date"]),
+                    "%Y-%m-%d",
+                )
+                contract_list = contract_list.filter(
+                    Q(
+                        Q(end_date=None) | Q(end_date__gte=date),
+                    )
+                    & Q(
+                        Q(active_date__lte=date),
+                    ),
+                )
 
             paginator = self.pagination_class()
             paginated_contracts = paginator.paginate_queryset(contract_list, request)
