@@ -1,22 +1,21 @@
 from rest_framework import status
-from rest_framework.response import Response
-from settings.utils.api import APIViewWithPagination
 from rest_framework.permissions import IsAuthenticated
-from settings.utils.exceptions import BadRequest400APIException
-from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
+from rest_framework.request import Request
+from rest_framework.response import Response
+
 from rental.notes.exceptions import validate_note_and_handle_errors
-from rental.notes.features import (
-    create_note,
-    get_notes,
-    get_note,
-    update_note,
-    delete_note,
-)
-from rental.notes.serializer import (
-    CreateNoteSerializer,
-    NoteSerializer,
-    UpdateNoteSerializer,
-)
+from rental.notes.features import create_note
+from rental.notes.features import delete_note
+from rental.notes.features import get_note
+from rental.notes.features import get_notes
+from rental.notes.features import update_note
+from rental.notes.models import Note
+from rental.notes.serializer import CreateNoteSerializer
+from rental.notes.serializer import NoteSerializer
+from rental.notes.serializer import UpdateNoteSerializer
+from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
+from settings.utils.api import APIViewWithPagination
+from settings.utils.exceptions import BadRequest400APIException
 
 
 class ListAndCreateNotesView(APIViewWithPagination):
@@ -24,7 +23,7 @@ class ListAndCreateNotesView(APIViewWithPagination):
 
     def get(self, request):
         try:
-            search_contract = request.query_params.get('contract')
+            search_contract = request.query_params.get("contract")
             notes_list = get_notes(search_contract)
 
             paginator = self.pagination_class()
@@ -34,22 +33,12 @@ class ListAndCreateNotesView(APIViewWithPagination):
         except Exception as e:
             raise BadRequest400APIException(str(e))
 
-    def post(self, request):
+    def post(self, request: Request):
         serializer = CreateNoteSerializer(data=request.data)
-        validate_note_and_handle_errors(serializer)
-
-        created_note = create_note(
-            contract_id=serializer.validated_data["contract"],
-            user_id=serializer.validated_data["user"],
-            subject=serializer.validated_data["subject"],
-            body=serializer.validated_data["body"],
-            remainder=serializer.validated_data.get("remainder"),
-            file=serializer.validated_data.get("file"),
-        )
-
-        serialized_note = NoteSerializer(created_note)
-
-        return Response(serialized_note.data, status=status.HTTP_201_CREATED)
+        # validate_note_and_handle_errors(serializer)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class GetUpdateAndDeleteANoteView(APIViewWithPagination):
@@ -62,28 +51,16 @@ class GetUpdateAndDeleteANoteView(APIViewWithPagination):
 
         return Response(serialized_note.data, status=status.HTTP_200_OK)
 
-    def put(self, request, note_id):
+    def put(self, request: Request, note_id: int):
+        note = Note.objects.filter(id=note_id).first()
         serializer = UpdateNoteSerializer(
-            data={
-                "id": note_id,
-                "subject": request.data.get("subject"),
-                "body": request.data.get("body"),
-                "remainder": request.data.get("remainder"),
-                "file": request.data.get("file"),
-            }
+            note,
+            data=request.data,
         )
-        validate_note_and_handle_errors(serializer)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
-        updated_note = update_note(
-            note_id=note_id,
-            subject=serializer.validated_data.get("subject"),
-            body=serializer.validated_data.get("body"),
-            remainder=serializer.validated_data.get("remainder"),
-            file=serializer.validated_data.get("file"),
-        )
-        serialized_note = NoteSerializer(updated_note)
-
-        return Response(serialized_note.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request, note_id):
         delete_note(note_id)
