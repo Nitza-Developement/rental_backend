@@ -1,4 +1,6 @@
+from django.urls import include
 from django.urls import path
+from rest_framework import routers
 
 from rental.client.api import ClientGetUpdateAndDeleteView
 from rental.client.api import ClientListAndCreateView
@@ -39,12 +41,17 @@ from rental.user.api import CustomTokenRefreshView
 from rental.user.api import get_user_data
 from rental.user.api import LogoutView
 from rental.user.api import update_profile
+from rental.user.api import UserView
 from rental.vehicle.api import get_vehicle_timeline
 from rental.vehicle.api import GetUpdateAndDeleteVehicleView
 from rental.vehicle.api import ListAndCreateVehicleView
 from rental.vehicle.api import VehiclePlateView
 
+router = routers.SimpleRouter()
+router.register(r"users", UserView, basename="users")
+
 urlpatterns = [
+    path("", include(router.urls)),
     path("login", CustomTokenObtainPairView.as_view(), name="login"),
     path("login/refresh", CustomTokenRefreshView.as_view(), name="refresh"),
     path("logout", LogoutView.as_view(), name="logout"),

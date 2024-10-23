@@ -1,11 +1,12 @@
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
-from rental.tenant.models import Tenant
+
 from rental.shared_serializers.serializers import InnerTenantUserSerializer
+from rental.tenant.models import Tenant
 
 
 class TenantSerializer(serializers.ModelSerializer):
-    tenantUsers= InnerTenantUserSerializer(many=True)
+    tenantUsers = InnerTenantUserSerializer(many=True)
 
     class Meta:
         model = Tenant
@@ -62,20 +63,19 @@ class CreateTenantSerializer(serializers.ModelSerializer):
         return value
 
 
-class UpdateTenantSerializer(serializers.Serializer):
-    id = serializers.PrimaryKeyRelatedField(
-        queryset=Tenant.objects.all(),
-    )
-    email = serializers.EmailField(required=False, allow_blank=False, allow_null=True)
-    name = serializers.CharField(
-        required=False,
-        max_length=100,
-        allow_blank=False,
-        allow_null=True,
-        trim_whitespace=True,
-    )
-    isAdmin = serializers.BooleanField(required=False, allow_null=True)
-    ownerId = serializers.IntegerField(required=False, allow_null=True)
+class UpdateTenantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tenant
+        fields = [
+            "email",
+            "name",
+            "isAdmin",
+        ]
+        extra_kwargs = {
+            "email": {"required": False},
+            "name": {"required": False},
+            "isAdmin": {"required": False},
+        }
 
     def validate_name(self, value):
         if value and (value.strip().isspace() or value.strip() == ""):

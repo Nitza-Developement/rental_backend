@@ -1,34 +1,33 @@
 from django.core.exceptions import ValidationError
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema, PolymorphicProxySerializer, OpenApiResponse
+from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import OpenApiResponse
+from drf_spectacular.utils import PolymorphicProxySerializer
 from rest_framework import status
 from rest_framework.exceptions import APIException
-from rest_framework.views import APIView
-from rest_framework.response import Response
-
-from rental.tenantUser.swagger_serializer import TenantUserCreateSwaggerRepresentationSerializer
-from settings.utils.api import APIViewWithPagination
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from rental.tenantUser.exceptions import ErrorTenantUserInvalidRole
+from rental.tenantUser.exceptions import validate_tenantUser_and_handle_errors
+from rental.tenantUser.features import create_tenantUser
+from rental.tenantUser.features import delete_tenantUser
+from rental.tenantUser.features import get_tenantUser
+from rental.tenantUser.features import get_tenantUsers
+from rental.tenantUser.features import update_tenantUser
+from rental.tenantUser.models import TenantUser
 from rental.tenantUser.permissions import IsAdminTenantUser
-from settings.utils.exceptions import (
-    BadRequest400APIException,
-    Unauthorized401APIException,
-    NotFound404APIException,
-    InternalServerError500APIException,
-)
-from rental.tenantUser.exceptions import validate_tenantUser_and_handle_errors, ErrorTenantUserInvalidRole
-from rental.tenantUser.serializer import (
-    TenantUserListSerializer,
-    TenantUserCreateSerializer,
-    TenantUserUpdateSerializer,
-)
-from rental.tenantUser.features import (
-    delete_tenantUser,
-    get_tenantUser,
-    get_tenantUsers,
-    create_tenantUser,
-    update_tenantUser,
-)
+from rental.tenantUser.serializer import TenantUserCreateSerializer
+from rental.tenantUser.serializer import TenantUserListSerializer
+from rental.tenantUser.serializer import TenantUserUpdateSerializer
+from rental.tenantUser.swagger_serializer import \
+    TenantUserCreateSwaggerRepresentationSerializer
+from settings.utils.api import APIViewWithPagination
+from settings.utils.exceptions import BadRequest400APIException
+from settings.utils.exceptions import InternalServerError500APIException
+from settings.utils.exceptions import NotFound404APIException
+from settings.utils.exceptions import Unauthorized401APIException
 from settings.utils.pagination import DefaultPagination
 
 
@@ -37,7 +36,9 @@ class ListAndCreateTenantUserView(APIViewWithPagination):
 
     @extend_schema(
         responses={
-            200: DefaultPagination.paginated_response_schema(TenantUserListSerializer(many=True)),
+            200: DefaultPagination.paginated_response_schema(
+                TenantUserListSerializer(many=True)
+            ),
             400: BadRequest400APIException.schema_response(),
             401: Unauthorized401APIException.schema_response(),
         }
@@ -69,16 +70,16 @@ class ListAndCreateTenantUserView(APIViewWithPagination):
         responses={
             201: TenantUserListSerializer(),
             400: PolymorphicProxySerializer(
-                                component_name="BadRequestTenantUser",
-                                serializers=[
-                                    ErrorTenantUserInvalidRole.schema_serializers(),
-                                    BadRequest400APIException.schema_serializers(),
-                                ],
-                                resource_type_field_name="error"
-                            ),
+                component_name="BadRequestTenantUser",
+                serializers=[
+                    ErrorTenantUserInvalidRole.schema_serializers(),
+                    BadRequest400APIException.schema_serializers(),
+                ],
+                resource_type_field_name="error",
+            ),
             401: Unauthorized401APIException.schema_response(),
-            500: InternalServerError500APIException.schema_response()
-        }
+            500: InternalServerError500APIException.schema_response(),
+        },
     )
     def post(self, request):
         """
@@ -109,9 +110,7 @@ class ListAndCreateTenantUserView(APIViewWithPagination):
             )
 
             serialized_tenantUser = TenantUserListSerializer(created_tenantUser)
-            return Response(
-                serialized_tenantUser.data, status=status.HTTP_201_CREATED
-            )
+            return Response(serialized_tenantUser.data, status=status.HTTP_201_CREATED)
         except ValidationError as ex:
             raise BadRequest400APIException(str(ex.message))
         except Exception as ex:
@@ -121,13 +120,12 @@ class ListAndCreateTenantUserView(APIViewWithPagination):
 class GetUpdateAndDeleteTenantUserView(APIView):
     permission_classes = [IsAuthenticated, IsAdminTenantUser]
 
-
     @extend_schema(
         responses={
             200: TenantUserListSerializer(),
             401: Unauthorized401APIException.schema_response(),
             404: NotFound404APIException.schema_response(),
-            500: InternalServerError500APIException.schema_response()
+            500: InternalServerError500APIException.schema_response(),
         }
     )
     def get(self, request, tenantUser_id):
@@ -160,11 +158,10 @@ class GetUpdateAndDeleteTenantUserView(APIView):
                     ErrorTenantUserInvalidRole.schema_serializers(),
                     BadRequest400APIException.schema_serializers(),
                 ],
-                resource_type_field_name="error"
+                resource_type_field_name="error",
             ),
-            401: Unauthorized401APIException.schema_response()
-
-        }
+            401: Unauthorized401APIException.schema_response(),
+        },
     )
     def put(self, request, tenantUser_id):
         """
@@ -183,7 +180,8 @@ class GetUpdateAndDeleteTenantUserView(APIView):
         Therefore, this action can only be performed if there are more than one entity
         of this type.
         """
-        serializer = TenantUserUpdateSerializer(data=request.data)
+        user = TenantUser.objects.filter(id=tenantUser_id).first()
+        serializer = TenantUserUpdateSerializer(user, data=request.data)
         validate_tenantUser_and_handle_errors(serializer)
         try:
             updated_tenant_user = update_tenantUser(
@@ -198,13 +196,12 @@ class GetUpdateAndDeleteTenantUserView(APIView):
             raise ex
         except Exception as ex:
             raise InternalServerError500APIException()
+
     @extend_schema(
         responses={
-            200: OpenApiResponse(
-                description="Successful response"
-            ),
+            200: OpenApiResponse(description="Successful response"),
             401: Unauthorized401APIException.schema_response(),
-            404: NotFound404APIException.schema_response()
+            404: NotFound404APIException.schema_response(),
         }
     )
     def delete(self, request, tenantUser_id):

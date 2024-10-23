@@ -1,25 +1,37 @@
-from drf_spectacular.utils import extend_schema, inline_serializer, OpenApiResponse
+from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import inline_serializer
+from drf_spectacular.utils import OpenApiResponse
 from rest_framework import serializers
 from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rental.user.permissions import IsSelf
-from rental.user.features import update_user, get_user
+from rest_framework.decorators import api_view
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAdminUser
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.decorators import api_view, permission_classes
-from rental.user.serializer import UpdateUserSerializer, UserDataSerializer
-from rental.user.exceptions import validate_user_and_handle_errors
-from settings.utils.exceptions import BadRequest400APIException, Unauthorized401APIException
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenRefreshView
+
 from rental.shared_serializers.serializers import UserProfileSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rental.user.exceptions import validate_user_and_handle_errors
+from rental.user.features import get_user
+from rental.user.features import update_user
+from rental.user.models import User
+from rental.user.permissions import IsSelf
+from rental.user.serializer import UpdateUserSerializer
+from rental.user.serializer import UserDataSerializer
+from settings.utils.exceptions import BadRequest400APIException
+from settings.utils.exceptions import Unauthorized401APIException
 
 
-@extend_schema(tags=['auth'])
+@extend_schema(tags=["auth"])
 class CustomTokenObtainPairView(TokenObtainPairView):
     pass
 
-@extend_schema(tags=['auth'])
+
+@extend_schema(tags=["auth"])
 class CustomTokenRefreshView(TokenRefreshView):
     pass
 
@@ -28,18 +40,13 @@ class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=['auth'],
+        tags=["auth"],
         request=inline_serializer(
-            name='RefreshTokenRequest',
-            fields={
-                'refreshToken': serializers.CharField()
-            }
+            name="RefreshTokenRequest", fields={"refreshToken": serializers.CharField()}
         ),
         responses={
-            200: OpenApiResponse(
-                description="Successful response"
-            ),
-            400: BadRequest400APIException.schema_response()
+            200: OpenApiResponse(description="Successful response"),
+            400: BadRequest400APIException.schema_response(),
         },
     )
     def post(self, request):
@@ -60,10 +67,10 @@ class LogoutView(APIView):
 
 
 @extend_schema(
-    tags=['auth'],
+    tags=["auth"],
     responses={
         200: UserDataSerializer,
-        401: Unauthorized401APIException.schema_response()
+        401: Unauthorized401APIException.schema_response(),
     },
 )
 @api_view(["GET"])
@@ -85,13 +92,12 @@ def get_user_data(request):
 
 
 @extend_schema(
-    tags=['auth'],
-    request = UpdateUserSerializer,
-    responses = {
+    tags=["auth"],
+    request=UpdateUserSerializer,
+    responses={
         200: UserProfileSerializer,
         400: BadRequest400APIException.schema_response(),
-        401: Unauthorized401APIException.schema_response()
-
+        401: Unauthorized401APIException.schema_response(),
     },
 )
 @api_view(["PUT"])
@@ -130,3 +136,9 @@ def update_profile(request):
     serialized_user = UserProfileSerializer(updated_user)
 
     return Response(serialized_user.data, status=status.HTTP_200_OK)
+
+
+class UserView(ModelViewSet):
+    permission_classes = [IsAuthenticated, IsAdminUser]
+    serializer_class = UserDataSerializer
+    queryset = User.objects.all()
