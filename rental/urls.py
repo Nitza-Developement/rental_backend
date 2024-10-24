@@ -40,6 +40,7 @@ from rental.user.api import CustomTokenObtainPairView
 from rental.user.api import CustomTokenRefreshView
 from rental.user.api import get_user_data
 from rental.user.api import LogoutView
+from rental.user.api import profile_change_password
 from rental.user.api import update_profile
 from rental.user.api import UserView
 from rental.vehicle.api import get_vehicle_timeline
@@ -57,6 +58,7 @@ urlpatterns = [
     path("logout", LogoutView.as_view(), name="logout"),
     path("user", get_user_data, name="user-data"),
     path("profile", update_profile, name="update-profile"),
+    path("password", profile_change_password, name="change-password"),
     path("tenant", ListAndCreateTenantsView.as_view(), name="tenant"),
     path(
         "tenant/<int:tenant_id>",

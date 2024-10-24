@@ -7,6 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAdminUser
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -20,6 +21,8 @@ from rental.user.features import get_user
 from rental.user.features import update_user
 from rental.user.models import User
 from rental.user.permissions import IsSelf
+from rental.user.serializer import ProfilePasswordSerializer
+from rental.user.serializer import UpdateProfileSerializer
 from rental.user.serializer import UpdateUserSerializer
 from rental.user.serializer import UserDataSerializer
 from settings.utils.exceptions import BadRequest400APIException
@@ -101,8 +104,8 @@ def get_user_data(request):
     },
 )
 @api_view(["PUT"])
-@permission_classes([IsAuthenticated, IsSelf])
-def update_profile(request):
+@permission_classes([IsAuthenticated])
+def update_profile(request: Request):
     """
     This method requires the user to be authenticated in order to be used.
     Authentication is performed by using a JWT (JSON Web Token) that is included
@@ -114,28 +117,49 @@ def update_profile(request):
     Endpoint to edit the data of the currently authenticated user
     """
     user = request.user
-    serializer = UpdateUserSerializer(
-        data={
-            "id": user.id,
-            "name": request.data.get("name"),
-            "email": request.data.get("email"),
-            "password": request.data.get("password"),
-            "image": request.FILES.get("image"),
-        }
+    serializer = UpdateProfileSerializer(
+        user,
+        data=request.data,
     )
-    validate_user_and_handle_errors(serializer)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data, status=status.HTTP_200_OK)
+    # serializer = UpdateUserSerializer(
+    #     data={
+    #         "id": user.id,
+    #         "name": request.data.get("name"),
+    #         "email": request.data.get("email"),
+    #         "password": request.data.get("password"),
+    #         "image": request.FILES.get("image"),
+    #     }
+    # )
+    # validate_user_and_handle_errors(serializer)
 
-    updated_user = update_user(
-        user_id=user.id,
-        name=serializer.validated_data.get("name"),
-        email=serializer.validated_data.get("email"),
-        password=serializer.validated_data.get("password"),
-        image=serializer.validated_data.get("image"),
+    # updated_user = update_user(
+    #     user_id=user.id,
+    #     name=serializer.validated_data.get("name"),
+    #     email=serializer.validated_data.get("email"),
+    #     password=serializer.validated_data.get("password"),
+    #     image=serializer.validated_data.get("image"),
+    # )
+    #
+    # serialized_user = UserProfileSerializer(updated_user)
+    #
+    # return Response(serialized_user.data, status=status.HTTP_200_OK)
+    #
+
+
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def profile_change_password(request: Request):
+    user = request.user
+    serializer = ProfilePasswordSerializer(
+        user,
+        data=request.data,
     )
-
-    serialized_user = UserProfileSerializer(updated_user)
-
-    return Response(serialized_user.data, status=status.HTTP_200_OK)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response({}, status=status.HTTP_200_OK)
 
 
 class UserView(ModelViewSet):
