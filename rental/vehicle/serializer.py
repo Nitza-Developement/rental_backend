@@ -1,6 +1,7 @@
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
+from rental.tracker.serializer import TrackerSerializer
 from rental.vehicle.models import Vehicle
 from rental.vehicle.models import VehiclePlate
 
@@ -32,6 +33,7 @@ class VehicleListSerializer(serializers.ModelSerializer):
         ]
 
     plate = serializers.SerializerMethodField()
+    tracker = TrackerSerializer()
 
     @extend_schema_field(VehiclePlateSerializer())
     def get_plate(self, vehicle: Vehicle):
