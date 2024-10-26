@@ -1,10 +1,9 @@
 from rest_framework import serializers
-from rental.contract_form.models import (
-    ContractFormTemplate,
-    ContractForm,
-    ContractFormField,
-    ContractFormFieldResponse,
-)
+
+from rental.contract_form.models import ContractForm
+from rental.contract_form.models import ContractFormField
+from rental.contract_form.models import ContractFormFieldResponse
+from rental.contract_form.models import ContractFormTemplate
 from settings.settings import MINIO_STORAGE_MEDIA_BUCKET_NAME
 from settings.utils.minio_client import minio_client
 
@@ -56,7 +55,6 @@ class ContractFormFieldSerializer(serializers.ModelSerializer):
 
 
 class ContractFormTemplateSerializer(serializers.ModelSerializer):
-
     fields = ContractFormFieldSerializer(many=True, read_only=True)
 
     class Meta:
@@ -72,10 +70,12 @@ class ContractFormTemplateSerializer(serializers.ModelSerializer):
             "fields",
         )
         extra_kwargs = {
+            "id": {"required": False},
             "template": {"required": False},
             "user": {"required": False},
             "tenant": {"required": False},
             "contracts": {"required": False},
+            "created_at": {"read_only": True},
         }
 
 
