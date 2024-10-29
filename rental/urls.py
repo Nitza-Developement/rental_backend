@@ -24,6 +24,7 @@ from rental.inspections.api import InspectionGetUpdateAndDeleteView
 from rental.inspections.api import InspectionListAndCreateView
 from rental.notes.api import GetUpdateAndDeleteANoteView
 from rental.notes.api import ListAndCreateNotesView
+from rental.reminders.api import ReminderViewSet
 from rental.rentalPlan.api import GetUpdateAndDeleteARentalPlanView
 from rental.rentalPlan.api import ListAndCreateRentalPlansView
 from rental.tenant.api import GetUpdateAndDeleteATenantView
@@ -50,6 +51,7 @@ from rental.vehicle.api import VehiclePlateView
 
 router = routers.SimpleRouter()
 router.register(r"users", UserView, basename="users")
+router.register(r"reminders", ReminderViewSet, basename="reminders")
 
 urlpatterns = [
     path("", include(router.urls)),
