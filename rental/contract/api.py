@@ -53,6 +53,13 @@ class ListAndCreateContractView(APIViewWithPagination):
                     ),
                 )
 
+            if "all" in request.query_params and (
+                request.query_params["all"] == "true"
+                or request.query_params["all"] is True
+            ):
+                serialized_list = ContractSerializer(contract_list, many=True)
+                return Response(serialized_list.data)
+
             paginator = self.pagination_class()
             paginated_contracts = paginator.paginate_queryset(contract_list, request)
             serialized_list = ContractSerializer(paginated_contracts, many=True)

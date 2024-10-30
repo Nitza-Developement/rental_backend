@@ -68,3 +68,9 @@ class Reminder(models.Model):
         related_name="reminders",
         null=True,
     )
+    reminder = models.ForeignKey(
+        "Reminder",
+        on_delete=models.CASCADE,
+        related_name="reminders",
+        null=True,
+    )

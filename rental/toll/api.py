@@ -24,6 +24,13 @@ class ListAndCreateTollDuesView(APIViewWithPagination):
         try:
             toll_dues_list = get_toll_dues()
 
+            if "all" in request.query_params and (
+                request.query_params["all"] == "true"
+                or request.query_params["all"] is True
+            ):
+                serializer = TollDueSerializer(toll_dues_list, many=True)
+                return Response(serializer.data)
+
             paginator = self.pagination_class()
             paginated_toll_dues = paginator.paginate_queryset(toll_dues_list, request)
             serialized_list = TollDueSerializer(paginated_toll_dues, many=True)

@@ -25,6 +25,14 @@ class ClientListAndCreateView(APIViewWithPagination):
     def get(self, request):
         try:
             clients_list = get_clients(request.user.defaultTenantUser().tenant)
+
+            if "all" in request.query_params and (
+                request.query_params["all"] == "true"
+                or request.query_params["all"] is True
+            ):
+                serializer = ClientListSerializer(clients_list, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+
             paginator = self.pagination_class()
             paginated_clients = paginator.paginate_queryset(clients_list, request)
             serialized_list = ClientListSerializer(paginated_clients, many=True)

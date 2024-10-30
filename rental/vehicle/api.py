@@ -52,6 +52,14 @@ class ListAndCreateVehicleView(APIViewWithPagination):
             vehicles_list = get_vehicles(
                 tenant=request.user.defaultTenantUser().tenant.id
             )
+
+            if "all" in request.query_params and (
+                request.query_params["all"] == "true"
+                or request.query_params["all"] is True
+            ):
+                serialized_list = VehicleListSerializer(vehicles_list, many=True)
+                return Response(serialized_list.data)
+
             paginator = self.pagination_class()
             paginated_vehicles = paginator.paginate_queryset(vehicles_list, request)
             serialized_list = VehicleListSerializer(paginated_vehicles, many=True)
