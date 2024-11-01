@@ -5,6 +5,8 @@ from django.db import transaction
 from tools.gestor_importers.clients_importer import ClientsImporter
 from tools.gestor_importers.trailers_importer import TrailerImporter
 
+DB = "db.sqlite3"
+
 
 class QueryCtl:
     def __init__(self, db_path: str):
@@ -27,7 +29,7 @@ class QueryCtl:
 
 @transaction.atomic
 def import_data():
-    qc = QueryCtl("db.sqlite3")
+    qc = QueryCtl(DB)
 
     ti = TrailerImporter()
     rows = qc.exec_query(f"tools/gestor_importers/{ti.sql_file}")
