@@ -1,47 +1,47 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
-from rental.models import (
-    User,
-    Tenant,
-    TenantUser,
-    Client,
-    Vehicle,
-    VehiclePicture,
-    VehiclePlate,
-    Contract,
-    Note,
-    StageUpdate,
-    TollDue,
-    Tracker,
-    TrackerHeartBeatData,
-    RentalPlan,
-)
-from rental.adminInline import (
-    ContractInline,
-    TenantUserInline,
-    ClientInline,
-    VehicleInline,
-    VehiclePlateInline,
-    VehiclePictureInline,
-    TrackerHeartbeatDataInline,
-    NoteInline,
-    TollDueInline,
-    StageUpdateInline,
-)
 
-from rental.forms.models import Form, Card, Field, FieldResponse
+from rental.adminInline import ClientInline
+from rental.adminInline import ContractInline
+from rental.adminInline import NoteInline
+from rental.adminInline import StageUpdateInline
+from rental.adminInline import TenantUserInline
+from rental.adminInline import TollDueInline
+from rental.adminInline import TrackerHeartbeatDataInline
+from rental.adminInline import VehicleInline
+from rental.adminInline import VehiclePictureInline
+from rental.adminInline import VehiclePlateInline
+from rental.contract_form.models import ContractForm
+from rental.contract_form.models import ContractFormField
+from rental.contract_form.models import ContractFormFieldResponse
+from rental.contract_form.models import ContractFormTemplate
+from rental.forms.models import Card
+from rental.forms.models import Field
+from rental.forms.models import FieldResponse
+from rental.forms.models import Form
 from rental.inspections.models import Inspection
-from rental.contract_form.models import (
-    ContractFormTemplate,
-    ContractForm,
-    ContractFormField,
-    ContractFormFieldResponse,
-)
+from rental.models import Client
+from rental.models import Contract
+from rental.models import Note
+from rental.models import RentalPlan
+from rental.models import StageUpdate
+from rental.models import Tenant
+from rental.models import TenantUser
+from rental.models import TollDue
+from rental.models import Tracker
+from rental.models import TrackerHeartBeatData
+from rental.models import User
+from rental.models import Vehicle
+from rental.models import VehiclePicture
+from rental.models import VehiclePlate
+from rental.reminders.models import Reminder
 
 admin.site.site_title = "Fleet Admin Site"
 admin.site.site_header = "Administration Panel"
 admin.site.index_title = "Dashboard"
 admin.site.unregister(Group)
+
+admin.site.register(Reminder)
 
 
 @admin.register(User)

@@ -1,6 +1,9 @@
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
-from rental.vehicle.models import Vehicle, VehiclePlate
+
+from rental.tracker.serializer import TrackerSerializer
+from rental.vehicle.models import Vehicle
+from rental.vehicle.models import VehiclePlate
 
 
 class VehiclePlateSerializer(serializers.ModelSerializer):
@@ -30,6 +33,7 @@ class VehicleListSerializer(serializers.ModelSerializer):
         ]
 
     plate = serializers.SerializerMethodField()
+    tracker = TrackerSerializer()
 
     @extend_schema_field(VehiclePlateSerializer())
     def get_plate(self, vehicle: Vehicle):
@@ -38,7 +42,10 @@ class VehicleListSerializer(serializers.ModelSerializer):
 
 class VehicleCreateSerializer(serializers.Serializer):
     type = serializers.ChoiceField(
-        required=False, choices=Vehicle.TYPE_CHOICES, allow_blank=False, allow_null=False
+        required=False,
+        choices=Vehicle.TYPE_CHOICES,
+        allow_blank=False,
+        allow_null=False,
     )
     year = serializers.IntegerField(
         required=False,
@@ -54,7 +61,9 @@ class VehicleCreateSerializer(serializers.Serializer):
         allow_null=False,
     )
     odometer = serializers.IntegerField(required=False, allow_null=False)
-    nickname = serializers.CharField(required=False, allow_blank=False, allow_null=False)
+    nickname = serializers.CharField(
+        required=False, allow_blank=False, allow_null=False
+    )
     spare_tires = serializers.IntegerField(required=False, allow_null=False)
     extra_fields = serializers.JSONField(required=False, allow_null=True)
     status = serializers.ChoiceField(
@@ -64,13 +73,21 @@ class VehicleCreateSerializer(serializers.Serializer):
         allow_null=False,
     )
 
+    def validate_vin(self, value):
+        if Vehicle.objects.filter(vin=value).exists():
+            raise serializers.ValidationError("A vehicle with this VIN already exists.")
+        return value
+
 
 class VehicleUpdateSerializer(serializers.Serializer):
     id = serializers.IntegerField(
         required=False,
     )
     type = serializers.ChoiceField(
-        required=False, choices=Vehicle.TYPE_CHOICES, allow_blank=False, allow_null=False
+        required=False,
+        choices=Vehicle.TYPE_CHOICES,
+        allow_blank=False,
+        allow_null=False,
     )
     year = serializers.IntegerField(
         required=False,
@@ -86,7 +103,9 @@ class VehicleUpdateSerializer(serializers.Serializer):
     trim = serializers.CharField(required=False, allow_blank=False, allow_null=False)
     plate = serializers.CharField(required=False, allow_blank=False, allow_null=False)
     odometer = serializers.IntegerField(required=False, allow_null=False)
-    nickname = serializers.CharField(required=False, allow_blank=False, allow_null=False)
+    nickname = serializers.CharField(
+        required=False, allow_blank=False, allow_null=False
+    )
     spare_tires = serializers.IntegerField(required=False, allow_null=False)
     extra_fields = serializers.JSONField(required=False, allow_null=True)
     status = serializers.ChoiceField(
@@ -99,14 +118,22 @@ class VehicleUpdateSerializer(serializers.Serializer):
     def validate_vin(self, value):
         if self.instance and self.instance.vin != value:
             if Vehicle.objects.exclude(id=self.instance.id).filter(vin=value).exists():
-                raise serializers.ValidationError("A vehicle with this VIN already exists.")
+                raise serializers.ValidationError(
+                    "A vehicle with this VIN already exists."
+                )
         return value
-    
+
     def validate_plate(self, value):
         try:
             plate_instance = VehiclePlate.objects.get(plate=value)
-            if self.instance and plate_instance and plate_instance.vehicle.id != self.instance.id:
-                raise serializers.ValidationError("This plate number is already assigned to another vehicle.")
+            if (
+                self.instance
+                and plate_instance
+                and plate_instance.vehicle.id != self.instance.id
+            ):
+                raise serializers.ValidationError(
+                    "This plate number is already assigned to another vehicle."
+                )
             else:
                 return value
         except VehiclePlate.DoesNotExist:

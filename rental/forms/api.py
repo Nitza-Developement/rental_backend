@@ -1,24 +1,24 @@
 from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from rental.forms.features import clone_form
+from rental.forms.features import create_card
+from rental.forms.features import create_form
+from rental.forms.features import delete_card
+from rental.forms.features import delete_form
+from rental.forms.features import get_form
+from rental.forms.features import get_forms
+from rental.forms.features import import_forms
+from rental.forms.features import rename_form
+from rental.forms.features import update_card
+from rental.forms.models import Form
+from rental.forms.serializer import CardSerializer
+from rental.forms.serializer import FormSerializer
 from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
 from settings.utils.api import APIViewWithPagination
 from settings.utils.exceptions import BadRequest400APIException
-
-from rental.forms.features import (
-    get_forms,
-    get_form,
-    import_forms,
-    clone_form,
-    create_form,
-    create_card,
-    rename_form,
-    delete_form,
-    delete_card,
-    update_card,
-)
-from rental.forms.serializer import FormSerializer, CardSerializer
 
 
 class FormListAndCreateView(APIViewWithPagination):
@@ -62,15 +62,17 @@ class FormGetUpdateAndDeleteView(APIView):
         return Response(serialized_form.data, status=status.HTTP_200_OK)
 
     def put(self, request, form_id):
-
-        serializer = FormSerializer(data=request.data | {"id": form_id})
+        form = Form.objects.filter(id=form_id).first()
+        serializer = FormSerializer(form, data=request.data | {"id": form_id})
 
         if serializer.is_valid():
-            rename_form(
-                form_id,
-                request.data.get("name"),
-                request.user.defaultTenantUser().tenant,
-            )
+            tenant = request.user.defaultTenantUser().tenant
+            serializer.save(tenant=tenant)
+            # rename_form(
+            #     form_id,
+            #     request.data.get("name"),
+            #     request.user.defaultTenantUser().tenant,
+            # )
 
             return Response(serializer.data, status=status.HTTP_200_OK)
 

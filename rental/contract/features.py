@@ -1,6 +1,7 @@
-from rental.contract.models import Contract, StageUpdate
-from settings.utils.exceptions import NotFound404APIException
+from rental.contract.models import Contract
+from rental.contract.models import StageUpdate
 from rental.shared_functions.functions import poblate_history_list
+from settings.utils.exceptions import NotFound404APIException
 
 
 def create_stage_update(
@@ -27,7 +28,7 @@ def create_contract(
 
 
 def get_contracts(tenant):
-    return Contract.objects.filter(tenant=tenant)
+    return Contract.objects.filter(tenant=tenant).order_by("id")
 
 
 def get_contract(contract_id: int):
@@ -81,6 +82,6 @@ def get_contract_history(contract_id: int):
     toll_logs = []
     for toll in contract.toll_dues.all():
         toll_logs.extend(list(toll.history.all()))
-    poblate_history_list(history_data, toll_logs, 'toll_due')
+    poblate_history_list(history_data, toll_logs, "toll_due")
 
     return history_data

@@ -1,34 +1,64 @@
+from datetime import datetime
+
+from django.db.models import Q
 from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view, permission_classes
-from settings.utils.api import APIViewWithPagination
-from rest_framework.permissions import IsAuthenticated
+
 from rental.contract.exceptions import validate_and_handle_errors
-from rental.contract.serializer import (
-    ContractCreateSerializer,
-    ContractUpdateSerializer,
-    ContractSerializer,
-    StageUpdateCreateSerializer,
-)
-from rental.contract.features import (
-    create_contract,
-    get_contract,
-    get_contracts,
-    update_contract,
-    create_stage_update,
-    get_contract_history
-)
-from settings.utils.exceptions import BadRequest400APIException
+from rental.contract.features import create_contract
+from rental.contract.features import create_stage_update
+from rental.contract.features import get_contract
+from rental.contract.features import get_contract_history
+from rental.contract.features import get_contracts
+from rental.contract.features import update_contract
+from rental.contract.models import Contract
+from rental.contract.serializer import ContractCreateSerializer
+from rental.contract.serializer import ContractSerializer
+from rental.contract.serializer import ContractUpdateSerializer
+from rental.contract.serializer import StageUpdateCreateSerializer
 from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
+from settings.utils.api import APIViewWithPagination
+from settings.utils.exceptions import BadRequest400APIException
 
 
 class ListAndCreateContractView(APIViewWithPagination):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
-    def get(self, request):
+    def get(self, request: Request):
         try:
-            contract_list = get_contracts(request.user.defaultTenantUser().tenant)
+            tenant = request.user.defaultTenantUser().tenant
+            contract_list = get_contracts(tenant)
+
+            if "plate" in request.query_params and request.query_params["plate"]:
+                contract_list = contract_list.filter(
+                    vehicle__plates__id=int(request.query_params["plate"]),
+                )
+
+            if "date" in request.query_params and request.query_params["date"]:
+                date = datetime.strptime(
+                    str(request.query_params["date"]),
+                    "%Y-%m-%d",
+                )
+                contract_list = contract_list.filter(
+                    Q(
+                        Q(end_date=None) | Q(end_date__gte=date),
+                    )
+                    & Q(
+                        Q(active_date__lte=date),
+                    ),
+                )
+
+            if "all" in request.query_params and (
+                request.query_params["all"] == "true"
+                or request.query_params["all"] is True
+            ):
+                serialized_list = ContractSerializer(contract_list, many=True)
+                return Response(serialized_list.data)
 
             paginator = self.pagination_class()
             paginated_contracts = paginator.paginate_queryset(contract_list, request)
@@ -61,13 +91,14 @@ class GetUpdatePatchContractView(APIView):
         return Response(serialized_contract.data, status=status.HTTP_200_OK)
 
     def put(self, request, contract_id):
+        contract = Contract.objects.filter(id=contract_id).first()
         serializer = ContractUpdateSerializer(
+            contract,
             data={
-                "id": contract_id,
                 "client": request.data.get("client"),
                 "vehicle": request.data.get("vehicle"),
                 "rental_plan": request.data.get("rental_plan"),
-            }
+            },
         )
         validate_and_handle_errors(serializer)
 

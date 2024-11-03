@@ -1,10 +1,12 @@
 from rest_framework import serializers
-from rental.toll.models import TollDue
 
+from rental.toll.models import TollDue
 from rental.vehicle.serializer import VehiclePlateSerializer
 
 
 class TollDueSerializer(serializers.ModelSerializer):
+    createDate = serializers.DateTimeField(format="%Y-%m-%d")
+
     class Meta:
         model = TollDue
         fields = [

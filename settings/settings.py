@@ -9,12 +9,11 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
-from datetime import timedelta
 import os
+from datetime import timedelta
 from pathlib import Path
+
 from decouple import config
-from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -260,7 +259,7 @@ MINIO_STORAGE_ENDPOINT = config("S3_ENDPOINT")
 MINIO_STORAGE_ACCESS_KEY = config("S3_ACCESS_KEY")
 MINIO_STORAGE_SECRET_KEY = config("S3_SECRET_KEY")
 MINIO_STORAGE_MEDIA_BUCKET_NAME = config("S3_BUCKET")
-MINIO_STORAGE_USE_HTTPS = config("S3_USE_HTTPS", cast=bool , default=True)
+MINIO_STORAGE_USE_HTTPS = config("S3_USE_HTTPS", cast=bool, default=True)
 MINIO_STORAGE_MEDIA_USE_PRESIGNED = True
 
 
@@ -294,7 +293,7 @@ To prove that you are authenticated, you can use the `[GET]` `/api/v1/user` endp
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "SCHEMA_PATH_PREFIX": "/api/v[0-9]",
-    "SCHEMA_PATH_PREFIX_INSERT": "",   
+    "SCHEMA_PATH_PREFIX_INSERT": "",
     "SWAGGER_UI_DIST": "SIDECAR",
     "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
     "REDOC_DIST": "SIDECAR",
@@ -309,3 +308,4 @@ To prove that you are authenticated, you can use the `[GET]` `/api/v1/user` endp
     # OTHER SETTINGS
     "COMPONENT_SPLIT_REQUEST": True,
 }
+

@@ -1,30 +1,26 @@
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
 from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
-from rental.tracker.features import (
-    create_tracker,
-    get_trackers,
-    get_tracker,
-    update_tracker,
-    delete_tracker,
-    get_tracker_heart_beat_data,
-    delete_tracker_heart_beat_data,
-    create_tracker_heart_beat_data,
-)
-from rental.tracker.serializer import (
-    CreateTrackerSerializer,
-    TrackerHeartBeatDataSerializer,
-    TrackerSerializer,
-    UpdateTrackerSerializer,
-    CreateTrackerHeartBeatDataSerializer,
-)
+from rental.tracker.exceptions import validate_tracker_and_handle_errors
+from rental.tracker.exceptions import validate_tracker_heartbeat_data_and_handle_errors
+from rental.tracker.features import create_tracker
+from rental.tracker.features import create_tracker_heart_beat_data
+from rental.tracker.features import delete_tracker
+from rental.tracker.features import delete_tracker_heart_beat_data
+from rental.tracker.features import get_tracker
+from rental.tracker.features import get_tracker_heart_beat_data
+from rental.tracker.features import get_trackers
+from rental.tracker.features import update_tracker
+from rental.tracker.models import Tracker
+from rental.tracker.serializer import CreateTrackerHeartBeatDataSerializer
+from rental.tracker.serializer import CreateTrackerSerializer
+from rental.tracker.serializer import TrackerHeartBeatDataSerializer
+from rental.tracker.serializer import TrackerSerializer
+from rental.tracker.serializer import UpdateTrackerSerializer
 from settings.utils.api import APIViewWithPagination
 from settings.utils.exceptions import BadRequest400APIException
-from rental.tracker.exceptions import (
-    validate_tracker_and_handle_errors,
-    validate_tracker_heartbeat_data_and_handle_errors,
-)
 
 
 class ListAndCreateTrackersView(APIViewWithPagination):
@@ -66,12 +62,13 @@ class GetUpdateAndDeleteATrackerView(APIViewWithPagination):
         return Response(serialized_tracker.data, status=status.HTTP_200_OK)
 
     def put(self, request, tracker_id):
+        tracker = Tracker.objects.filter(id=tracker_id).first()
         serializer = UpdateTrackerSerializer(
+            tracker,
             data={
-                "id": tracker_id,
                 "name": request.data.get("name"),
                 "vehicle": request.data.get("vehicle"),
-            }
+            },
         )
         validate_tracker_and_handle_errors(serializer)
 

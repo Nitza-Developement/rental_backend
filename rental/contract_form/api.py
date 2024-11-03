@@ -1,34 +1,28 @@
 from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.request import Request
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
+from rental.contract_form.features import clone_contract_form_template
+from rental.contract_form.features import create_contract_form
+from rental.contract_form.features import create_contract_form_response
+from rental.contract_form.features import create_contract_form_template
+from rental.contract_form.features import delete_contract_form_template
+from rental.contract_form.features import get_contract_form
+from rental.contract_form.features import get_contract_form_template
+from rental.contract_form.features import get_contract_form_templates
+from rental.contract_form.features import get_contract_forms
+from rental.contract_form.features import update_contract_form_template
+from rental.contract_form.serializer import CloneContractFormTemplateSerializer
+from rental.contract_form.serializer import ContractFormSerializer
+from rental.contract_form.serializer import ContractFormTemplateSerializer
+from rental.contract_form.serializer import CreateContractFormSerializer
+from rental.contract_form.serializer import UpdateContractFormTemplateSerializer
+from rental.contract_form.validators import validate_contract_form_response
+from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
 from settings.utils.api import APIViewWithPagination
 from settings.utils.exceptions import BadRequest400APIException
-
-from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
-from rental.contract_form.serializer import (
-    ContractFormTemplateSerializer,
-    UpdateContractFormTemplateSerializer,
-    ContractFormSerializer,
-    CreateContractFormSerializer,
-    CloneContractFormTemplateSerializer,
-)
-
-from rental.contract_form.features import (
-    get_contract_form_templates,
-    create_contract_form_template,
-    get_contract_form_template,
-    delete_contract_form_template,
-    update_contract_form_template,
-    get_contract_forms,
-    create_contract_form,
-    clone_contract_form_template,
-    get_contract_form,
-    create_contract_form_response,
-)
-from rental.contract_form.validators import validate_contract_form_response
 
 
 class ContractFormTemplateListAndCreateView(APIViewWithPagination):
@@ -54,23 +48,13 @@ class ContractFormTemplateListAndCreateView(APIViewWithPagination):
             raise BadRequest400APIException(str(error)) from error
 
     def post(self, request):
-
         serializer = ContractFormTemplateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        if serializer.is_valid():
-
-            tenant = request.user.defaultTenantUser().tenant
-            user = request.user.defaultTenantUser()
-
-            data = {"tenant": tenant, "user": user}
-            data.update(serializer.validated_data)
-
-            form = create_contract_form_template(**data)
-            serialized_form = ContractFormTemplateSerializer(form)
-
-            return Response(serialized_form.data, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        tenant = request.user.defaultTenantUser().tenant
+        user = request.user.defaultTenantUser()
+        serializer.save(tenant=tenant, user=user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class ContractFormTemplateGetUpdateAndDeleteView(APIView):

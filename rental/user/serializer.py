@@ -1,9 +1,10 @@
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
-from rental.user.models import User
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
+
 from rental.tenantUser.serializer import TenantUserListSerializer
+from rental.user.models import User
 
 
 class UserDataSerializer(serializers.ModelSerializer):
@@ -75,3 +76,80 @@ class UpdateUserSerializer(serializers.Serializer):
             )
 
         return new_email
+
+
+class UpdateProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "name",
+            "email",
+            # "password",
+            "image",
+        ]
+        extra_kwargs = {
+            "name": {"write_only": False},
+            "email": {"write_only": False},
+            # "password": {"write_only": False},
+            "image": {"write_only": False},
+        }
+
+
+class ProfilePasswordSerializer(serializers.ModelSerializer):
+    old_password = serializers.CharField(
+        required=True,
+        min_length=3,
+    )
+    new_password = serializers.CharField(
+        required=True,
+        min_length=3,
+    )
+    confirm_password = serializers.CharField(
+        required=True,
+        min_length=3,
+    )
+
+    class Meta:
+        model = User
+        fields = ["old_password", "new_password", "confirm_password"]
+
+    def validate(self, attrs: dict):
+        if self.instance is None:
+            raise serializers.ValidationError(
+                detail="You must be authenticated to change your password",
+                code="not_authenticated",
+            )
+
+        user: User = self.instance
+        old_password = attrs.get("old_password")
+        new_password = attrs.get("new_password")
+        confirm_password = attrs.get("confirm_password")
+
+        if not user.check_password(old_password):
+            raise serializers.ValidationError(
+                detail={"old_password": "Old password is incorrect"},
+                code="old_password",
+            )
+
+        if new_password != confirm_password:
+            raise serializers.ValidationError(
+                detail={
+                    "confirm_password": "New password and confirm password do not match"
+                },
+                code="confirm_password",
+            )
+
+        return attrs
+
+    def save(self, **kwargs):
+        if self.instance is None:
+            raise serializers.ValidationError(
+                detail="You must be authenticated to change your password",
+                code="not_authenticated",
+            )
+
+        user: User = self.instance
+        new_password = self.validated_data.get("new_password")
+        user.set_password(new_password)
+        user.save()
+        return user

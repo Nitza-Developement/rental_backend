@@ -1,23 +1,22 @@
 from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
-from rental.client.serializer import (
-    ClientListSerializer,
-    ClientCreateSerializer,
-    ClientUpdateSerializer,
-)
-from rental.client.features import (
-    delete_client,
-    get_client,
-    get_clients,
-    create_client,
-    update_client,
-)
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from rental.client.exceptions import validate_client_and_handle_errors
+from rental.client.features import create_client
+from rental.client.features import delete_client
+from rental.client.features import get_client
+from rental.client.features import get_clients
+from rental.client.features import update_client
+from rental.client.models import Client
+from rental.client.serializer import ClientCreateSerializer
+from rental.client.serializer import ClientListSerializer
+from rental.client.serializer import ClientUpdateSerializer
+from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
 from settings.utils.api import APIViewWithPagination
-from settings.utils.exceptions import BadRequest400APIException, NotFound404APIException
+from settings.utils.exceptions import BadRequest400APIException
+from settings.utils.exceptions import NotFound404APIException
 
 
 class ClientListAndCreateView(APIViewWithPagination):
@@ -26,6 +25,14 @@ class ClientListAndCreateView(APIViewWithPagination):
     def get(self, request):
         try:
             clients_list = get_clients(request.user.defaultTenantUser().tenant)
+
+            if "all" in request.query_params and (
+                request.query_params["all"] == "true"
+                or request.query_params["all"] is True
+            ):
+                serializer = ClientListSerializer(clients_list, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+
             paginator = self.pagination_class()
             paginated_clients = paginator.paginate_queryset(clients_list, request)
             serialized_list = ClientListSerializer(paginated_clients, many=True)
@@ -60,7 +67,11 @@ class ClientGetUpdateAndDeleteView(APIView):
             raise BadRequest400APIException(str(e))
 
     def put(self, request, client_id):
-        serializer = ClientUpdateSerializer(data=request.data | {"id": client_id})
+        client = Client.objects.filter(id=client_id).first()
+        serializer = ClientUpdateSerializer(
+            client,
+            data=request.data,
+        )
         validate_client_and_handle_errors(serializer)
 
         updated_client = update_client(
