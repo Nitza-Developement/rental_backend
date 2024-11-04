@@ -32,11 +32,12 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", cast=bool)
 APPEND_SLASH = False
 ALLOWED_HOSTS = [
-    "rental.towithouston.com",
+    "app.towitrentals.com",
     "localhost",
     "127.0.0.1",
 ]
 CORS_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = ['https://app.towitrentals.com']
 
 # Application definition
 
