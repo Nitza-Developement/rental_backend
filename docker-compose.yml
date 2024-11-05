@@ -9,3 +9,8 @@ services:
       - 8001:8000
     env_file:
       - .env
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://154.53.40.104:1514"  # Replace with your Graylog server IP and port
+        tag: "rental-backend"
