@@ -218,6 +218,9 @@ COPY "public"."auditlog_logentry" ("id", "object_pk", "object_id", "object_repr"
 12	4	4	4	0	{"id": ["None", "4"], "role": ["None", "Admin"], "user": ["None", "3"], "tenant": ["None", "2"], "is_default": ["None", "True"], "inspections": ["None", "rental.Inspection.None"], "my_reminders": ["None", "rental.Reminder.None"], "field_responses": ["None", "rental.FieldResponse.None"]}	2024-11-03 01:03:03.610406+00	3	13	127.0.0.1	\N	\N	\N	
 13	3	3	Vladímir	1	{"last_login": ["2024-11-03 01:00:46", "2024-11-03 18:26:57.160315"]}	2024-11-03 18:26:57.282989+00	\N	10	127.0.0.1	\N	\N	\N	
 14	3	3	Vladímir	1	{"last_login": ["2024-11-03 18:26:57.160315", "2024-11-03 23:19:42.425083"]}	2024-11-03 23:19:42.557076+00	\N	10	94.140.11.4	\N	\N	\N	
+15	1	1	1G1AF1F57A7190000 | testVehicle | Trailer	0	{"id": ["None", "1"], "vin": ["None", "1G1AF1F57A7190000"], "make": ["None", "BigTex"], "trim": ["None", "null"], "type": ["None", "Trailer"], "year": ["None", "2023"], "model": ["None", "Flatbed"], "plates": ["None", "rental.VehiclePlate.None"], "status": ["None", "Available"], "tenant": ["None", "2"], "nickname": ["None", "testVehicle"], "odometer": ["None", "0"], "contracts": ["None", "rental.Contract.None"], "reminders": ["None", "rental.Reminder.None"], "is_deleted": ["None", "False"], "inspections": ["None", "rental.Inspection.None"], "spare_tires": ["None", "2"], "vehicle_pictures": ["None", "rental.VehiclePicture.None"]}	2024-11-05 15:30:55.473436+00	3	14	\N	\N	\N	\N	
+16	1	1	4232rewr324	0	{"id": ["None", "1"], "plate": ["None", "4232rewr324"], "vehicle": ["None", "1"], "is_active": ["None", "True"], "toll_dues": ["None", "rental.TollDue.None"], "assign_date": ["None", "2024-11-05 15:30:55.552304"]}	2024-11-05 15:30:55.687518+00	3	16	\N	\N	\N	\N	
+17	1	1	1G1AF1F57A7190000 | testVehicle | Trailer	1	{"spare_tires": ["2", "1"]}	2024-11-05 16:13:31.617092+00	3	14	\N	\N	\N	\N	
 \.
 
 
@@ -586,6 +589,7 @@ COPY "public"."rental_rentalplan" ("id", "name", "amount", "periodicity", "tenan
 --
 
 COPY "public"."rental_vehicle" ("id", "type", "year", "make", "trim", "vin", "odometer", "nickname", "spare_tires", "extra_fields", "status", "tenant_id", "model", "is_deleted") FROM stdin;
+1	Trailer	2023	BigTex	null	1G1AF1F57A7190000	0	testVehicle	1	\N	Available	2	Flatbed	f
 \.
 
 
@@ -670,6 +674,7 @@ COPY "public"."rental_note" ("id", "subject", "body", "createdDate", "remainder"
 --
 
 COPY "public"."rental_vehicleplate" ("id", "is_active", "plate", "assign_date", "dismiss_date", "vehicle_id") FROM stdin;
+1	t	4232rewr324	2024-11-05 15:30:55.552304+00	\N	1
 \.
 
 
@@ -811,7 +816,7 @@ SELECT pg_catalog.setval('"pgsodium"."key_key_id_seq"', 1, false);
 -- Name: auditlog_logentry_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."auditlog_logentry_id_seq"', 14, true);
+SELECT pg_catalog.setval('"public"."auditlog_logentry_id_seq"', 17, true);
 
 
 --
@@ -1028,7 +1033,7 @@ SELECT pg_catalog.setval('"public"."rental_user_user_permissions_id_seq"', 1, fa
 -- Name: rental_vehicle_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."rental_vehicle_id_seq"', 1, false);
+SELECT pg_catalog.setval('"public"."rental_vehicle_id_seq"', 1, true);
 
 
 --
@@ -1042,7 +1047,7 @@ SELECT pg_catalog.setval('"public"."rental_vehiclepicture_id_seq"', 1, false);
 -- Name: rental_vehicleplate_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."rental_vehicleplate_id_seq"', 1, false);
+SELECT pg_catalog.setval('"public"."rental_vehicleplate_id_seq"', 1, true);
 
 
 --
