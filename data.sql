@@ -222,6 +222,10 @@ COPY "public"."auditlog_logentry" ("id", "object_pk", "object_id", "object_repr"
 16	1	1	4232rewr324	0	{"id": ["None", "1"], "plate": ["None", "4232rewr324"], "vehicle": ["None", "1"], "is_active": ["None", "True"], "toll_dues": ["None", "rental.TollDue.None"], "assign_date": ["None", "2024-11-05 15:30:55.552304"]}	2024-11-05 15:30:55.687518+00	3	16	\N	\N	\N	\N	
 17	1	1	1G1AF1F57A7190000 | testVehicle | Trailer	1	{"spare_tires": ["2", "1"]}	2024-11-05 16:13:31.617092+00	3	14	\N	\N	\N	\N	
 18	1	1	Previo a la renta	0	{"id": ["None", "1"], "form": ["None", "1"], "tenant": ["None", "2"], "vehicle": ["None", "1"], "created_at": ["None", "2024-11-06 21:26:30.726011"], "tenantUser": ["None", "4"], "field_responses": ["None", "rental.FieldResponse.None"]}	2024-11-06 21:26:30.849219+00	\N	28	94.140.11.134	\N	\N	\N	
+19	1	1	Pepe | ppe@gmail.cu | 3058336104	0	{"id": ["None", "1"], "name": ["None", "Pepe"], "email": ["None", "ppe@gmail.cu"], "tenant": ["None", "2"], "contracts": ["None", "rental.Contract.None"], "reminders": ["None", "rental.Reminder.None"], "phone_number": ["None", "3058336104"]}	2024-11-07 23:36:16.027303+00	3	12	152.207.211.251	\N	\N	\N	
+20	1	1	Test-Tenant | Pepe | ppe@gmail.cu | 3058336104 | 1G1AF1F57A7190000 | testVehicle | Trailer	0	{"id": ["None", "1"], "notes": ["None", "rental.Note.None"], "client": ["None", "1"], "tenant": ["None", "2"], "vehicle": ["None", "1"], "reminders": ["None", "rental.Reminder.None"], "toll_dues": ["None", "rental.TollDue.None"], "rental_plan": ["None", "3"], "creation_date": ["None", "2024-11-07 23:37:33.169376"], "stages_updates": ["None", "rental.StageUpdate.None"]}	2024-11-07 23:37:33.304364+00	3	17	152.207.211.251	\N	\N	\N	
+21	1	1	Pending | 2024-11-07 23:37:33.372262+00:00 | Test-Tenant | Pepe | ppe@gmail.cu | 3058336104 | 1G1AF1F57A7190000 | testVehicle | Trailer	0	{"id": ["None", "1"], "date": ["None", "2024-11-07 23:37:33.372262"], "stage": ["None", "Pending"], "contract": ["None", "1"]}	2024-11-07 23:37:33.505894+00	3	20	152.207.211.251	\N	\N	\N	
+22	2	2	Active | 2024-11-07 23:39:54.354742+00:00 | Test-Tenant | Pepe | ppe@gmail.cu | 3058336104 | 1G1AF1F57A7190000 | testVehicle | Trailer	0	{"id": ["None", "2"], "date": ["None", "2024-11-07 23:39:54.354742"], "stage": ["None", "Active"], "comments": ["None", "Ya quedó firmado"], "contract": ["None", "1"]}	2024-11-07 23:39:54.601477+00	3	20	152.207.211.251	\N	\N	\N	
 \.
 
 
@@ -578,6 +582,7 @@ COPY "public"."rental_checkoption" ("id", "name", "field_id", "type") FROM stdin
 --
 
 COPY "public"."rental_client" ("id", "name", "email", "phone_number", "tenant_id") FROM stdin;
+1	Pepe	ppe@gmail.cu	3058336104	2
 \.
 
 
@@ -606,6 +611,7 @@ COPY "public"."rental_vehicle" ("id", "type", "year", "make", "trim", "vin", "od
 --
 
 COPY "public"."rental_contract" ("id", "creation_date", "active_date", "end_date", "client_id", "tenant_id", "vehicle_id", "rental_plan_id") FROM stdin;
+1	2024-11-07 23:37:33.169376+00	\N	\N	1	2	1	3
 \.
 
 
@@ -700,6 +706,7 @@ COPY "public"."rental_tolldue" ("id", "amount", "stage", "invoice", "invoiceNumb
 --
 
 COPY "public"."rental_reminder" ("id", "status", "important", "title", "content", "remainder", "file", "created_at", "client_id", "contract_id", "created_by_id", "toll_due_id", "vehicle_id", "reminder_id") FROM stdin;
+1	Waiting	f	Esta nota es una prueba	<p>Acá está el contenido de la prueba</p>	\N		2024-11-07 21:33:14.477+00	\N	\N	4	\N	1	\N
 \.
 
 
@@ -708,6 +715,8 @@ COPY "public"."rental_reminder" ("id", "status", "important", "title", "content"
 --
 
 COPY "public"."rental_stageupdate" ("id", "date", "reason", "comments", "stage", "contract_id") FROM stdin;
+1	2024-11-07 23:37:33.372262+00	\N	\N	Pending	1
+2	2024-11-07 23:39:54.354742+00	\N	Ya quedó firmado	Active	1
 \.
 
 
@@ -757,6 +766,10 @@ COPY "public"."rental_vehiclepicture" ("id", "image", "pinned", "vehicle_id") FR
 
 COPY "public"."token_blacklist_outstandingtoken" ("id", "token", "created_at", "expires_at", "user_id", "jti") FROM stdin;
 1	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMTM1OTYwMCwiaWF0IjoxNzMwOTI3NjAwLCJqdGkiOiI2ODRiNmExOWFmMzQ0MmM2OTU2MTY4YTAxMGVkMzYyOSIsInVzZXJfaWQiOjN9.4UQl9gODp_vgaYeOtK6eorAtiYJq3D3D3a0bQccWlAk	2024-11-06 21:13:20.679984+00	2024-11-11 21:13:20+00	3	684b6a19af3442c6956168a010ed3629
+2	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMTQyOTk5MSwiaWF0IjoxNzMwOTk3OTkxLCJqdGkiOiIzY2M5NTVjNGIzMmM0YWVlYWJkYjhkZTlmMjk3ZmU1NCIsInVzZXJfaWQiOjN9.Rt_s3t_v25a8J9YTy1B4TTqgzs_ot63VTX1zO7dzCVE	2024-11-07 16:46:31.503647+00	2024-11-12 16:46:31+00	3	3cc955c4b32c4aeeabdb8de9f297fe54
+3	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMTQzMDA5MSwiaWF0IjoxNzMwOTk4MDkxLCJqdGkiOiJlNzgzYWRhOTE5YjQ0NjZiOWMwN2I2OTQ4MTRkYjRhNCIsInVzZXJfaWQiOjN9.rUQYD1A2oEH8oU3SuZhLcRyRszQlZ2sptzw7xvvklhw	2024-11-07 16:48:11.101547+00	2024-11-12 16:48:11+00	3	e783ada919b4466b9c07b694814db4a4
+4	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMTQ0NTY0NywiaWF0IjoxNzMxMDEzNjQ3LCJqdGkiOiJkMjkxZTk4YTk0MTY0MzhmYjA5NmQ0MDU5ZDFhMDFjMyIsInVzZXJfaWQiOjN9.5kAkOTS0E1apTHr57pwfIhclu7h4VS0hl9XWP9y4qmk	2024-11-07 21:07:27.003369+00	2024-11-12 21:07:27+00	3	d291e98a9416438fb096d4059d1a01c3
+5	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMTQ1NDYyOSwiaWF0IjoxNzMxMDIyNjI5LCJqdGkiOiI0MjQxNzFjYTVlYzM0MjE0YTFmNGIwOGNhNDZkNTJmYyIsInVzZXJfaWQiOjN9.9Ez16-jML5_HFbhajoX_H0uee6jovQuq31jKFk3UaAY	2024-11-07 23:37:09.08042+00	2024-11-12 23:37:09+00	3	424171ca5ec34214a1f4b08ca46d52fc
 \.
 
 
@@ -826,7 +839,7 @@ SELECT pg_catalog.setval('"pgsodium"."key_key_id_seq"', 1, false);
 -- Name: auditlog_logentry_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."auditlog_logentry_id_seq"', 18, true);
+SELECT pg_catalog.setval('"public"."auditlog_logentry_id_seq"', 22, true);
 
 
 --
@@ -889,14 +902,14 @@ SELECT pg_catalog.setval('"public"."rental_checkoption_id_seq"', 52, true);
 -- Name: rental_client_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."rental_client_id_seq"', 1, false);
+SELECT pg_catalog.setval('"public"."rental_client_id_seq"', 1, true);
 
 
 --
 -- Name: rental_contract_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."rental_contract_id_seq"', 1, false);
+SELECT pg_catalog.setval('"public"."rental_contract_id_seq"', 1, true);
 
 
 --
@@ -966,7 +979,7 @@ SELECT pg_catalog.setval('"public"."rental_note_id_seq"', 1, false);
 -- Name: rental_reminder_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."rental_reminder_id_seq"', 1, false);
+SELECT pg_catalog.setval('"public"."rental_reminder_id_seq"', 1, true);
 
 
 --
@@ -980,7 +993,7 @@ SELECT pg_catalog.setval('"public"."rental_rentalplan_id_seq"', 4, true);
 -- Name: rental_stageupdate_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."rental_stageupdate_id_seq"', 1, false);
+SELECT pg_catalog.setval('"public"."rental_stageupdate_id_seq"', 2, true);
 
 
 --
@@ -1071,7 +1084,7 @@ SELECT pg_catalog.setval('"public"."token_blacklist_blacklistedtoken_id_seq"', 1
 -- Name: token_blacklist_outstandingtoken_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."token_blacklist_outstandingtoken_id_seq"', 1, true);
+SELECT pg_catalog.setval('"public"."token_blacklist_outstandingtoken_id_seq"', 5, true);
 
 
 --
