@@ -62,21 +62,20 @@ class FormGetUpdateAndDeleteView(APIView):
         return Response(serialized_form.data, status=status.HTTP_200_OK)
 
     def put(self, request, form_id):
-        form = Form.objects.filter(id=form_id).first()
-        serializer = FormSerializer(form, data=request.data | {"id": form_id})
+        
+        serializer = FormSerializer(data=request.data | {"id": form_id})
 
         if serializer.is_valid():
-            tenant = request.user.defaultTenantUser().tenant
-            serializer.save(tenant=tenant)
-            # rename_form(
-            #     form_id,
-            #     request.data.get("name"),
-            #     request.user.defaultTenantUser().tenant,
-            # )
+            rename_form(
+                form_id,
+                request.data.get("name"),
+                request.user.defaultTenantUser().tenant,
+            )
 
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
     def delete(self, request, form_id):
         delete_form(form_id, request.user.defaultTenantUser().tenant)
