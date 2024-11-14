@@ -146,12 +146,12 @@ urlpatterns = [
     ),
     path("forms/import", FormImportView.as_view(), name="import-forms"),
     path(
-        "forms/cards",
+        "forms/<int:form_id>/cards",
         CardCreateUpdateAndDeleteView.as_view(),
         name="add-card",
     ),
     path(
-        "forms/cards/<int:card_id>",
+        "forms/<int:form_id>/cards/<int:card_id>",
         CardCreateUpdateAndDeleteView.as_view(),
         name="card-actions",
     ),

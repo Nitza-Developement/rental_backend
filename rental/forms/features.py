@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 from rental.forms.models import Card, Form, Field, CheckOption
 from settings.utils.exceptions import NotFound404APIException
 
@@ -20,9 +21,9 @@ def get_forms(tenant):
 
 def get_form(form_id, tenant):
     try:
-        return Form.objects.get(id=form_id, tenant=tenant)
-    except Form.DoesNotExist:
-        raise NotFound404APIException(f"Form with ID {form_id} doesnt exists")
+        return Form.objects.get(id=form_id, tenant=tenant, is_active=True)
+    except Form.DoesNotExist as exc:
+        raise NotFound404APIException(f"Form with ID {form_id} doesnt exists") from exc
 
 
 def create_form(tenant, data):
@@ -47,8 +48,8 @@ def update_form(form_id, name, is_active):
         form.is_active = is_active
         form.save()
         return form
-    except form.DoesNotExist:
-        raise NotFound404APIException(f"Form with ID {form_id} doesnt exists")
+    except form.DoesNotExist as exc:
+        raise NotFound404APIException(f"Form with ID {form_id} doesnt exists") from exc
 
 
 def import_forms(tenant, forms: list):
@@ -115,7 +116,7 @@ def clone_form(form_id, tenant):
     return form
 
 
-def create_card(form, name, fields):
+def create_card(form: Form, name: str, fields: list):
     card = Card.objects.create(name=name, form=form)
 
     for _field in fields:
@@ -143,11 +144,11 @@ def delete_card(card_id):
         card = Card.objects.get(id=card_id)
         card.delete()
         return True
-    except Card.DoesNotExist:
-        raise NotFound404APIException(f"Card with ID {card_id} doesnt exists")
+    except Card.DoesNotExist as exc:
+        raise NotFound404APIException(f"Card with ID {card_id} doesnt exists") from exc
 
 
-def update_card(card_id, name, fields):
+def update_card(card_id: int, name: str, fields: list):
     try:
         card = Card.objects.get(id=card_id)
         card.name = name
@@ -165,11 +166,16 @@ def update_card(card_id, name, fields):
             field_required = _field.get("required", True)
 
             if field_id:  # update
-                field = Field.objects.get(id=field_id)
-                field.name = field_name
-                field.type = field_type
-                field.required = field_required
-                field.save()
+                try:
+                    field = Field.objects.get(id=field_id)
+                    field.name = field_name
+                    field.type = field_type
+                    field.required = field_required
+                    field.save()
+                except Field.DoesNotExist as exc:
+                    raise NotFound404APIException(
+                        f"Field with ID {field_id} doesnt exists"
+                    ) from exc
             else:  # create
                 field = Field.objects.create(
                     name=field_name,
@@ -209,5 +215,5 @@ def update_card(card_id, name, fields):
                 CheckOption.objects.filter(field=field).delete()
 
         return card
-    except Card.DoesNotExist:
-        raise NotFound404APIException(f"Card with ID {card_id} doesnt exists")
+    except Card.DoesNotExist as exc:
+        raise NotFound404APIException(f"Card with ID {card_id} doesnt exists") from exc
