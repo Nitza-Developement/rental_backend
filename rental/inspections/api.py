@@ -1,13 +1,12 @@
-from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.permissions import IsAuthenticated
-from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
 from settings.utils.api import APIViewWithPagination
 from settings.utils.exceptions import BadRequest400APIException
 
+from rental.tenantUser.permissions import IsAdminOrStaffTenantUser
 from rental.forms.models import Form
 from rental.models import Vehicle
 from rental.inspections.serializer import (
@@ -35,8 +34,8 @@ class InspectionListAndCreateView(APIViewWithPagination):
             paginated_clients = paginator.paginate_queryset(forms_list, request)
             serialized_list = InspectionSerializer(paginated_clients, many=True)
             return paginator.get_paginated_response(serialized_list.data)
-        except Exception as e:
-            raise BadRequest400APIException(str(e))
+        except Exception as exc:
+            raise BadRequest400APIException(str(exc)) from exc
 
     def post(self, request):
 
@@ -55,8 +54,7 @@ class InspectionListAndCreateView(APIViewWithPagination):
             serialized_inspection = InspectionSerializer(inspection)
             return Response(serialized_inspection.data, status=status.HTTP_201_CREATED)
 
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class InspectionGetUpdateAndDeleteView(APIView):
@@ -86,10 +84,10 @@ class FormsAndVehiclesGet(APIView):
 
     def get(self, request):
 
-        forms = Form.objects.filter(
+        forms = Form.objects.filter(  # pylint: disable=no-member
             tenant=request.user.defaultTenantUser().tenant, is_active=True
         )
-        vehicles = Vehicle.objects.filter(
+        vehicles = Vehicle.objects.filter(  # pylint: disable=no-member
             tenant=request.user.defaultTenantUser().tenant
         )
 
@@ -124,5 +122,5 @@ class InspectionCreateResponseView(APIView):
 
             return Response(serialized_inspection.data, status=status.HTTP_201_CREATED)
 
-        except Exception as errors:
-            raise BadRequest400APIException(str(errors))
+        except Exception as exc:
+            raise BadRequest400APIException(str(exc)) from exc
