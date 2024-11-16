@@ -196,7 +196,8 @@ COPY "public"."rental_user" ("id", "password", "last_login", "email", "image", "
 1	pbkdf2_sha256$720000$B0UqbzLOOcfBzmUGw50PMr$J0mzO65LJ/vcjT2cOZgIFzEqooUqVGDE+761pXpM3gQ=	\N	admin@admin.com		2024-11-03 00:57:56.79005+00	t	t	t	Admin
 2	pbkdf2_sha256$720000$BxY4no1zP9v1rklnUyyg79$x9GapVM9oc0lON9IAJOPQfe2NguOefF92TI3WWaCHdc=	\N	test-admin@admin.com		2024-11-03 00:58:00.199079+00	t	t	t	Admin-Test
 3	pbkdf2_sha256$720000$6QW72u08wra3UPZ61tTxU0$an6i8hKa66GfRjGjSoiChX8Pr8mXMP16aNgDSe/ysYg=	2024-11-03 23:19:42.425083+00	vladimir.rdguez@gmail.com		2024-11-03 01:02:21.30949+00	t	t	t	Vladímir
-4	pbkdf2_sha256$720000$ri7dj48KgIkQv83xbRmQdO$kI8nLAAX86g7yyihW8UG6TOpsOwC0fEc4uUsDLXR37M=	\N	fc0510507@gmail.com		2024-11-13 20:24:56.659094+00	t	f	f	Frank Carlos
+4	pbkdf2_sha256$720000$0QyZwWN8C0RWlx5dU3QH7R$fkQMb8wXePcybt+DC493ga6EcmiFFeyHP0Fn4Op2oCs=	\N	fc0510507@gmail.com		2024-11-15 19:12:04.740959+00	t	f	f	Frank Carlos
+5	qJNSvLwnRFg9QfzEtaeyUT	\N	raulodev@gmail.com		2024-11-15 19:41:56.309517+00	t	t	t	Raúl
 \.
 
 
@@ -230,6 +231,10 @@ COPY "public"."auditlog_logentry" ("id", "object_pk", "object_id", "object_repr"
 23	4	4	-	0	{"id": ["None", "4"], "name": ["None", "-"], "email": ["None", "fc0510507@gmail.com"], "image": ["None", ""], "notes": ["None", "rental.Note.None"], "is_staff": ["None", "False"], "password": ["None", "pbkdf2_sha256$720000$ri7dj48KgIkQv83xbRmQdO$kI8nLAAX86g7yyihW8UG6TOpsOwC0fEc4uUsDLXR37M="], "is_active": ["None", "True"], "date_joined": ["None", "2024-11-13 20:19:46.210676"], "tenantUsers": ["None", "rental.TenantUser.None"], "is_superuser": ["None", "False"]}	2024-11-13 20:19:46.364245+00	3	10	181.214.151.29	\N	\N	\N	
 24	5	5	5	0	{"id": ["None", "5"], "role": ["None", "Admin"], "user": ["None", "4"], "tenant": ["None", "2"], "is_default": ["None", "True"], "inspections": ["None", "rental.Inspection.None"], "my_reminders": ["None", "rental.Reminder.None"], "field_responses": ["None", "rental.FieldResponse.None"]}	2024-11-13 20:19:46.891468+00	3	13	181.214.151.29	\N	\N	\N	
 25	4	4	Frank Carlos	1	{"name": ["-", "Frank Carlos"]}	2024-11-13 20:24:56.593764+00	3	10	181.214.151.29	\N	\N	\N	
+26	4	4	Frank Carlos	1	{"password": ["pbkdf2_sha256$720000$ri7dj48KgIkQv83xbRmQdO$kI8nLAAX86g7yyihW8UG6TOpsOwC0fEc4uUsDLXR37M=", "pbkdf2_sha256$720000$0QyZwWN8C0RWlx5dU3QH7R$fkQMb8wXePcybt+DC493ga6EcmiFFeyHP0Fn4Op2oCs="]}	2024-11-15 19:12:04.657068+00	\N	10	\N	\N	\N	\N	
+27	5	5	Raúl	0	{"id": ["None", "5"], "name": ["None", "Raúl"], "email": ["None", "raulodev@gmail.com"], "image": ["None", ""], "notes": ["None", "rental.Note.None"], "is_staff": ["None", "True"], "password": ["None", "qJNSvLwnRFg9QfzEtaeyUT"], "is_active": ["None", "True"], "date_joined": ["None", "2024-11-15 19:41:56.309517"], "tenantUsers": ["None", "rental.TenantUser.None"], "is_superuser": ["None", "True"]}	2024-11-15 19:41:56.375949+00	3	10	2.59.157.57	\N	\N	\N	
+28	6	6	6	0	{"id": ["None", "6"], "role": ["None", "Admin"], "user": ["None", "5"], "tenant": ["None", "1"], "is_default": ["None", "False"], "inspections": ["None", "rental.Inspection.None"], "my_reminders": ["None", "rental.Reminder.None"], "field_responses": ["None", "rental.FieldResponse.None"]}	2024-11-15 19:43:09.62746+00	3	13	2.59.157.57	\N	\N	\N	
+29	7	7	7	0	{"id": ["None", "7"], "role": ["None", "Admin"], "user": ["None", "5"], "tenant": ["None", "2"], "is_default": ["None", "True"], "inspections": ["None", "rental.Inspection.None"], "my_reminders": ["None", "rental.Reminder.None"], "field_responses": ["None", "rental.FieldResponse.None"]}	2024-11-15 19:43:23.412043+00	3	13	2.59.157.57	\N	\N	\N	
 \.
 
 
@@ -402,6 +407,9 @@ COPY "public"."django_admin_log" ("id", "action_time", "object_id", "object_repr
 2	2024-11-03 01:02:21.84401+00	3	Vladímir	2	[{"changed": {"fields": ["Name"]}}]	10	3
 3	2024-11-03 01:03:03.787613+00	4	4	1	[{"added": {}}]	13	3
 4	2024-11-13 20:24:56.858963+00	4	Frank Carlos	2	[{"changed": {"fields": ["Name"]}}]	10	3
+5	2024-11-15 19:41:56.584922+00	5	Raúl	1	[{"added": {}}]	10	3
+6	2024-11-15 19:43:09.687845+00	6	6	1	[{"added": {}}]	13	3
+7	2024-11-15 19:43:23.474232+00	7	7	1	[{"added": {}}]	13	3
 \.
 
 
@@ -630,6 +638,8 @@ COPY "public"."rental_tenantuser" ("id", "role", "is_default", "tenant_id", "use
 3	Admin	f	1	3
 4	Admin	t	2	3
 5	Admin	t	2	4
+6	Admin	f	1	5
+7	Admin	t	2	5
 \.
 
 
@@ -778,6 +788,13 @@ COPY "public"."token_blacklist_outstandingtoken" ("id", "token", "created_at", "
 5	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMTQ1NDYyOSwiaWF0IjoxNzMxMDIyNjI5LCJqdGkiOiI0MjQxNzFjYTVlYzM0MjE0YTFmNGIwOGNhNDZkNTJmYyIsInVzZXJfaWQiOjN9.9Ez16-jML5_HFbhajoX_H0uee6jovQuq31jKFk3UaAY	2024-11-07 23:37:09.08042+00	2024-11-12 23:37:09+00	3	424171ca5ec34214a1f4b08ca46d52fc
 6	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMTkzMTMyNiwiaWF0IjoxNzMxNDk5MzI2LCJqdGkiOiI4ZjAxNjk5OGQwOWE0MmI0YTBiZjg1MDU4NDkxODUyOSIsInVzZXJfaWQiOjN9.f5ndE4vexb7LmeYY_658GpCctxUJlMsbhAfcqQIpAew	2024-11-13 12:02:06.181089+00	2024-11-18 12:02:06+00	3	8f016998d09a42b4a0bf850584918529
 7	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMTk1ODA5NSwiaWF0IjoxNzMxNTI2MDk1LCJqdGkiOiIzZDJlMDMyZTA0ZjQ0MDQwODM1MGEwNzFhZTliMGRjMCIsInVzZXJfaWQiOjN9.TpWHa0Tvxqr89BbvCv4Sld5QLQ3KyJsvQfXQbbAt7Z4	2024-11-13 19:28:15.740346+00	2024-11-18 19:28:15+00	3	3d2e032e04f440408350a071ae9b0dc0
+8	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMjEyODUxOCwiaWF0IjoxNzMxNjk2NTE4LCJqdGkiOiJkNzEzMGY0ZWY4ZDQ0Y2MwYWQ1YzA2OTUzZWY2OTAwMCIsInVzZXJfaWQiOjN9.cUPXotSy_4BnWADRfnGe8ff8zcLaH7XCX9nRn7YCL4o	2024-11-15 18:48:38.038909+00	2024-11-20 18:48:38+00	3	d7130f4ef8d44cc0ad5c06953ef69000
+9	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMjEzMDA0OSwiaWF0IjoxNzMxNjk4MDQ5LCJqdGkiOiJmYTlkNGVhZGZhZjY0MjRmYjViNDkxYTA3ZjI3ODBjYyIsInVzZXJfaWQiOjR9.7rmBCipN_WiQ0dj3Ekw1dvQ4mVDsiGNuqNpoaJ3rqjE	2024-11-15 19:14:09.62663+00	2024-11-20 19:14:09+00	4	fa9d4eadfaf6424fb5b491a07f2780cc
+10	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMjEzMDExMSwiaWF0IjoxNzMxNjk4MTExLCJqdGkiOiJjMjhkMTBmMDJiYzk0Y2QyOTIyZDI1NjM0NjIwODJkYSIsInVzZXJfaWQiOjR9.UzXvDiY50BsOzBSIi81Bt9HNlVYd1C1FagyptNR0WsM	2024-11-15 19:15:11.31013+00	2024-11-20 19:15:11+00	4	c28d10f02bc94cd2922d2563462082da
+11	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMjEzMDE1NiwiaWF0IjoxNzMxNjk4MTU2LCJqdGkiOiIzZWRlZGZlOWE3YzM0NTg2YmNjM2E3ZWQzODVjODAwYyIsInVzZXJfaWQiOjR9.6OmC5COPBxbc7ZW3abzMsvhi0zW3zvtK6n0EcpLvPfs	2024-11-15 19:15:56.283853+00	2024-11-20 19:15:56+00	4	3ededfe9a7c34586bcc3a7ed385c800c
+12	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMjEzMDY0NCwiaWF0IjoxNzMxNjk4NjQ0LCJqdGkiOiJmOTJjMzc1MGRlOTQ0YjY2OTAzYTlkMjczOWI0NGMwNyIsInVzZXJfaWQiOjN9.2ykMvsoB5zdGDjiH4VwgrLzQeuFKtqdJ3Ho0cpCEWmE	2024-11-15 19:24:04.79195+00	2024-11-20 19:24:04+00	3	f92c3750de944b66903a9d2739b44c07
+13	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMjEzMTM2OCwiaWF0IjoxNzMxNjk5MzY4LCJqdGkiOiI2YTY2ZjliNDAxZGQ0OTMxODRiZWVjYzIxYjRhZGE4NiIsInVzZXJfaWQiOjN9.toP6-QLBT3NFJNYtXXEUij260MEIkXOxwxxxeFZaQRI	2024-11-15 19:36:08.103895+00	2024-11-20 19:36:08+00	3	6a66f9b401dd493184beecc21b4ada86
+14	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMjEzMzAzOSwiaWF0IjoxNzMxNzAxMDM5LCJqdGkiOiI3NzFlODk2ZWFjZWM0ZmE1OTRjN2NmM2Q0NzAzMzY3MCIsInVzZXJfaWQiOjN9.2zHIKm_ocGCy0Gd0MulC8H8gdImNY4eYA6de0sXLqXg	2024-11-15 20:03:59.067789+00	2024-11-20 20:03:59+00	3	771e896eacec4fa594c7cf3d47033670
 \.
 
 
@@ -847,7 +864,7 @@ SELECT pg_catalog.setval('"pgsodium"."key_key_id_seq"', 1, false);
 -- Name: auditlog_logentry_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."auditlog_logentry_id_seq"', 25, true);
+SELECT pg_catalog.setval('"public"."auditlog_logentry_id_seq"', 29, true);
 
 
 --
@@ -875,7 +892,7 @@ SELECT pg_catalog.setval('"public"."auth_permission_id_seq"', 136, true);
 -- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."django_admin_log_id_seq"', 4, true);
+SELECT pg_catalog.setval('"public"."django_admin_log_id_seq"', 7, true);
 
 
 --
@@ -1015,7 +1032,7 @@ SELECT pg_catalog.setval('"public"."rental_tenant_id_seq"', 2, true);
 -- Name: rental_tenantuser_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."rental_tenantuser_id_seq"', 5, true);
+SELECT pg_catalog.setval('"public"."rental_tenantuser_id_seq"', 7, true);
 
 
 --
@@ -1050,7 +1067,7 @@ SELECT pg_catalog.setval('"public"."rental_user_groups_id_seq"', 1, false);
 -- Name: rental_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."rental_user_id_seq"', 4, true);
+SELECT pg_catalog.setval('"public"."rental_user_id_seq"', 5, true);
 
 
 --
@@ -1092,7 +1109,7 @@ SELECT pg_catalog.setval('"public"."token_blacklist_blacklistedtoken_id_seq"', 1
 -- Name: token_blacklist_outstandingtoken_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."token_blacklist_outstandingtoken_id_seq"', 7, true);
+SELECT pg_catalog.setval('"public"."token_blacklist_outstandingtoken_id_seq"', 14, true);
 
 
 --
