@@ -1,6 +1,5 @@
 from django.core.validators import validate_email
 from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
-import magic
 from rental.forms.models import Field, Card
 from rental.inspections.models import Inspection
 
@@ -8,7 +7,9 @@ from rental.inspections.models import Inspection
 def validate_inspection_response(data: dict, tenant):
 
     inspection = validate_inspection(data.pop("inspection"), tenant)
-    cards = Card.objects.filter(form__id=inspection.form.id).all()
+    cards = Card.objects.filter(  # pylint: disable=no-member
+        form__id=inspection.form.id
+    ).all()
 
     fields = sum([list(card.fields.all()) for card in cards], [])
 
@@ -41,16 +42,16 @@ def validate_inspection_response(data: dict, tenant):
                 f"Field {field_id} does not exist in this inspection or not exist."
             )
 
-        field = Field.objects.get(id=field_id)
+        field = Field.objects.get(id=field_id)  # pylint: disable=no-member
         validate_field_value(field, data[field_id])
 
 
 def validate_inspection(id, tenant):
 
     try:
-        return Inspection.objects.get(id=id, tenant=tenant)
-    except Inspection.DoesNotExist:
-        raise ValueError("Inspection does not exist")
+        return Inspection.objects.get(id=id, tenant=tenant)  # pylint: disable=no-member
+    except Inspection.DoesNotExist as exc:  # pylint: disable=no-member
+        raise ValueError("Inspection does not exist") from exc
 
 
 def validate_field_value(field: Field, value):
@@ -82,9 +83,7 @@ def validate_field_value(field: Field, value):
         if not isinstance(value, (InMemoryUploadedFile, TemporaryUploadedFile)):
             raise ValueError(f"Field {field.id} must be an image")
 
-        filetype = magic.from_buffer(value.read(), mime=True)
-
-        if filetype not in ("image/jpeg", "image/jpg", "image/png", "image/webp"):
+        if "image/" not in value.content_type:
             raise ValueError(f"Field {field.id} must be a valid image")
 
         if value.size > 1024 * 1024 * 3:  # 3MB

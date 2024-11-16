@@ -31,8 +31,8 @@ class FormListAndCreateView(APIViewWithPagination):
             paginated_clients = paginator.paginate_queryset(forms_list, request)
             serialized_list = FormSerializer(paginated_clients, many=True)
             return paginator.get_paginated_response(serialized_list.data)
-        except Exception as e:
-            raise BadRequest400APIException(str(e))
+        except Exception as exc:
+            raise BadRequest400APIException(str(exc)) from exc
 
     def post(self, request):
 
@@ -62,17 +62,15 @@ class FormGetUpdateAndDeleteView(APIView):
         return Response(serialized_form.data, status=status.HTTP_200_OK)
 
     def put(self, request, form_id):
-        form = Form.objects.filter(id=form_id).first()
-        serializer = FormSerializer(form, data=request.data | {"id": form_id})
+
+        serializer = FormSerializer(data=request.data | {"id": form_id})
 
         if serializer.is_valid():
-            tenant = request.user.defaultTenantUser().tenant
-            serializer.save(tenant=tenant)
-            # rename_form(
-            #     form_id,
-            #     request.data.get("name"),
-            #     request.user.defaultTenantUser().tenant,
-            # )
+            rename_form(
+                form_id,
+                request.data.get("name"),
+                request.user.defaultTenantUser().tenant,
+            )
 
             return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -119,15 +117,13 @@ class FormCloneView(APIView):
 class CardCreateUpdateAndDeleteView(APIView):
     permission_classes = [IsAuthenticated, IsAdminOrStaffTenantUser]
 
-    def post(self, request):
+    def post(self, request, form_id):
 
         serializer = CardSerializer(data=request.data)
 
         if serializer.is_valid():
 
-            form = get_form(
-                request.data.get("form_id"), request.user.defaultTenantUser().tenant
-            )
+            form = get_form(form_id, request.user.defaultTenantUser().tenant)
 
             card = create_card(
                 form,
@@ -140,21 +136,20 @@ class CardCreateUpdateAndDeleteView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, card_id):
-
+    def delete(self, request, form_id, card_id):
         delete_card(card_id)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def put(self, request):
+    def put(self, request, form_id, card_id):
 
         serializer = CardSerializer(data=request.data)
 
         if serializer.is_valid():
 
             card = update_card(
-                request.data.get("id"),
+                card_id,
                 serializer.validated_data.get("name"),
-                request.data.get("fields"),
+                serializer.validated_data.get("fields"),
             )
             serialized_card = CardSerializer(card)
             return Response(serialized_card.data, status=status.HTTP_200_OK)

@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 from weasyprint import HTML
 from django.http import HttpResponse
 from rental.inspections.models import Inspection
