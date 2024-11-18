@@ -237,6 +237,7 @@ COPY "public"."auditlog_logentry" ("id", "object_pk", "object_id", "object_repr"
 29	7	7	7	0	{"id": ["None", "7"], "role": ["None", "Admin"], "user": ["None", "5"], "tenant": ["None", "2"], "is_default": ["None", "True"], "inspections": ["None", "rental.Inspection.None"], "my_reminders": ["None", "rental.Reminder.None"], "field_responses": ["None", "rental.FieldResponse.None"]}	2024-11-15 19:43:23.412043+00	3	13	2.59.157.57	\N	\N	\N	
 30	5	5	Raúl	1	{"password": ["qJNSvLwnRFg9QfzEtaeyUT", "pbkdf2_sha256$720000$qtnwgwtje8s3M5MtKDdeaV$eB74ezpWbXKxf4q0Uw6ghZhSrSaMyfsCPsxGO6r/ftk="]}	2024-11-16 02:02:37.903979+00	\N	10	\N	\N	\N	\N	
 31	2	2	Formulario	0	{"id": ["None", "2"], "form": ["None", "2"], "tenant": ["None", "2"], "vehicle": ["None", "1"], "created_at": ["None", "2024-11-17 00:50:05.186526"], "tenantUser": ["None", "4"], "field_responses": ["None", "rental.FieldResponse.None"]}	2024-11-17 00:50:05.314776+00	3	28	152.206.141.147	\N	\N	\N	
+32	3	3	Simple	0	{"id": ["None", "3"], "form": ["None", "4"], "tenant": ["None", "2"], "vehicle": ["None", "1"], "created_at": ["None", "2024-11-17 03:31:21.926268"], "tenantUser": ["None", "7"], "field_responses": ["None", "rental.FieldResponse.None"]}	2024-11-17 03:31:21.997718+00	\N	28	45.87.214.82	\N	\N	\N	
 \.
 
 
@@ -561,6 +562,7 @@ COPY "public"."rental_form" ("id", "name", "is_active", "created_at", "tenant_id
 1	Previo a la renta	t	2024-11-06 21:25:27.876558+00	2
 2	Formulario	t	2024-11-17 00:49:11.259523+00	2
 3	Formulario	f	2024-11-17 00:49:45.670114+00	2
+4	Simple	t	2024-11-17 03:29:44.372998+00	2
 \.
 
 
@@ -572,6 +574,7 @@ COPY "public"."rental_card" ("id", "name", "form_id") FROM stdin;
 26	Luces	1
 27	Todo	2
 28	Todo	3
+29	TODO	4
 \.
 
 
@@ -598,6 +601,9 @@ COPY "public"."rental_field" ("id", "name", "required", "type", "card_id") FROM 
 94	Telefono	t	PHONE	28
 95	Foto	t	IMAGE	28
 96	Firma	t	SIGNATURE	28
+97	Edad	t	NUMBER	29
+98	Nombre	t	TEXT	29
+99	Aprobado	t	SINGLE_CHECK	29
 76	Delanteras	t	IMAGE	26
 77	Traseras	t	IMAGE	26
 78	Stop	t	SINGLE_CHECK	26
@@ -615,6 +621,8 @@ COPY "public"."rental_checkoption" ("id", "name", "field_id", "type") FROM stdin
 54	no	81	POINT_FAIL
 55	si	90	POINT_PASS
 56	no	90	POINT_FAIL
+57	Si	99	POINT_PASS
+58	No	99	POINT_FAIL
 \.
 
 
@@ -710,6 +718,7 @@ COPY "public"."rental_contractformfieldresponse" ("id", "content", "field_id", "
 COPY "public"."rental_inspection" ("id", "created_at", "form_id", "tenant_id", "tenantUser_id", "vehicle_id") FROM stdin;
 1	2024-11-06 21:26:30.726011+00	1	2	4	1
 2	2024-11-17 00:50:05.186526+00	2	2	4	1
+3	2024-11-17 03:31:21.926268+00	4	2	7	1
 \.
 
 
@@ -718,6 +727,18 @@ COPY "public"."rental_inspection" ("id", "created_at", "form_id", "tenant_id", "
 --
 
 COPY "public"."rental_fieldresponse" ("id", "note", "created_at", "content", "check_option_selected_id", "field_id", "tenantUser_id", "inspection_id") FROM stdin;
+1	\N	2024-11-17 03:31:55.063101+00	30	\N	97	7	3
+2	\N	2024-11-17 03:31:55.190121+00	Nombre	\N	98	7	3
+3	Casi desaprueba	2024-11-17 03:31:55.376198+00	\N	57	99	7	3
+4	\N	2024-11-17 03:35:04.622428+00	30	\N	79	7	2
+5	\N	2024-11-17 03:35:04.749401+00	Nombre	\N	80	7	2
+6	Me obligaron	2024-11-17 03:35:04.940112+00	\N	53	81	7	2
+7	\N	2024-11-17 03:35:05.068708+00	email@example.com	\N	82	7	2
+8	\N	2024-11-17 03:35:05.207723+00	2024-11-13	\N	83	7	2
+9	\N	2024-11-17 03:35:05.33481+00	13:33	\N	84	7	2
+10	\N	2024-11-17 03:35:05.462291+00	+36454545454545	\N	85	7	2
+11	\N	2024-11-17 03:35:06.346158+00	inspections/2/image-86.png	\N	86	7	2
+12	\N	2024-11-17 03:35:06.793953+00	inspections/2/signature-87.png	\N	87	7	2
 \.
 
 
@@ -827,6 +848,7 @@ COPY "public"."token_blacklist_outstandingtoken" ("id", "token", "created_at", "
 15	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMjE1NDU3NiwiaWF0IjoxNzMxNzIyNTc2LCJqdGkiOiIwMWQwYTY0MGQ0Njg0MGNhYmM2MzQzMzliMDgxMDI0YiIsInVzZXJfaWQiOjV9.GKC5hT8GUErJam_hyVXFUCxekh35ioMRzLWZuwF6EZw	2024-11-16 02:02:56.640127+00	2024-11-21 02:02:56+00	5	01d0a640d46840cabc634339b081024b
 16	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMjE1NDYwMiwiaWF0IjoxNzMxNzIyNjAyLCJqdGkiOiJjMWY2NjJhYTU2MGM0NTUxYTJiNzUxNDY3NTkzNDcxNSIsInVzZXJfaWQiOjN9.RMoQ_zrvFq4KlKKUVZbqVODOP4ujdiHw4O3WI8ewtSE	2024-11-16 02:03:22.098638+00	2024-11-21 02:03:22+00	3	c1f662aa560c4551a2b7514675934715
 17	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMjIzNjUyOSwiaWF0IjoxNzMxODA0NTI5LCJqdGkiOiIxOWNiZDU0ZTU4ODk0OTQ0YTIwODdkZDc4MzRjMjU0ZCIsInVzZXJfaWQiOjN9.CvOF3GVHOwTF7edFrpHA15gpHJ_xqQI2vkeK0UYkT5g	2024-11-17 00:48:49.297144+00	2024-11-22 00:48:49+00	3	19cbd54e58894944a2087dd7834c254d
+18	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMjI0NjE0MiwiaWF0IjoxNzMxODE0MTQyLCJqdGkiOiIwMDQwNWJlOTEzMzE0NzQ0YjIwZTA4YTYwOGViMDRkOSIsInVzZXJfaWQiOjV9.oJ5BlYVhK6LSDcUu10Owr6ZBIG9F_EzJlVmDhBT-pyk	2024-11-17 03:29:02.917053+00	2024-11-22 03:29:02+00	5	00405be913314744b20e08a608eb04d9
 \.
 
 
@@ -896,7 +918,7 @@ SELECT pg_catalog.setval('"pgsodium"."key_key_id_seq"', 1, false);
 -- Name: auditlog_logentry_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."auditlog_logentry_id_seq"', 31, true);
+SELECT pg_catalog.setval('"public"."auditlog_logentry_id_seq"', 32, true);
 
 
 --
@@ -945,14 +967,14 @@ SELECT pg_catalog.setval('"public"."django_migrations_id_seq"', 98, true);
 -- Name: rental_card_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."rental_card_id_seq"', 28, true);
+SELECT pg_catalog.setval('"public"."rental_card_id_seq"', 29, true);
 
 
 --
 -- Name: rental_checkoption_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."rental_checkoption_id_seq"', 56, true);
+SELECT pg_catalog.setval('"public"."rental_checkoption_id_seq"', 58, true);
 
 
 --
@@ -1001,28 +1023,28 @@ SELECT pg_catalog.setval('"public"."rental_contractformtemplate_id_seq"', 1, fal
 -- Name: rental_field_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."rental_field_id_seq"', 96, true);
+SELECT pg_catalog.setval('"public"."rental_field_id_seq"', 99, true);
 
 
 --
 -- Name: rental_fieldresponse_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."rental_fieldresponse_id_seq"', 1, false);
+SELECT pg_catalog.setval('"public"."rental_fieldresponse_id_seq"', 12, true);
 
 
 --
 -- Name: rental_form_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."rental_form_id_seq"', 3, true);
+SELECT pg_catalog.setval('"public"."rental_form_id_seq"', 4, true);
 
 
 --
 -- Name: rental_inspection_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."rental_inspection_id_seq"', 2, true);
+SELECT pg_catalog.setval('"public"."rental_inspection_id_seq"', 3, true);
 
 
 --
@@ -1141,7 +1163,7 @@ SELECT pg_catalog.setval('"public"."token_blacklist_blacklistedtoken_id_seq"', 1
 -- Name: token_blacklist_outstandingtoken_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."token_blacklist_outstandingtoken_id_seq"', 17, true);
+SELECT pg_catalog.setval('"public"."token_blacklist_outstandingtoken_id_seq"', 18, true);
 
 
 --
