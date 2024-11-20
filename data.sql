@@ -5,7 +5,7 @@ SET session_replication_role = replica;
 --
 
 -- Dumped from database version 15.6
--- Dumped by pg_dump version 15.7 (Ubuntu 15.7-1.pgdg20.04+1)
+-- Dumped by pg_dump version 15.6
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -852,6 +852,7 @@ COPY "public"."token_blacklist_outstandingtoken" ("id", "token", "created_at", "
 17	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMjIzNjUyOSwiaWF0IjoxNzMxODA0NTI5LCJqdGkiOiIxOWNiZDU0ZTU4ODk0OTQ0YTIwODdkZDc4MzRjMjU0ZCIsInVzZXJfaWQiOjN9.CvOF3GVHOwTF7edFrpHA15gpHJ_xqQI2vkeK0UYkT5g	2024-11-17 00:48:49.297144+00	2024-11-22 00:48:49+00	3	19cbd54e58894944a2087dd7834c254d
 18	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMjI0NjE0MiwiaWF0IjoxNzMxODE0MTQyLCJqdGkiOiIwMDQwNWJlOTEzMzE0NzQ0YjIwZTA4YTYwOGViMDRkOSIsInVzZXJfaWQiOjV9.oJ5BlYVhK6LSDcUu10Owr6ZBIG9F_EzJlVmDhBT-pyk	2024-11-17 03:29:02.917053+00	2024-11-22 03:29:02+00	5	00405be913314744b20e08a608eb04d9
 19	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMjM4MDQ3NiwiaWF0IjoxNzMxOTQ4NDc2LCJqdGkiOiIzZTJhOWIzMWQzMjE0MWM1OGFhMDU4ZjM2NTViZjk1NyIsInVzZXJfaWQiOjN9.u7nM_iZzSVYBFUkJXsHbAjGr3UEBRCtuTKFf3HYIBqw	2024-11-18 16:47:56.825851+00	2024-11-23 16:47:56+00	3	3e2a9b31d32141c58aa058f3655bf957
+20	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMjQ3OTgzNCwiaWF0IjoxNzMyMDQ3ODM0LCJqdGkiOiIxODEzODA2NTliM2Y0OGM0YWYwMzAyN2Y1YjIyMzkxYSIsInVzZXJfaWQiOjR9.2v0FDwaZgrIFzoZchOx_JamrXNViLhZIwDedxbbZ_gw	2024-11-19 20:23:54.941233+00	2024-11-24 20:23:54+00	4	181380659b3f48c4af03027f5b22391a
 \.
 
 
@@ -1166,7 +1167,7 @@ SELECT pg_catalog.setval('"public"."token_blacklist_blacklistedtoken_id_seq"', 1
 -- Name: token_blacklist_outstandingtoken_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."token_blacklist_outstandingtoken_id_seq"', 19, true);
+SELECT pg_catalog.setval('"public"."token_blacklist_outstandingtoken_id_seq"', 20, true);
 
 
 --
