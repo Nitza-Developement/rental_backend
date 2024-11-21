@@ -1,12 +1,14 @@
 # pylint: disable=no-member
+from weasyprint import HTML, CSS
+from django.http import HttpResponse
 from rental.contract_form.models import (
     ContractFormTemplate,
     ContractFormField,
     ContractForm,
     ContractFormFieldResponse,
 )
+from rental.contract_form.custom_html_parser import CustomHTMLParser
 from settings.utils.exceptions import NotFound404APIException
-
 from settings.settings import MINIO_STORAGE_MEDIA_BUCKET_NAME
 from settings.utils.minio_client import minio_client
 
@@ -71,10 +73,11 @@ def clone_contract_form_template(form: ContractFormTemplate):
     return form
 
 
-def update_contract_form_template(instance, fields=None, **data):
+def update_contract_form_template(instance: ContractFormTemplate, fields=None, **data):
     """
     Update a contract form template
     """
+
     ContractFormTemplate.objects.filter(id=instance.id).update(**data)
 
     if fields:
@@ -161,3 +164,42 @@ def create_contract_form_response(tenant, data):
             )
 
     return contract_form
+
+
+def create_contract_form_pdf(contract_form):
+
+    fields = contract_form.get("template").get("fields")
+    html_template = contract_form.get("template").get("html_template")
+
+    parser = CustomHTMLParser()
+    parser.feed(html_template, fields)
+
+    stylesheets = [
+        CSS(
+            string="body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important }"
+        ),
+        CSS(string="a { color: #000 !important; text-decoration: none !important }"),
+        CSS(
+            string=""".content {
+                background-color: 
+                rgb(250, 202 ,21) !important ; 
+                padding: 5px !important ;
+                border-bottom: 1px solid #000 !important ;
+                }
+            """
+        ),
+        CSS(
+            string=".image { border: 1px solid #000 !important ;width: 100%; height: auto; }"
+        ),
+    ]
+
+    response = HttpResponse(
+        content_type="application/pdf",
+        headers={"Content-Disposition": 'attachment; filename="contract-form.pdf"'},
+    )
+
+    html = HTML(string=parser.template).write_pdf(stylesheets=stylesheets)
+
+    response.write(html)
+
+    return response

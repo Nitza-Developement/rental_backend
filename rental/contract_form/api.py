@@ -14,6 +14,7 @@ from rental.contract_form.features import get_contract_form_template
 from rental.contract_form.features import get_contract_form_templates
 from rental.contract_form.features import get_contract_forms
 from rental.contract_form.features import update_contract_form_template
+from rental.contract_form.features import create_contract_form_pdf
 from rental.contract_form.serializer import CloneContractFormTemplateSerializer
 from rental.contract_form.serializer import ContractFormSerializer
 from rental.contract_form.serializer import ContractFormTemplateSerializer
@@ -49,12 +50,21 @@ class ContractFormTemplateListAndCreateView(APIViewWithPagination):
 
     def post(self, request):
         serializer = ContractFormTemplateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
 
-        tenant = request.user.defaultTenantUser().tenant
-        user = request.user.defaultTenantUser()
-        serializer.save(tenant=tenant, user=user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if serializer.is_valid():
+
+            tenant = request.user.defaultTenantUser().tenant
+            user = request.user.defaultTenantUser()
+
+            data = {"tenant": tenant, "user": user}
+            data.update(serializer.validated_data)
+
+            form = create_contract_form_template(**data)
+            serialized_form = ContractFormTemplateSerializer(form)
+
+            return Response(serialized_form.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ContractFormTemplateGetUpdateAndDeleteView(APIView):
@@ -162,10 +172,18 @@ class ContractFormGetView(APIView):
     def get(self, request, pk):
 
         tenant = request.user.defaultTenantUser().tenant
+
         contract_form = get_contract_form(tenant, pk)
+
         serializer = ContractFormSerializer(
             contract_form, context={"contract_form_id": pk}
         )
+
+        create_pdf = request.query_params.get("create_pdf")
+
+        if create_pdf:
+
+            return create_contract_form_pdf(serializer.data)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
