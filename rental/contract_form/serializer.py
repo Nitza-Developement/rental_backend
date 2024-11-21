@@ -64,6 +64,7 @@ class ContractFormTemplateSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "template",
+            "html_template",
             "user",
             "tenant",
             "created_at",
@@ -73,6 +74,7 @@ class ContractFormTemplateSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "id": {"required": False},
             "template": {"required": False},
+            "html_template": {"required": False},
             "user": {"required": False},
             "tenant": {"required": False},
             "contracts": {"required": False},
@@ -86,9 +88,10 @@ class UpdateContractFormTemplateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ContractFormTemplate
-        fields = ("name", "template", "fields")
+        fields = ("name", "template", "fields", "html_template")
         extra_kwargs = {
             "template": {"required": False},
+            "html_template": {"required": False},
             "name": {"required": False},
         }
 
