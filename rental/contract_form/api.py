@@ -49,12 +49,21 @@ class ContractFormTemplateListAndCreateView(APIViewWithPagination):
 
     def post(self, request):
         serializer = ContractFormTemplateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
 
-        tenant = request.user.defaultTenantUser().tenant
-        user = request.user.defaultTenantUser()
-        serializer.save(tenant=tenant, user=user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if serializer.is_valid():
+
+            tenant = request.user.defaultTenantUser().tenant
+            user = request.user.defaultTenantUser()
+
+            data = {"tenant": tenant, "user": user}
+            data.update(serializer.validated_data)
+
+            form = create_contract_form_template(**data)
+            serialized_form = ContractFormTemplateSerializer(form)
+
+            return Response(serialized_form.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ContractFormTemplateGetUpdateAndDeleteView(APIView):
