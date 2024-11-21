@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 from rest_framework import serializers
 
 from rental.contract_form.models import ContractForm

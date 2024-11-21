@@ -71,7 +71,7 @@ def clone_contract_form_template(form: ContractFormTemplate):
     return form
 
 
-def update_contract_form_template(instance, fields=None, **data):
+def update_contract_form_template(instance: ContractFormTemplate, fields=None, **data):
     """
     Update a contract form template
     """
