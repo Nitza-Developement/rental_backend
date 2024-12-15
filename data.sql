@@ -853,6 +853,7 @@ COPY "public"."token_blacklist_outstandingtoken" ("id", "token", "created_at", "
 18	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMjI0NjE0MiwiaWF0IjoxNzMxODE0MTQyLCJqdGkiOiIwMDQwNWJlOTEzMzE0NzQ0YjIwZTA4YTYwOGViMDRkOSIsInVzZXJfaWQiOjV9.oJ5BlYVhK6LSDcUu10Owr6ZBIG9F_EzJlVmDhBT-pyk	2024-11-17 03:29:02.917053+00	2024-11-22 03:29:02+00	5	00405be913314744b20e08a608eb04d9
 19	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMjM4MDQ3NiwiaWF0IjoxNzMxOTQ4NDc2LCJqdGkiOiIzZTJhOWIzMWQzMjE0MWM1OGFhMDU4ZjM2NTViZjk1NyIsInVzZXJfaWQiOjN9.u7nM_iZzSVYBFUkJXsHbAjGr3UEBRCtuTKFf3HYIBqw	2024-11-18 16:47:56.825851+00	2024-11-23 16:47:56+00	3	3e2a9b31d32141c58aa058f3655bf957
 20	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMjQ3OTgzNCwiaWF0IjoxNzMyMDQ3ODM0LCJqdGkiOiIxODEzODA2NTliM2Y0OGM0YWYwMzAyN2Y1YjIyMzkxYSIsInVzZXJfaWQiOjR9.2v0FDwaZgrIFzoZchOx_JamrXNViLhZIwDedxbbZ_gw	2024-11-19 20:23:54.941233+00	2024-11-24 20:23:54+00	4	181380659b3f48c4af03027f5b22391a
+21	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczNDU5NTk0MCwiaWF0IjoxNzM0MTYzOTQwLCJqdGkiOiI0OGVjZDU2MWNiNzE0YWI1OWM2MGZhYTM4ZjQ2NDczZCIsInVzZXJfaWQiOjV9.JSFv6iTj-QjJrZka_-Fy0ctPvd0KbyBYtq5WFcrDP7I	2024-12-14 08:12:20.972806+00	2024-12-19 08:12:20+00	5	48ecd561cb714ab59c60faa38f46473d
 \.
 
 
@@ -1167,7 +1168,7 @@ SELECT pg_catalog.setval('"public"."token_blacklist_blacklistedtoken_id_seq"', 1
 -- Name: token_blacklist_outstandingtoken_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."token_blacklist_outstandingtoken_id_seq"', 20, true);
+SELECT pg_catalog.setval('"public"."token_blacklist_outstandingtoken_id_seq"', 21, true);
 
 
 --
